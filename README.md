@@ -9,7 +9,7 @@
   <a href="https://github.com/epicsagas/book-forge/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/book-forge?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.2.1-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.2.2-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -105,7 +105,19 @@ codex plugin marketplace add epicsagas/Velith
 codex       # launch Codex → /plugins → browse Velith → Install
 ```
 
-Skills are auto-discovered from `.agents/skills/` and subagents from `.codex/agents/`. The `.codex-plugin/plugin.json` manifest points Codex to the skill directory.
+Velith provides 16 skills (via `.agents/skills/`) and 7 custom subagents (via `.codex/agents/`):
+
+| Subagent | Model | Role |
+|----------|-------|------|
+| `book-architect` | gpt-5.4 | Structure validation, outline scoring |
+| `chapter-writer` | gpt-5.4 | Chapter draft generation |
+| `scene-generator` | gpt-5.4 | Scene-level GMC+RDD breakdown (fiction) |
+| `continuity-editor` | gpt-5.4 | Cross-chapter consistency checks |
+| `style-doctor` | gpt-5.4 | AI-slop detection, voice consistency |
+| `cover-designer` | gpt-5.4-mini | Cover concepts + image prompts |
+| `marketing-expert` | gpt-5.4 | Reader personas, launch strategy |
+
+Codex auto-discovers skills from `.agents/skills/` and subagents from `.codex/agents/*.toml`. No extra configuration needed.
 
 **Prerequisites:** [Codex CLI](https://github.com/openai/codex) installed and configured with an OpenAI API key.
 
