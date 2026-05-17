@@ -19,3 +19,12 @@ Validation by genre:
 Output: `outline.md` (structure overview, chapter specs, dependency map, validation results).
 
 Gate: outline.md exists, all chapters specified, cross-reference map written.
+
+
+## Post-Completion
+
+Update the project dashboard status:
+
+```bash
+node {PLUGIN_ROOT}/skills/book-status/scripts/scan-project.js [project-dir] --plugin-root={PLUGIN_ROOT}
+```

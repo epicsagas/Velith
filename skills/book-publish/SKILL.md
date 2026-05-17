@@ -21,3 +21,12 @@ description: "Phase 5: Publishing. Convert to EPUB/PDF/MOBI/TXT/Markdown, cover 
 Output: `publish/` directory with all formats + metadata + title-candidates.md + cover/concepts.md + marketing-plan.md.
 
 Gate: EPUB + PDF generated, metadata complete, 22+ titles, cover concepts, marketing plan.
+
+
+## Post-Completion
+
+Update the project dashboard status:
+
+```bash
+node {PLUGIN_ROOT}/skills/book-status/scripts/scan-project.js [project-dir] --plugin-root={PLUGIN_ROOT}
+```

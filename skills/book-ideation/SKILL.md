@@ -16,3 +16,12 @@ Present to user → select ≤3 → merge → confirm single concept.
 Output: `ideation.md` (pitch, competitive matrix, gap summary, rationale).
 
 Gate: ideation.md exists, 5+ competitors analyzed, user approved.
+
+
+## Post-Completion
+
+Update the project dashboard status:
+
+```bash
+node {PLUGIN_ROOT}/skills/book-status/scripts/scan-project.js [project-dir] --plugin-root={PLUGIN_ROOT}
+```

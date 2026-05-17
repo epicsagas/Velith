@@ -20,3 +20,12 @@ Sequential 5-stage pipeline. Context accumulates across stages.
 Auto-fix scope: spelling/spacing, format normalization, terminology per STYLE.md, heading consistency.
 
 Gate: all 5 stages done, <5 Critical/Major remaining, report generated, user approved Critical/Major.
+
+
+## Post-Completion
+
+Update the project dashboard status:
+
+```bash
+node {PLUGIN_ROOT}/skills/book-status/scripts/scan-project.js [project-dir] --plugin-root={PLUGIN_ROOT}
+```

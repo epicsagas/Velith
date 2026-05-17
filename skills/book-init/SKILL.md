@@ -19,3 +19,12 @@ Outputs:
 - `drafts/` `edits/` `publish/` `sources/` directories
 
 Gate: PRD.md + STYLE.md exist, source map has 3+ items.
+
+
+## Post-Completion
+
+Update the project dashboard status:
+
+```bash
+node {PLUGIN_ROOT}/skills/book-status/scripts/scan-project.js [project-dir] --plugin-root={PLUGIN_ROOT}
+```

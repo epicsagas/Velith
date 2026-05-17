@@ -17,3 +17,12 @@ description: "Phase 3: Drafting. Plan-Then-Execute chapter generation with paral
 **Continuity** (every 3-5 chapters): term consistency, logic flow, character/code compat, reference integrity.
 
 Gate: all chapters exist, ±10% word target, continuity passed.
+
+
+## Post-Completion
+
+Update the project dashboard status:
+
+```bash
+node {PLUGIN_ROOT}/skills/book-status/scripts/scan-project.js [project-dir] --plugin-root={PLUGIN_ROOT}
+```
