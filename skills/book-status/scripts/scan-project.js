@@ -23,11 +23,24 @@ const words = (p) => { try { return parseInt(execSync(`wc -w < "${p}"`, { encodi
 
 // --- scan ---
 const prd = has('PRD.md') ? readFileSync(join(dir, 'PRD.md'), 'utf8') : '';
+// Extract from YAML frontmatter first, then fall back to body
+const yamlTitle = (prd.match(/^---\n[\s\S]*?^title:\s*["']?(.+?)["']?\s*$/m) || [])[1]?.trim();
+const yamlGenre = (prd.match(/^---\n[\s\S]*?^genre:\s*(.+)$/m) || [])[1]?.trim();
+const yamlLang = (prd.match(/^---\n[\s\S]*?^language:\s*(.+)$/m) || [])[1]?.trim();
 const meta = {
-  title: (prd.match(/\*\*Title\*?\*?:\s*(.+)/i) || prd.match(/\*\*제목:\*\*\s*(.+)/) || prd.match(/#\s*PRD[—\-\s]+(.+)/i) || [,'Untitled'])[1]?.trim(),
-  genre: (prd.match(/\*\*Genre\*?\*?:\s*(.+)/i) || prd.match(/\*\*장르:\*\*\s*(.+)/) || [,'unknown'])[1]?.trim().toLowerCase(),
-  language: (prd.match(/\*\*Language\*?\*?:\s*(.+)/i) || prd.match(/\*\*언어:\*\*\s*(.+)/) || [,'ko'])[1]?.trim(),
-  target_words: parseInt((prd.match(/(\d[\d,]+)\s*(?:words|자|글자)/i) || [,'0'])[1]?.replace(/,/g, '')),
+  title: yamlTitle || (prd.match(/\*\*Title\*?\*?:\s*(.+)/i) || prd.match(/\*\*제목:\*\*\s*(.+)/) || prd.match(/^#\s*PRD[—:\-\s]+(.+)/im) || [,'Untitled'])[1]?.trim(),
+  genre: (yamlGenre || (prd.match(/\*\*Genre\*?\*?:\s*(.+)/i) || prd.match(/\*\*장르:\*\*\s*(.+)/) || [,'unknown'])[1])?.trim().toLowerCase(),
+  language: (yamlLang || (prd.match(/\*\*Language\*?\*?:\s*(.+)/i) || prd.match(/\*\*언어:\*\*\s*(.+)/) || [,'ko'])[1])?.trim(),
+  target_words: (() => {
+    // Try Korean 만/억 units first: "5~6만자", "10만 글자", "3억자"
+    const manMatch = prd.match(/(?:분량|target|목표)[^\n]*?(\d+)\s*~?\s*(\d+)\s*만\s*(?:자|글자)/i);
+    if (manMatch) return parseInt(manMatch[2]) * 10000;
+    const eokMatch = prd.match(/(?:분량|target|목표)[^\n]*?(\d+)\s*~?\s*(\d+)\s*억\s*(?:자|글자)/i);
+    if (eokMatch) return parseInt(eokMatch[2]) * 100000000;
+    // Standard: "80,000 words", "5만자" standalone
+    const m = prd.match(/(?:분량|target|목표)[^\n]*?(\d[\d,]+)\s*(?:words|자|글자)/i) || prd.match(/(\d[\d,]+)\s*(?:words|자|글자)/i);
+    return parseInt((m || [,'0'])[1]?.replace(/,/g, '')) || 0;
+  })(),
 };
 const draftsDir = (prd.match(/drafts_dir:\s*(\S+)/i) || prd.match(/\*\*초안\s*경로:\*\*\s*(\S+)/) || [,'drafts'])[1];
 const planned = parseInt((prd.match(/(\d+)\s*(?:chapters|장|챕터)/i) || [,'0'])[1]);
@@ -128,7 +141,7 @@ const phases = [
   phase(0, 'Onboarding', has('PRD.md') && has('STYLE.md') ? 100 : has('PRD.md') ? 50 : 0, has('PRD.md') && has('STYLE.md') ? 'complete' : has('PRD.md') ? 'in_progress' : 'pending'),
   phase(1, 'Ideation', has('ideation.md') || has('outline.md') ? 100 : 0, has('ideation.md') || has('outline.md') ? 'complete' : 'pending'),
   phase(2, 'Outlining', has('outline.md') ? 100 : 0, has('outline.md') ? 'complete' : 'pending'),
-  phase(3, 'Drafting', planned ? Math.round(drafts.length / planned * 100) : 0, drafts.length > 0 && drafts.length < planned ? 'in_progress' : drafts.length >= planned && planned > 0 ? 'complete' : 'pending'),
+  phase(3, 'Drafting', planned ? Math.min(Math.round(drafts.length / planned * 100), 100) : 0, drafts.length > 0 && drafts.length < planned ? 'in_progress' : drafts.length >= planned && planned > 0 ? 'complete' : 'pending'),
   phase(4, 'Editing', has('edits/editorial-report.md') ? 100 : edits.length > 0 ? 50 : 0, has('edits/editorial-report.md') ? 'complete' : edits.length > 0 ? 'in_progress' : 'pending'),
   phase(5, 'Publishing', output_files.some(f => f.exists && f.name.match(/epub|pdf/)) ? 100 : 0, output_files.some(f => f.exists && f.name.match(/epub|pdf/)) ? 'complete' : 'pending'),
 ];
@@ -136,10 +149,12 @@ const current_phase = (() => { const ip = phases.find(p => p.status === 'in_prog
 
 // --- build JSON ---
 const now = new Date().toISOString();
+const totalChapters = planned || drafts.length;
+const completedChapters = Math.min(drafts.length, totalChapters);
 const project = {
   name: meta.title, path: dir, genre: meta.genre, language: meta.language,
   current_phase, phase_status: phases,
-  total_chapters: planned || drafts.length, completed_chapters: drafts.length,
+  total_chapters: totalChapters, completed_chapters: completedChapters,
   total_words, target_words: meta.target_words || 0,
   chapter_details, output_files, cover_path,
   last_updated: now,
