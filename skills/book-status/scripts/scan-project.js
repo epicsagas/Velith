@@ -120,10 +120,13 @@ const agentDefs = [
   { id: 'scene-generator', name: 'Scene Generator', icon: 'theaters', role: 'Scene creation & expansion', artifacts: [] },
   { id: 'style-doctor', name: 'Style Doctor', icon: 'medical_services', role: 'Style consistency & AI-slop detection', artifacts: [] },
 ];
-const agentsDir = join(dir, '.velith', 'agents');
+const projectAgentsDir = join(dir, '.velith', 'agents');
+const globalAgentsDir = join(VELITH, 'agents');
 const agents = agentDefs.map(a => {
-  const sf = join(agentsDir, `${a.id}.json`);
-  const s = existsSync(sf) ? read(sf, {}) : {};
+  const projectFile = join(projectAgentsDir, `${a.id}.json`);
+  const globalFile = join(globalAgentsDir, `${a.id}.json`);
+  const sf = existsSync(projectFile) ? projectFile : existsSync(globalFile) ? globalFile : null;
+  const s = sf ? read(sf, {}) : {};
   let status = s.status || null;
   if (!status) {
     if (a.artifacts.length > 0 && a.artifacts.every(f => existsSync(join(dir, f)))) status = 'complete';
