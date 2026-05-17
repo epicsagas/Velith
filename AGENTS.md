@@ -100,9 +100,18 @@ npm run build     # rebuild dist/ (included in repo for plugin users)
 
 Velith also supports OpenAI Codex CLI discovery. The dual-plugin structure allows both Claude Code and Codex to find skills and agents.
 
-### Plugin structure
+### Plugin manifests
+
+| Platform | Manifest | Purpose |
+|----------|----------|---------|
+| Claude Code | `.claude-plugin/plugin.json` | Skills + agent definitions |
+| Codex CLI | `.codex-plugin/plugin.json` | Skill directory pointer |
+
+### Directory structure
 
 ```
+.claude-plugin/plugin.json      — Claude Code manifest
+.codex-plugin/plugin.json       — Codex CLI manifest
 .agents/skills/{name}/SKILL.md  — Codex skills (symlinks → ../../../skills/{name}/SKILL.md)
 .codex/agents/{name}.toml       — Codex subagents
 ```
