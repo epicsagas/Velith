@@ -3,4 +3,5 @@
 !dist/
 !dist/**
 !server.mjs
+!AGENT_STATUS_SCHEMA.md
 !.gitignore
