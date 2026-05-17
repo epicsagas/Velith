@@ -167,8 +167,9 @@ const server = http.createServer(async (req, res) => {
 
 const config = readJson(CONFIG_PATH, {});
 const port = config.port || DEFAULT_PORT;
+const host = config.host || '127.0.0.1';
 
-server.listen(port, '127.0.0.1', () => {
+server.listen(port, host, () => {
   fs.writeFileSync(PID_PATH, String(process.pid));
-  console.log(`velith:${port}`);
+  console.log(`velith:${host === '0.0.0.0' ? '0.0.0.0' : '127.0.0.1'}:${port}`);
 });
