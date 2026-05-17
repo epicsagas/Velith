@@ -149,6 +149,19 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Download publish file: /download/{projectIndex}/{filename}
+  const dlMatch = url.pathname.match(/^\/download\/(\d+)\/(.+)$/);
+  if (dlMatch) {
+    const projDir = getProjectDir(parseInt(dlMatch[1]));
+    if (!projDir) { res.writeHead(404); res.end('Not found'); return; }
+    const fp = path.join(projDir, 'publish', dlMatch[2]);
+    if (!fs.existsSync(fp) || fs.statSync(fp).isDirectory()) { res.writeHead(404); res.end('Not found'); return; }
+    const ext = path.extname(fp);
+    res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream', 'Content-Disposition': `attachment; filename="${dlMatch[2]}"` });
+    fs.createReadStream(fp).pipe(res);
+    return;
+  }
+
   serveStatic(res, url.pathname);
 });
 

@@ -53,10 +53,33 @@ const editStage = (() => {
   return last;
 })();
 
+// Per-chapter edit detection: compare draft mtime vs first edit report mtime
+const editStartTime = hasEdits
+  ? (() => { const r = editReports.find(r => edits.includes(r.file)); return r ? statSync(join(editsPath, r.file)).mtimeMs : null; })()
+  : null;
+const editingComplete = hasEdits && edits.includes('editorial-report.md');
+
+function chapterStatus(fp) {
+  if (editingComplete) return 'edit';
+  if (!editStartTime) return 'draft';
+  try { return statSync(fp).mtimeMs > editStartTime ? 'edit' : 'draft'; } catch { return 'draft'; }
+}
+
 const chapter_details = drafts.map(f => {
   const fp = join(draftsPath, f);
-  return { filename: f, title: basename(f, '.md').replace(/^ch\d+[-_]?/i, '').replace(/[-_]/g, ' '), lines: lines(fp), words: words(fp), status: hasEdits ? 'edit' : 'draft', edit_stage: editStage };
+  return { filename: f, title: basename(f, '.md').replace(/^ch\d+[-_]?/i, '').replace(/[-_]/g, ' '), lines: lines(fp), words: words(fp), status: chapterStatus(fp), edit_stage: editStage };
 });
+
+// 'wait' entries for planned chapters not yet drafted (parse outline.md)
+const outlineText = has('outline.md') ? readFileSync(join(dir, 'outline.md'), 'utf8') : '';
+const plannedChapters = [...outlineText.matchAll(/^###\s+Chapter\s+(\d+):\s*(.+)$/gm)].map(m => ({ num: parseInt(m[1]), title: m[2].trim() }));
+const draftedNums = new Set(drafts.map(f => { const m = f.match(/^ch(\d+)/i); return m ? parseInt(m[1]) : null; }).filter(Boolean));
+for (const pc of plannedChapters) {
+  if (!draftedNums.has(pc.num)) {
+    chapter_details.push({ filename: `ch${String(pc.num).padStart(2, '0')}-${pc.title.replace(/\s+/g, '-')}.md`, title: pc.title, lines: 0, words: 0, status: 'wait', edit_stage: null });
+  }
+}
+chapter_details.sort((a, b) => a.filename.localeCompare(b.filename, undefined, { numeric: true }));
 const total_words = chapter_details.reduce((s, c) => s + c.words, 0);
 
 // cover scan
