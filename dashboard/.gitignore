@@ -1,0 +1,6 @@
+# Source — only dist/ is deployed
+*
+!dist/
+!dist/**
+!server.mjs
+!.gitignore
