@@ -126,13 +126,13 @@ const agents = agentDefs.map(a => {
 const phase = (n, name, pct, st) => ({ phase: n, name, percent: pct, status: st });
 const phases = [
   phase(0, 'Onboarding', has('PRD.md') && has('STYLE.md') ? 100 : has('PRD.md') ? 50 : 0, has('PRD.md') && has('STYLE.md') ? 'complete' : has('PRD.md') ? 'in_progress' : 'pending'),
-  phase(1, 'Ideation', has('ideation.md') ? 100 : 0, has('ideation.md') ? 'complete' : 'pending'),
+  phase(1, 'Ideation', has('ideation.md') || has('outline.md') ? 100 : 0, has('ideation.md') || has('outline.md') ? 'complete' : 'pending'),
   phase(2, 'Outlining', has('outline.md') ? 100 : 0, has('outline.md') ? 'complete' : 'pending'),
   phase(3, 'Drafting', planned ? Math.round(drafts.length / planned * 100) : 0, drafts.length > 0 && drafts.length < planned ? 'in_progress' : drafts.length >= planned && planned > 0 ? 'complete' : 'pending'),
   phase(4, 'Editing', has('edits/editorial-report.md') ? 100 : edits.length > 0 ? 50 : 0, has('edits/editorial-report.md') ? 'complete' : edits.length > 0 ? 'in_progress' : 'pending'),
   phase(5, 'Publishing', output_files.some(f => f.exists && f.name.match(/epub|pdf/)) ? 100 : 0, output_files.some(f => f.exists && f.name.match(/epub|pdf/)) ? 'complete' : 'pending'),
 ];
-const current_phase = (() => { const ip = phases.find(p => p.status === 'in_progress'); if (ip) return ip.phase; const last = [...phases].reverse().find(p => p.status === 'complete'); return last ? last.phase + 1 : 0; })();
+const current_phase = (() => { const ip = phases.find(p => p.status === 'in_progress'); if (ip) return ip.phase; const last = [...phases].reverse().find(p => p.status === 'complete'); return last ? Math.min(last.phase + 1, phases[phases.length - 1].phase) : 0; })();
 
 // --- build JSON ---
 const now = new Date().toISOString();
