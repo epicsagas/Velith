@@ -95,3 +95,15 @@ npm run build     # rebuild dist/ (included in repo for plugin users)
 - **i18n**: All user-facing strings must go through the i18n system. When adding keys, add to all 10 locale files.
 - **Idempotent agents**: Agents must skip already-completed work (e.g., chapter-writer skips existing draft files).
 - **Agent status tracking**: All agents call `node {PLUGIN_ROOT}/scripts/agent-status.js {id} {running|complete|error} [task]` to update status.
+
+## Versioning and Release
+
+This is a Claude Code plugin. Before every push to `main`, bump the `version` field in `.claude-plugin/plugin.json` semantically based on the change scope:
+
+- **PATCH** (`0.1.0` → `0.1.1`): Bug fixes, typo corrections, minor dashboard styling tweaks, i18n string fixes — no new functionality.
+- **MINOR** (`0.1.0` → `0.2.0`): New skills, new agents, new genre support, new dashboard views, new i18n keys, feature additions to existing skills/agents.
+- **MAJOR** (`0.1.0` → `1.0.0`): Breaking changes to skill/agent interfaces, pipeline phase restructuring, removed skills or agents, incompatible plugin manifest changes.
+
+Also bump `version` in `README.md` badge URL (`badge/version-{version}`) to match.
+
+**Process**: bump version → commit all changes → push. Do not push without bumping.
