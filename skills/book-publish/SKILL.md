@@ -22,6 +22,12 @@ Output: `publish/` directory with all formats + metadata + title-candidates.md +
 
 Gate: EPUB + PDF generated, metadata complete, 22+ titles, cover concepts, marketing plan.
 
+## Pre-processing
+
+**Poetry line breaks**: If genre is `poetry` or `poetry-essay`, before running pandoc, prepend two trailing spaces (`  `) to each non-empty line within poem sections (content under `##` headings, before `###` subheadings). This forces pandoc to preserve line breaks instead of merging into paragraphs.
+
+**Cover image guard**: Before running pandoc, check if the cover image file referenced in `metadata.yaml` (typically `cover.png`) actually exists. If missing, temporarily remove the `cover-image` field from metadata, run pandoc, then restore the field. This prevents pandoc from failing when cover hasn't been generated yet.
+
 
 ## Post-Completion
 

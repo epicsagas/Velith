@@ -20,6 +20,8 @@ Outputs:
 
 Gate: PRD.md + STYLE.md exist, source map has 3+ items.
 
+**Poetry note**: For poetry/poetry-essay genres, STYLE.md line targets per poem should be 20-80 lines (not the default 10-30). Word/character targets in PRD.md should reflect total poem count × average length rather than a flat word count.
+
 
 ## Post-Completion
 

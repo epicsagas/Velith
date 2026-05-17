@@ -42,6 +42,11 @@ const meta = {
     return parseInt((m || [,'0'])[1]?.replace(/,/g, '')) || 0;
   })(),
 };
+const CJK_LANGS = new Set(['ko', 'ja', 'zh', 'zh-cn', 'zh-tw', 'zh-hans', 'zh-hant']);
+const isCJK = CJK_LANGS.has((meta.language || '').toLowerCase());
+const chars = (p) => { try { return parseInt(execSync(`tr -d '[:space:]' < "${p}" | wc -m`, { encoding: 'utf8' }).trim()); } catch { return 0; } };
+const countFn = isCJK ? chars : words;
+const countUnit = isCJK ? 'chars' : 'words';
 const draftsDir = (prd.match(/drafts_dir:\s*(\S+)/i) || prd.match(/\*\*초안\s*경로:\*\*\s*(\S+)/) || [,'drafts'])[1];
 const planned = parseInt((prd.match(/(\d+)\s*(?:chapters|장|챕터)/i) || [,'0'])[1]);
 
@@ -80,7 +85,7 @@ function chapterStatus(fp) {
 
 const chapter_details = drafts.map(f => {
   const fp = join(draftsPath, f);
-  return { filename: f, title: basename(f, '.md').replace(/^ch\d+[-_]?/i, '').replace(/[-_]/g, ' '), lines: lines(fp), words: words(fp), status: chapterStatus(fp), edit_stage: editStage };
+  return { filename: f, title: basename(f, '.md').replace(/^ch\d+[-_]?/i, '').replace(/[-_]/g, ' '), lines: lines(fp), words: countFn(fp), status: chapterStatus(fp), edit_stage: editStage };
 });
 
 // 'wait' entries for planned chapters not yet drafted (parse outline.md)
@@ -93,6 +98,7 @@ for (const pc of plannedChapters) {
   }
 }
 chapter_details.sort((a, b) => a.filename.localeCompare(b.filename, undefined, { numeric: true }));
+const effectivePlanned = planned || plannedChapters.length || 0;
 const total_words = chapter_details.reduce((s, c) => s + c.words, 0);
 
 // cover scan
@@ -130,7 +136,7 @@ const agents = agentDefs.map(a => {
   let status = s.status || null;
   if (!status) {
     if (a.artifacts.length > 0 && a.artifacts.every(f => existsSync(join(dir, f)))) status = 'complete';
-    else if (a.id === 'chapter-writer' && drafts.length > 0) status = drafts.length < (planned || Infinity) ? 'running' : 'complete';
+    else if (a.id === 'chapter-writer' && drafts.length > 0) status = drafts.length < (effectivePlanned || Infinity) ? 'running' : 'complete';
     else if (a.id === 'style-doctor' && editStage === 'proofread') status = 'complete';
     else if (a.id === 'continuity-editor' && editStage === 'developmental') status = 'complete';
     else status = 'idle';
@@ -144,21 +150,21 @@ const phases = [
   phase(0, 'Onboarding', has('PRD.md') && has('STYLE.md') ? 100 : has('PRD.md') ? 50 : 0, has('PRD.md') && has('STYLE.md') ? 'complete' : has('PRD.md') ? 'in_progress' : 'pending'),
   phase(1, 'Ideation', has('ideation.md') || has('outline.md') ? 100 : 0, has('ideation.md') || has('outline.md') ? 'complete' : 'pending'),
   phase(2, 'Outlining', has('outline.md') ? 100 : 0, has('outline.md') ? 'complete' : 'pending'),
-  phase(3, 'Drafting', planned ? Math.min(Math.round(drafts.length / planned * 100), 100) : 0, drafts.length > 0 && drafts.length < planned ? 'in_progress' : drafts.length >= planned && planned > 0 ? 'complete' : 'pending'),
+  phase(3, 'Drafting', effectivePlanned > 0 ? Math.min(Math.round(drafts.length / effectivePlanned * 100), 100) : drafts.length > 0 ? 100 : 0, effectivePlanned > 0 ? (drafts.length > 0 && drafts.length < effectivePlanned ? 'in_progress' : drafts.length >= effectivePlanned ? 'complete' : 'pending') : (drafts.length > 0 ? 'complete' : 'pending')),
   phase(4, 'Editing', has('edits/editorial-report.md') ? 100 : edits.length > 0 ? 50 : 0, has('edits/editorial-report.md') ? 'complete' : edits.length > 0 ? 'in_progress' : 'pending'),
-  phase(5, 'Publishing', output_files.some(f => f.exists && f.name.match(/epub|pdf/)) ? 100 : 0, output_files.some(f => f.exists && f.name.match(/epub|pdf/)) ? 'complete' : 'pending'),
+  phase(5, 'Publishing', (() => { const c = [output_files.find(f => f.name === 'book.epub')?.exists, output_files.find(f => f.name === 'book.pdf')?.exists, has('publish/metadata.yaml'), has('publish/title-candidates.md'), has('publish/marketing-plan.md'), cover_path != null]; return Math.round(c.filter(Boolean).length / c.length * 100); })(), (() => { const ep = output_files.find(f => f.name === 'book.epub')?.exists, pd = output_files.find(f => f.name === 'book.pdf')?.exists; return (ep && pd && has('publish/metadata.yaml')) ? 'complete' : (ep || pd) ? 'in_progress' : 'pending'; })()),
 ];
 const current_phase = (() => { const ip = phases.find(p => p.status === 'in_progress'); if (ip) return ip.phase; const last = [...phases].reverse().find(p => p.status === 'complete'); return last ? Math.min(last.phase + 1, phases[phases.length - 1].phase) : 0; })();
 
 // --- build JSON ---
 const now = new Date().toISOString();
-const totalChapters = planned || drafts.length;
+const totalChapters = effectivePlanned || drafts.length;
 const completedChapters = Math.min(drafts.length, totalChapters);
 const project = {
   name: meta.title, path: dir, genre: meta.genre, language: meta.language,
   current_phase, phase_status: phases,
   total_chapters: totalChapters, completed_chapters: completedChapters,
-  total_words, target_words: meta.target_words || 0,
+  total_words, target_words: meta.target_words || 0, count_unit: countUnit,
   chapter_details, output_files, cover_path,
   last_updated: now,
 };
@@ -192,8 +198,8 @@ out += line(`${meta.genre} · ${meta.language} · ${planned || '?'} chapters`);
 out += sep();
 phases.forEach(p => out += line(`${p.phase}. ${p.name.padEnd(13)} ${bar(p.percent)} ${String(p.percent).padStart(3)}%  ${statusLabel(p.status)}`));
 out += sep();
-chapter_details.forEach(c => out += line(`${c.filename.padEnd(20)} ${String(c.lines).padStart(5)} lines  ${String(c.words).padStart(5)} words  [${c.status}]`));
-if (chapter_details.length) out += line(`Total: ${total_words} words · Target: ${meta.target_words || '?'}`);
+chapter_details.forEach(c => out += line(`${c.filename.padEnd(20)} ${String(c.lines).padStart(5)} lines  ${String(c.words).padStart(5)} ${countUnit}  [${c.status}]`));
+if (chapter_details.length) out += line(`Total: ${total_words} ${countUnit} · Target: ${meta.target_words || '?'}`);
 out += sep();
 output_files.forEach(f => out += line(`${f.name.padEnd(12)} ${f.exists ? '✓ exists' : '✗ missing'}${f.size_bytes ? ` (${(f.size_bytes / 1024).toFixed(0)}KB)` : ''}`));
 out += `╚${'═'.repeat(w - 2)}╝\n`;
