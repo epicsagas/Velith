@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dashboard/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    paths:
+      - 'dashboard/**'
+      - '.github/workflows/ci.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Dashboard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: dashboard/.node-version
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Install dependencies
+        working-directory: dashboard
+        run: npm ci
+
+      - name: Build
+        working-directory: dashboard
+        run: npm run build
+
+      - name: Type check
+        working-directory: dashboard
+        continue-on-error: true
+        run: npx svelte-check --tsconfig ./tsconfig.json
+
+      - name: Commit dist (push to main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dashboard/dist/
+          if git diff --staged --quiet; then
+            echo "No dist changes to commit"
+          else
+            git commit -m "chore(dashboard): auto-rebuild dist [skip ci]"
+            git push
+          fi
