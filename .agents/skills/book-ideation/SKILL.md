@@ -1,0 +1,1 @@
+../../../skills/book-ideation/SKILL.md

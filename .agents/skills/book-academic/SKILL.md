@@ -1,0 +1,1 @@
+../../../skills/book-academic/SKILL.md

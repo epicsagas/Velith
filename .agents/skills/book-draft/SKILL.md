@@ -1,0 +1,1 @@
+../../../skills/book-draft/SKILL.md

@@ -1,0 +1,1 @@
+../../../skills/book-init/SKILL.md

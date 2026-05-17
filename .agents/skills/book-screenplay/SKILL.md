@@ -1,0 +1,1 @@
+../../../skills/book-screenplay/SKILL.md

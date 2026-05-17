@@ -96,6 +96,48 @@ npm run build     # rebuild dist/ (included in repo for plugin users)
 - **Idempotent agents**: Agents must skip already-completed work (e.g., chapter-writer skips existing draft files).
 - **Agent status tracking**: All agents call `node {PLUGIN_ROOT}/scripts/agent-status.js {id} {running|complete|error} [task]` to update status.
 
+## Codex (OpenAI) Plugin Support
+
+Velith also supports OpenAI Codex CLI discovery. The dual-plugin structure allows both Claude Code and Codex to find skills and agents.
+
+### Plugin structure
+
+```
+.agents/skills/{name}/SKILL.md  — Codex skills (symlinks → ../../../skills/{name}/SKILL.md)
+.codex/agents/{name}.toml       — Codex subagents
+```
+
+### Skill discovery (Codex)
+
+Codex discovers skills at `.agents/skills/`. Each skill is a directory with `SKILL.md` containing YAML frontmatter (`name`, `description`). Velith uses symlinks to share the same `SKILL.md` files between Claude Code (`skills/`) and Codex (`.agents/skills/`).
+
+### Agent discovery (Codex)
+
+Codex subagents are defined as `.codex/agents/<name>.toml` with:
+
+- `name` — agent identifier
+- `description` — short role summary
+- `developer_instructions` — full prompt body (equivalent to agent `.md` body)
+- `model` (optional) — `gpt-5.4` (sonnet) or `gpt-5.4-mini` (haiku)
+
+### Model mapping
+
+| Claude Code | Codex |
+|-------------|-------|
+| `sonnet` | `gpt-5.4` |
+| `haiku` | `gpt-5.4-mini` |
+
+### Adding a new Codex agent
+
+1. Create `.codex/agents/{name}.toml` with `name`, `description`, `developer_instructions`
+2. Set `model` based on the Claude Code agent's model field
+3. Extract the prompt body from the corresponding `agents/{name}.md` into `developer_instructions`
+
+### Adding a new Codex skill
+
+1. Create `skills/{name}/SKILL.md` (Claude Code skill)
+2. Create symlink: `.agents/skills/{name}/SKILL.md → ../../../skills/{name}/SKILL.md`
+
 ## Versioning and Release
 
 This is a Claude Code plugin. Before every push to `main`, bump the `version` field in `.claude-plugin/plugin.json` semantically based on the change scope:

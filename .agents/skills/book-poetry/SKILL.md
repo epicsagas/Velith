@@ -1,0 +1,1 @@
+../../../skills/book-poetry/SKILL.md

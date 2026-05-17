@@ -1,0 +1,1 @@
+../../../skills/book-edit/SKILL.md

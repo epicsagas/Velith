@@ -1,0 +1,1 @@
+../../../skills/book-game/SKILL.md

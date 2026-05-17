@@ -1,0 +1,1 @@
+../../../skills/book-nonfiction/SKILL.md
