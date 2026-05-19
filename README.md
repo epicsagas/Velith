@@ -98,11 +98,7 @@ claude plugin install velith@epicsagas
 ### Codex CLI (OpenAI)
 
 ```bash
-# Add Velith as a marketplace source
-codex plugin marketplace add epicsagas/Velith
-
-# Then install from the plugin browser inside Codex
-codex       # launch Codex → /plugins → browse Velith → Install
+codex plugin marketplace add epicsagas/plugins
 ```
 
 Velith provides 16 skills (via `.agents/skills/`) and 7 custom subagents (via `.codex/agents/`):

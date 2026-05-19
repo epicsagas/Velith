@@ -9,5 +9,23 @@
   "homepage": "https://github.com/epicsagas/Velith",
   "repository": "https://github.com/epicsagas/Velith",
   "license": "Apache-2.0",
-  "skills": "./.agents/skills/"
+  "skills": "./skills/",
+  "agents": [
+    "./agents/book-architect.md",
+    "./agents/chapter-writer.md",
+    "./agents/continuity-editor.md",
+    "./agents/style-doctor.md",
+    "./agents/scene-generator.md",
+    "./agents/cover-designer.md",
+    "./agents/marketing-expert.md"
+  ],
+  "interface": {
+    "displayName": "Velith",
+    "shortDescription": "AI-native publishing system — from ideation to EPUB/PDF.",
+    "longDescription": "Autonomous multi-phase publishing workflows. Fiction, non-fiction, technical, screenplay, poetry, game, academic, and custom genres.",
+    "developerName": "epicsagas",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/epicsagas/Velith"
+  }
 }
