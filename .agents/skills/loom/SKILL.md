@@ -1,1 +1,0 @@
-../../../skills/loom/SKILL.md

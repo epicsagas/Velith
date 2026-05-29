@@ -1,1 +1,0 @@
-../../../skills/book-publish/SKILL.md

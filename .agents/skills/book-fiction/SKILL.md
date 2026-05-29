@@ -1,1 +1,0 @@
-../../../skills/book-fiction/SKILL.md

@@ -98,7 +98,7 @@ npm run build     # rebuild dist/ (included in repo for plugin users)
 
 ## Codex (OpenAI) Plugin Support
 
-Velith also supports OpenAI Codex CLI discovery. The dual-plugin structure allows both Claude Code and Codex to find skills and agents.
+Velith also supports OpenAI Codex CLI discovery via `.codex-plugin/plugin.json`, which points to the same `skills/` and `agents/*.md` used by Claude Code.
 
 ### Plugin manifests
 
@@ -107,45 +107,12 @@ Velith also supports OpenAI Codex CLI discovery. The dual-plugin structure allow
 | Claude Code | `.claude-plugin/plugin.json` | Skills + agent definitions |
 | Codex CLI | `.codex-plugin/plugin.json` | Skill directory pointer |
 
-### Directory structure
-
-```
-.claude-plugin/plugin.json      — Claude Code manifest
-.codex-plugin/plugin.json       — Codex CLI manifest
-.agents/skills/{name}/SKILL.md  — Codex skills (symlinks → ../../../skills/{name}/SKILL.md)
-.codex/agents/{name}.toml       — Codex subagents
-```
-
-### Skill discovery (Codex)
-
-Codex discovers skills at `.agents/skills/`. Each skill is a directory with `SKILL.md` containing YAML frontmatter (`name`, `description`). Velith uses symlinks to share the same `SKILL.md` files between Claude Code (`skills/`) and Codex (`.agents/skills/`).
-
-### Agent discovery (Codex)
-
-Codex subagents are defined as `.codex/agents/<name>.toml` with:
-
-- `name` — agent identifier
-- `description` — short role summary
-- `developer_instructions` — full prompt body (equivalent to agent `.md` body)
-- `model` (optional) — `gpt-5.4` (sonnet) or `gpt-5.4-mini` (haiku)
-
 ### Model mapping
 
 | Claude Code | Codex |
 |-------------|-------|
 | `sonnet` | `gpt-5.4` |
 | `haiku` | `gpt-5.4-mini` |
-
-### Adding a new Codex agent
-
-1. Create `.codex/agents/{name}.toml` with `name`, `description`, `developer_instructions`
-2. Set `model` based on the Claude Code agent's model field
-3. Extract the prompt body from the corresponding `agents/{name}.md` into `developer_instructions`
-
-### Adding a new Codex skill
-
-1. Create `skills/{name}/SKILL.md` (Claude Code skill)
-2. Create symlink: `.agents/skills/{name}/SKILL.md → ../../../skills/{name}/SKILL.md`
 
 ## Versioning and Release
 

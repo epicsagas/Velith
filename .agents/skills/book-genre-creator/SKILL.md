@@ -1,1 +1,0 @@
-../../../skills/book-genre-creator/SKILL.md

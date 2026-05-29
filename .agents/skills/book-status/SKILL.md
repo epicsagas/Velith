@@ -1,1 +1,0 @@
-../../../skills/book-status/SKILL.md
