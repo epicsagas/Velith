@@ -6,38 +6,17 @@
 # Velith
 
 <p>
-  <a href="https://github.com/epicsagas/book-forge/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/epicsagas/book-forge?style=for-the-badge&labelColor=0d1117&color=ffd700&logo=github&logoColor=white" /></a>
-  <a href="https://github.com/epicsagas/book-forge/network/members"><img alt="Forks" src="https://img.shields.io/github/forks/epicsagas/book-forge?style=for-the-badge&labelColor=0d1117&color=2ecc71&logo=github&logoColor=white" /></a>
-  <a href="https://github.com/epicsagas/book-forge/issues"><img alt="Issues" src="https://img.shields.io/github/issues/epicsagas/book-forge?style=for-the-badge&labelColor=0d1117&color=ff6b6b&logo=github&logoColor=white" /></a>
-  <a href="https://github.com/epicsagas/book-forge/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/book-forge?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
+  <a href="https://github.com/epicsagas/Velith/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=ffd700&logo=github&logoColor=white" /></a>
+  <a href="https://github.com/epicsagas/Velith/network/members"><img alt="Forks" src="https://img.shields.io/github/forks/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=2ecc71&logo=github&logoColor=white" /></a>
+  <a href="https://github.com/epicsagas/Velith/issues"><img alt="Issues" src="https://img.shields.io/github/issues/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=ff6b6b&logo=github&logoColor=white" /></a>
+  <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.1.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.2.8-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://buymeacoffee.com/epicsaga"><img alt="Buy Me a Coffee" src="https://img.shields.io/badge/buy_me_a_coffee-FFDD00?style=for-the-badge&labelColor=0d1117&logo=buymeacoffee&logoColor=black" /></a>
-</p>
-<p>
-  <img alt="7 Agents" src="https://img.shields.io/badge/7_agents-architect_%7C_writer_%7C_scene_%7C_continuity_%7C_style_%7C_cover_%7C_marketing-e67e22?style=for-the-badge&labelColor=0d1117" />
-</p>
-<p>
-  <img alt="6 Phases" src="https://img.shields.io/badge/6_phases-onboard_%E2%86%92_ideate_%E2%86%92_outline_%E2%86%92_draft_%E2%86%92_edit_%E2%86%92_publish-9b59b6?style=for-the-badge&labelColor=0d1117" />
-</p>
-<p>
-  <img alt="EPUB" src="https://img.shields.io/badge/output-EPUB-3498db?style=for-the-badge&labelColor=0d1117" />
-  <img alt="PDF" src="https://img.shields.io/badge/output-PDF-3498db?style=for-the-badge&labelColor=0d1117" />
-  <img alt="MOBI" src="https://img.shields.io/badge/output-MOBI-3498db?style=for-the-badge&labelColor=0d1117" />
-  <img alt="TXT" src="https://img.shields.io/badge/output-TXT-3498db?style=for-the-badge&labelColor=0d1117" />
-  <img alt="Markdown" src="https://img.shields.io/badge/output-Markdown-3498db?style=for-the-badge&labelColor=0d1117" />
-</p>
-<p>
-  <img alt="Fiction" src="https://img.shields.io/badge/genre-Fiction-d73a49?style=for-the-badge&labelColor=0d1117" />
-  <img alt="Non-Fiction" src="https://img.shields.io/badge/genre-Non--Fiction-d73a49?style=for-the-badge&labelColor=0d1117" />
-  <img alt="Technical" src="https://img.shields.io/badge/genre-Technical-d73a49?style=for-the-badge&labelColor=0d1117" />
-  <img alt="Screenplay" src="https://img.shields.io/badge/genre-Screenplay-d73a49?style=for-the-badge&labelColor=0d1117" />
-  <img alt="Poetry" src="https://img.shields.io/badge/genre-Poetry-d73a49?style=for-the-badge&labelColor=0d1117" />
-  <img alt="Game" src="https://img.shields.io/badge/genre-Game-d73a49?style=for-the-badge&labelColor=0d1117" />
-  <img alt="Academic" src="https://img.shields.io/badge/genre-Academic-d73a49?style=for-the-badge&labelColor=0d1117" />
 </p>
 
 <p>
