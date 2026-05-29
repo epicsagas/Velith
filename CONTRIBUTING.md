@@ -4,9 +4,9 @@ Thank you for your interest in improving Velith! This guide covers how to contri
 
 ## Quick Links
 
-- [Report a Bug](https://github.com/epicsagas/book-forge/issues/new?template=bug_report.md)
-- [Request a Feature](https://github.com/epicsagas/book-forge/issues/new?template=feature_request.md)
-- [Open a Discussion](https://github.com/epicsagas/book-forge/discussions)
+- [Report a Bug](https://github.com/epicsagas/Velith/issues/new?template=bug_report.md)
+- [Request a Feature](https://github.com/epicsagas/Velith/issues/new?template=feature_request.md)
+- [Open a Discussion](https://github.com/epicsagas/Velith/discussions)
 
 ## How to Contribute
 
@@ -22,10 +22,10 @@ Thank you for your interest in improving Velith! This guide covers how to contri
 
 ### Improving Skills
 
-Skills are the core of Velith. Each skill file lives in `skills/book-forge/`:
+Skills are the core of Velith. Each skill file lives in `skills/Velith/`:
 
 ```
-skills/book-forge/
+skills/Velith/
 ├── SKILL.md          # Main entry point
 ├── onboarding.md     # Phase 0
 ├── ideation.md       # Phase 1
@@ -88,7 +88,7 @@ docs(readme): add comparison table
 
 ```bash
 # Clone the repo
-git clone https://github.com/epicsagas/book-forge.git
+git clone https://github.com/epicsagas/Velith.git
 
 # Install as a local plugin for testing
 claude plugin install --local /path/to/velith
