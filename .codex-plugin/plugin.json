@@ -10,15 +10,6 @@
   "repository": "https://github.com/epicsagas/Velith",
   "license": "Apache-2.0",
   "skills": "./skills/",
-  "agents": [
-    "./agents/book-architect.toml",
-    "./agents/chapter-writer.toml",
-    "./agents/continuity-editor.toml",
-    "./agents/style-doctor.toml",
-    "./agents/scene-generator.toml",
-    "./agents/cover-designer.toml",
-    "./agents/marketing-expert.toml"
-  ],
   "interface": {
     "displayName": "Velith",
     "shortDescription": "AI-native publishing system — from ideation to EPUB/PDF.",
