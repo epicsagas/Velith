@@ -1,0 +1,15 @@
+{
+  "name": "velith-dashboard",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "svelte": "^5.0.0",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "vite": "^6.0.0"
+  }
+}

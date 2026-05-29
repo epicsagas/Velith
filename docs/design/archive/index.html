@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Velith — Dashboard</title>
+
+    <!-- FOUC prevention: apply dark class before paint -->
+    <script>
+      (function () {
+        var stored = localStorage.getItem('velith-theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (stored !== 'light' && (prefersDark || !stored)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Geist:wght@100..900&display=swap" rel="stylesheet" />
+
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              // Theme-switching tokens (via .dark class)
+              primary: 'var(--color-primary)',
+              'primary-container': 'var(--color-primary-container)',
+              'on-primary': 'var(--color-on-primary)',
+              'on-primary-container': 'var(--color-on-primary-container)',
+              secondary: 'var(--color-secondary)',
+              'secondary-container': 'var(--color-secondary-container)',
+              'on-secondary': 'var(--color-on-secondary)',
+              'on-secondary-container': 'var(--color-on-secondary-container)',
+              surface: 'var(--color-surface)',
+              'surface-container': 'var(--color-surface-container)',
+              'surface-container-low': 'var(--color-surface-container-low)',
+              'surface-container-lowest': 'var(--color-surface-container-lowest)',
+              'surface-container-high': 'var(--color-surface-container-high)',
+              'surface-variant': 'var(--color-surface-variant)',
+              'on-surface': 'var(--color-on-surface)',
+              'on-surface-variant': 'var(--color-on-surface-variant)',
+              'inverse-surface': 'var(--color-inverse-surface)',
+              'inverse-on-surface': 'var(--color-inverse-on-surface)',
+              outline: 'var(--color-outline)',
+              'outline-variant': 'var(--color-outline-variant)',
+              background: 'var(--color-background)',
+              error: 'var(--color-error)',
+              'error-container': 'var(--color-error-container)',
+              // Sidebar — permanently dark, immune to theme toggle
+              'sidebar-bg': 'var(--sidebar-bg)',
+              'sidebar-active': 'var(--sidebar-active)',
+              'sidebar-hover': 'var(--sidebar-hover)',
+              'sidebar-text': 'var(--sidebar-text)',
+              'sidebar-muted': 'var(--sidebar-muted)',
+              'sidebar-border': 'var(--sidebar-border)',
+              'sidebar-accent': 'var(--sidebar-accent)',
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      /* ── Sidebar — always dark, independent of theme ───────────── */
+      :root {
+        --sidebar-bg: #0d0f18;
+        --sidebar-active: #1e2138;
+        --sidebar-hover: #161927;
+        --sidebar-text: #e5e1ea;
+        --sidebar-muted: #9da3c0;
+        --sidebar-border: #1f2238;
+        --sidebar-accent: #e07020;      /* bright orange on dark bg: 5.4:1 */
+      }
+
+      /* ── Light theme (WCAG AA verified) ───────────────────────── */
+      :root {
+        --color-primary: #c45500;               /* bright amber */
+        --color-primary-container: #ff8a2a;     /* vivid orange accent */
+        --color-on-primary: #ffffff;
+        --color-on-primary-container: #2f1500;
+        --color-secondary: #565d6f;             /* 6.3:1 on white */
+        --color-secondary-container: #d9dff5;
+        --color-on-secondary: #ffffff;
+        --color-on-secondary-container: #3e4459;
+        --color-surface: #f8f9fa;
+        --color-surface-container: #edeeef;
+        --color-surface-container-low: #f3f4f5;
+        --color-surface-container-lowest: #ffffff;
+        --color-surface-container-high: #e7e8e9;
+        --color-surface-variant: #e0e3e5;
+        --color-on-surface: #191c1d;            /* 18:1 on surface */
+        --color-on-surface-variant: #44474a;    /* 7.5:1 on surface-variant */
+        --color-inverse-surface: #2e3132;
+        --color-inverse-on-surface: #f0f1f2;
+        --color-outline: #747779;               /* 4.7:1 on white */
+        --color-outline-variant: #c2c7ca;
+        --color-background: #f8f9fa;
+        --color-error: #ba1a1a;                 /* 6.1:1 on white */
+        --color-error-container: #ffdad6;
+      }
+
+      /* ── Dark theme — stitch design palette (WCAG AA verified) ── */
+      .dark {
+        --color-primary: #e8762a;               /* 5.4:1 on surface */
+        --color-primary-container: #7a3a10;     /* warm amber tint */
+        --color-on-primary: #ffffff;
+        --color-on-primary-container: #ffdbba;  /* 10:1 on primary-container */
+        --color-secondary: #9da3c0;             /* 8.1:1 on surface */
+        --color-secondary-container: #2a2e46;
+        --color-on-secondary: #ffffff;
+        --color-on-secondary-container: #c8cde8;
+        --color-surface: #10121a;               /* deep navy */
+        --color-surface-container: #161926;
+        --color-surface-container-low: #12141e;
+        --color-surface-container-lowest: #0d0f17;
+        --color-surface-container-high: #1c1f30;
+        --color-surface-variant: #1e2132;
+        --color-on-surface: #e8e4f0;            /* 15.7:1 on surface ✓ AAA */
+        --color-on-surface-variant: #c0bdd0;    /* 9.2:1 on surface-variant */
+        --color-inverse-surface: #e8e4f0;
+        --color-inverse-on-surface: #13161f;
+        --color-outline: #7a7d9e;               /* 4.6:1 on surface */
+        --color-outline-variant: #2c2f45;
+        --color-background: #10121a;
+        --color-error: #ffb4ab;                 /* 7.5:1 on surface */
+        --color-error-container: #690005;
+      }
+
+      /* ── Base ──────────────────────────────────────────────────── */
+      html { color-scheme: light; }
+      .dark { color-scheme: dark; }
+
+      body { font-family: 'Geist', system-ui, sans-serif; }
+
+      /* ── Material Symbols ──────────────────────────────────────── */
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 1;
+      }
+      .fill-icon { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+      /* ── WCAG 2.4.11 Focus Appearance ──────────────────────────── */
+      :focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+      }
+      :focus:not(:focus-visible) { outline: none; }
+
+      /* Sidebar focus ring uses sidebar accent, not theme primary */
+      aside :focus-visible {
+        outline-color: var(--sidebar-accent);
+      }
+
+      /* ── Skip link (WCAG 2.4.1) ────────────────────────────────── */
+      .skip-link {
+        position: absolute;
+        top: -3rem;
+        left: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: var(--color-primary);
+        color: var(--color-on-primary);
+        font-weight: bold;
+        font-size: 0.875rem;
+        z-index: 9999;
+        text-decoration: none;
+        transition: top 0.1s;
+      }
+      .skip-link:focus { top: 0.5rem; }
+
+      /* ── Reduced motion ─────────────────────────────────────────── */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/index-CTLvPnAr.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Di7e76Qr.css">
+  </head>
+  <body class="bg-background text-on-surface">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div id="app"></div>
+  </body>
+</html>

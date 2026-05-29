@@ -5,3 +5,19 @@
 !server.mjs
 !AGENT_STATUS_SCHEMA.md
 !.gitignore
+
+# Development source (for recovery/editing)
+!src/
+!src/**
+!lib/
+!lib/**
+!locales/
+!locales/**
+!views/
+!views/**
+!package.json
+!vite.config.ts
+!svelte.config.js
+!index.html
+!app.css
+!main.js
