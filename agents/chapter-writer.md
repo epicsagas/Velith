@@ -1,7 +1,6 @@
 ---
 name: chapter-writer
 description: "Per-chapter draft generation. Writes from outline spec + style guide + sources with self-QA."
-model: sonnet
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 ---
 

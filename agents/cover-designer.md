@@ -1,7 +1,6 @@
 ---
 name: cover-designer
 description: "Book cover design. Analyzes genre/audience/title → 3-5 concepts with Midjourney/DALL-E/SD prompts. KDP 2560x1600px compliant. Phase 5."
-model: haiku
 tools: ["Read", "Write", "Bash"]
 ---
 

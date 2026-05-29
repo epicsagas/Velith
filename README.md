@@ -80,15 +80,15 @@ codex plugin marketplace add epicsagas/plugins
 
 Velith provides 16 skills (via `.agents/skills/`) and 7 custom subagents (via `.codex/agents/`):
 
-| Subagent | Model | Role |
-|----------|-------|------|
-| `book-architect` | gpt-5.4 | Structure validation, outline scoring |
-| `chapter-writer` | gpt-5.4 | Chapter draft generation |
-| `scene-generator` | gpt-5.4 | Scene-level GMC+RDD breakdown (fiction) |
-| `continuity-editor` | gpt-5.4 | Cross-chapter consistency checks |
-| `style-doctor` | gpt-5.4 | AI-slop detection, voice consistency |
-| `cover-designer` | gpt-5.4-mini | Cover concepts + image prompts |
-| `marketing-expert` | gpt-5.4 | Reader personas, launch strategy |
+| Subagent | Role |
+|----------|------|
+| `book-architect` | Structure validation, outline scoring |
+| `chapter-writer` | Chapter draft generation |
+| `scene-generator` | Scene-level GMC+RDD breakdown (fiction) |
+| `continuity-editor` | Cross-chapter consistency checks |
+| `style-doctor` | AI-slop detection, voice consistency |
+| `cover-designer` | Cover concepts + image prompts |
+| `marketing-expert` | Reader personas, launch strategy |
 
 Codex auto-discovers skills from `.agents/skills/` and subagents from `.codex/agents/*.toml`. No extra configuration needed.
 

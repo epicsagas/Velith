@@ -1,7 +1,6 @@
 ---
 name: continuity-editor
 description: "Cross-chapter consistency checker. Validates terminology, references, characters, timelines, prerequisites."
-model: sonnet
 tools: ["Read", "Edit", "Glob", "Grep", "Bash"]
 ---
 

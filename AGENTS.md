@@ -11,8 +11,8 @@ A Claude Code plugin for AI-native book publishing. 6-phase pipeline (Onboarding
 ### Plugin structure
 
 ```
-skills/{skill-name}/SKILL.md    — Skills (slash commands): frontmatter (name, description, model?) + prompt
-agents/{agent-name}.md          — Agents: frontmatter (name, description, model, tools[]) + prompt
+skills/{skill-name}/SKILL.md    — Skills (slash commands): frontmatter (name, description) + prompt
+agents/{agent-name}.md          — Agents: frontmatter (name, description, tools[]) + prompt
 scripts/agent-status.js         — Shared agent status tracker (writes ~/.velith/agents/{id}.json)
 .claude-plugin/plugin.json      — Plugin manifest (skills path, agent list)
 ```
@@ -30,10 +30,8 @@ Skills are the user-facing entry points (`/book-init`, `/book-draft`, etc.). Age
 | 4 | `/book-edit` | `style-doctor`, `continuity-editor` |
 | 5 | `/book-publish` | `cover-designer`, `marketing-expert` |
 
-### Agent model and tool constraints
+### Agent tool constraints
 
-- `sonnet`: chapter-writer, continuity-editor, scene-generator, style-doctor, marketing-expert
-- `haiku`: cover-designer
 - Each agent has minimal tool access by design (e.g., style-doctor has Read/Edit/Glob/Grep/Bash but no Write)
 
 ### Genre system
@@ -106,13 +104,6 @@ Velith also supports OpenAI Codex CLI discovery via `.codex-plugin/plugin.json`,
 |----------|----------|---------|
 | Claude Code | `.claude-plugin/plugin.json` | Skills + agent definitions |
 | Codex CLI | `.codex-plugin/plugin.json` | Skill directory pointer |
-
-### Model mapping
-
-| Claude Code | Codex |
-|-------------|-------|
-| `sonnet` | `gpt-5.4` |
-| `haiku` | `gpt-5.4-mini` |
 
 ## Versioning and Release
 

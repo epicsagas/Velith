@@ -1,7 +1,6 @@
 ---
 name: style-doctor
 description: "Style consistency agent. Detects AI-slop patterns, style drift, tone violations, prohibited patterns."
-model: sonnet
 tools: ["Read", "Edit", "Glob", "Grep", "Bash"]
 ---
 

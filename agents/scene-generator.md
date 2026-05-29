@@ -1,7 +1,6 @@
 ---
 name: scene-generator
 description: "Scene-level generation. Decomposes chapter outline + character bible into GMC+RDD scenes. Fiction only. Runs before chapter-writer."
-model: sonnet
 tools: ["Read", "Write", "Edit", "Grep", "Bash"]
 ---
 

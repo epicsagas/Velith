@@ -1,7 +1,6 @@
 ---
 name: marketing-expert
 description: "Book marketing strategy. Reader personas, channel strategy, 12-week calendar, launch campaign. Phase 5."
-model: sonnet
 tools: ["Read", "Write", "WebSearch", "Bash"]
 ---
 
