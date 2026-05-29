@@ -11,13 +11,13 @@
   "license": "Apache-2.0",
   "skills": "./skills/",
   "agents": [
-    "./agents/book-architect.md",
-    "./agents/chapter-writer.md",
-    "./agents/continuity-editor.md",
-    "./agents/style-doctor.md",
-    "./agents/scene-generator.md",
-    "./agents/cover-designer.md",
-    "./agents/marketing-expert.md"
+    "./agents/book-architect.toml",
+    "./agents/chapter-writer.toml",
+    "./agents/continuity-editor.toml",
+    "./agents/style-doctor.toml",
+    "./agents/scene-generator.toml",
+    "./agents/cover-designer.toml",
+    "./agents/marketing-expert.toml"
   ],
   "interface": {
     "displayName": "Velith",
