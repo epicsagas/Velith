@@ -9,7 +9,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.1.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -62,13 +62,14 @@ Writing a book with raw LLM prompts gives you disconnected chapters, inconsisten
 
 ### Claude Code
 
-```bash
-# Add epicsagas marketplace (one-time)
-claude plugin marketplace add epicsagas/plugins
-
-# Install velith
-claude plugin install velith@epicsagas
 ```
+/plugin marketplace add epicsagas/plugins
+/plugin install velith@epicsagas
+```
+
+All 16 skills and 7 agents are available immediately. No further steps needed.
+
+Updates with `/plugin update velith@epicsagas`.
 
 **Prerequisites:** [Claude Code](https://claude.ai/code) CLI installed and authenticated.
 
@@ -91,6 +92,8 @@ Velith provides 16 skills (via `.agents/skills/`) and 7 custom subagents (via `.
 | `marketing-expert` | Reader personas, launch strategy |
 
 Codex auto-discovers skills from `.agents/skills/` and subagents from `.codex/agents/*.toml`. No extra configuration needed.
+
+Updates with `codex plugin update velith@epicsagas`.
 
 **Prerequisites:** [Codex CLI](https://github.com/openai/codex) installed and configured with an OpenAI API key.
 
