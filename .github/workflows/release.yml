@@ -22,7 +22,7 @@ jobs:
       - name: Build dashboard
         run: |
           cd dashboard
-          npm install
+          npm install --legacy-peer-deps
           npm run build
 
       - name: Package plugin archive
