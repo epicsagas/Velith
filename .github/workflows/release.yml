@@ -15,6 +15,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Build dashboard
+        run: |
+          cd dashboard
+          npm ci
+          npm run build
+
       - name: Package plugin archive
         run: |
           mkdir -p dist
@@ -22,6 +34,7 @@ jobs:
             agents \
             skills \
             scripts \
+            dashboard/dist \
             .claude-plugin \
             LICENSE \
             README.md
@@ -29,6 +42,7 @@ jobs:
             agents \
             skills \
             scripts \
+            dashboard/dist \
             .claude-plugin \
             LICENSE \
             README.md
