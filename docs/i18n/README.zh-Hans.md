@@ -85,6 +85,16 @@ codex plugin marketplace add epicsagas/plugins
 
 **前提条件:** 已安装 [Codex CLI](https://github.com/openai/codex) 并配置 OpenAI API 密钥。
 
+### Agy (Antigravity)
+
+```bash
+agy plugin install https://github.com/epicsagas/Velith
+```
+
+Agy 会自动从仓库根目录发现技能和代理。无需额外配置。
+
+**前提条件:** 已安装并配置 [Agy](https://github.com/nicepkg/antigravity)。
+
 ### Cursor
 
 Velith 在 `.cursor/rules/` 中提供上下文规则，使 Cursor 的代理能够完全了解出版流程、体裁模式和编辑标准。在 Cursor 中打开项目时，规则会自动加载。
@@ -106,16 +116,6 @@ aider  # CONVENTIONS.md 自动加载
 ```
 
 **前提条件:** 已安装 [Aider](https://aider.chat) 并配置 API 密钥。
-
-### Agy (Antigravity)
-
-```bash
-agy plugin install https://github.com/epicsagas/Velith
-```
-
-Agy 会自动从仓库根目录发现技能和代理。无需额外配置。
-
-**前提条件:** 已安装并配置 [Agy](https://github.com/nicepkg/antigravity)。
 
 ## 快速开始
 

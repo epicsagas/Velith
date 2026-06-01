@@ -85,6 +85,16 @@ codex plugin marketplace add epicsagas/plugins
 
 **Voraussetzungen:** [Codex CLI](https://github.com/openai/codex) installiert und mit einem OpenAI-API-Schlüssel konfiguriert.
 
+### Agy (Antigravity)
+
+```bash
+agy plugin install https://github.com/epicsagas/Velith
+```
+
+Agy erkennt Skills und Agenten automatisch aus dem Repository-Root. Keine zusätzliche Konfiguration erforderlich.
+
+**Voraussetzungen:** [Agy](https://github.com/nicepkg/antigravity) installiert und konfiguriert.
+
 ### Cursor
 
 Velith bietet Kontextregeln in `.cursor/rules/`, die dem Cursor-Agent volle Kenntnis des Publishing-Pipelines, Genre-Muster und Bearbeitungsstandards geben. Die Regeln werden beim Öffnen eines Buchprojekts in Cursor automatisch geladen.
@@ -106,16 +116,6 @@ aider  # CONVENTIONS.md wird automatisch geladen
 ```
 
 **Voraussetzungen:** [Aider](https://aider.chat) installiert und mit einem API-Schlüssel konfiguriert.
-
-### Agy (Antigravity)
-
-```bash
-agy plugin install https://github.com/epicsagas/Velith
-```
-
-Agy erkennt Skills und Agenten automatisch aus dem Repository-Root. Keine zusätzliche Konfiguration erforderlich.
-
-**Voraussetzungen:** [Agy](https://github.com/nicepkg/antigravity) installiert und konfiguriert.
 
 ## Schnellstart
 

@@ -94,6 +94,16 @@ Codex auto-discovers skills from `.agents/skills/` and subagents from `.codex/ag
 
 **Prerequisites:** [Codex CLI](https://github.com/openai/codex) installed and configured with an OpenAI API key.
 
+### Agy (Antigravity)
+
+```bash
+agy plugin install https://github.com/epicsagas/Velith
+```
+
+Agy auto-discovers skills and agents from the repository root. No extra configuration needed.
+
+**Prerequisites:** [Agy](https://github.com/nicepkg/antigravity) installed and configured.
+
 ### Cursor
 
 Velith provides context rules in `.cursor/rules/` that give Cursor's agent full awareness of the book publishing pipeline, genre patterns, and editing standards.
@@ -123,16 +133,6 @@ aider  # CONVENTIONS.md is auto-loaded
 ```
 
 **Prerequisites:** [Aider](https://aider.chat) installed and configured with an API key.
-
-### Agy (Antigravity)
-
-```bash
-agy plugin install https://github.com/epicsagas/Velith
-```
-
-Agy auto-discovers skills and agents from the repository root. No extra configuration needed.
-
-**Prerequisites:** [Agy](https://github.com/nicepkg/antigravity) installed and configured.
 
 ## Quick Start
 

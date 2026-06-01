@@ -85,6 +85,16 @@ codex plugin marketplace add epicsagas/plugins
 
 **사전 요건:** [Codex CLI](https://github.com/openai/codex)가 설치되고 OpenAI API 키가 구성되어 있어야 합니다.
 
+### Agy (Antigravity)
+
+```bash
+agy plugin install https://github.com/epicsagas/Velith
+```
+
+Agy가 리포지토리 루트에서 스킬과 에이전트를 자동으로 인식합니다. 별도 설정이 필요 없습니다.
+
+**사전 요건:** [Agy](https://github.com/nicepkg/antigravity)가 설치되고 구성되어 있어야 합니다.
+
 ### Cursor
 
 Velith는 `.cursor/rules/`에 컨텍스트 규칙을 제공하여 Cursor 에이전트가 출판 파이프라인, 장르 패턴, 편집 기준을 완전히 인식할 수 있도록 합니다.
@@ -108,16 +118,6 @@ aider  # CONVENTIONS.md가 자동 로드됨
 ```
 
 **사전 요건:** [Aider](https://aider.chat)가 설치되고 API 키가 구성되어 있어야 합니다.
-
-### Agy (Antigravity)
-
-```bash
-agy plugin install https://github.com/epicsagas/Velith
-```
-
-Agy가 리포지토리 루트에서 스킬과 에이전트를 자동으로 인식합니다. 별도 설정이 필요 없습니다.
-
-**사전 요건:** [Agy](https://github.com/nicepkg/antigravity)가 설치되고 구성되어 있어야 합니다.
 
 ## 빠른 시작
 
