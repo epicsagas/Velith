@@ -1,0 +1,64 @@
+---
+description: Velith genre-specific writing conventions for each supported genre
+globs:
+  - "**/drafts/**"
+  - "**/outline.md"
+  - "**/PRD.md"
+alwaysApply: false
+---
+
+# Velith — Genre Conventions
+
+## Fiction
+- Plot structure: Save the Cat! 15-beat or Snowflake Method
+- Character bible with GMC (Goal, Motivation, Conflict) per character
+- Scene beats with RDD (Reaction, Dilemma, Decision) pacing
+- POV consistency (no 1st/3rd mixing within chapters)
+- Dialogue rules: subtext over exposition, distinctive voice per character
+
+## Non-Fiction
+- Problem-solution structure per chapter
+- Learner persona–driven progression (what does the reader already know?)
+- Evidence hierarchy: primary research > expert interviews > case studies > anecdotes
+- Chapter hooks: open with a question or counterintuitive fact
+- Summary + action items at chapter end
+
+## Technical
+- Concept progression gradient: novice → intermediate → expert
+- Code examples: compilable, commented, with expected output
+- Diagrams for architecture, data flow, or process steps
+- API docs: endpoint, parameters, response schema, error codes
+- Labs/exercises at end of each chapter
+
+## Screenplay
+- 3-act structure + 8-sequence method
+- Dialogue: subtext, distinct voice, no on-the-nose exposition
+- A/B story interweaving (main plot + subplot)
+- Action lines: present tense, visual, concise
+- Page budget: ~1 page = ~1 minute of screen time
+
+## Poetry
+- Form types: sonnet, haiku, free verse, villanelle, prose poem, etc.
+- Meter/rhythm awareness (iambic, trochaic, anapestic, dactylic)
+- Imagery systems: visual, auditory, tactile, olfactory, gustatory
+- Collection arc: ordering poems for emotional/thematic progression
+- Line break intentionality: enjambment vs end-stopped
+
+## Game Scenario
+- Quest/event tree structure with branching conditions
+- Dialogue branching with player agency flags
+- Lore bible: world rules, factions, technology/magic systems
+- Flag system: track player choices across chapters/scenes
+- Multiple endings: foreshadowing and divergence points
+
+## Academic
+- IMRAD structure (Introduction, Methods, Results, Discussion)
+- Literature review: thematic organization, not chronological
+- Argument chains: claim → evidence → warrant → backing → rebuttal
+- Citation practices: consistent style (APA, MLA, Chicago, etc.)
+- Abstract and keywords before main body
+
+## Custom Genres
+- Compose patterns from any supported genre via genre-creator
+- Define custom quality gates and chapter templates
+- Can inherit from multiple parent genres

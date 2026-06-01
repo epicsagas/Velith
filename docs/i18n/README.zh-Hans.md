@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -60,13 +60,15 @@
 | AI 糟糕内容检测 | 内置（style-doctor） | 无 | 无 |
 | 体裁感知 | 7种体裁系统 + 自定义 | 取决于提示 | 以小说为主 |
 | 输出格式 | EPUB、PDF、MOBI、TXT、Markdown | 复制粘贴 | DOCX，有限 |
-| 所需条件 | Claude Code | 任意 LLM | 订阅 |
+| 所需条件 | Claude Code、Codex CLI、Cursor、Cline 或 Aider | 任意 LLM | 订阅 |
 | 完全控制 | 提示级别 | 完全 | 黑盒 |
 
 ## 安装
 
+### Claude Code
+
 ```bash
-# 添加 epicsagas 市场（如尚未添加）
+# 添加 epicsagas 市场（首次）
 claude plugin marketplace add epicsagas
 
 # 安装 velith
@@ -74,6 +76,36 @@ claude plugin install velith@epicsagas
 ```
 
 **前提条件:** 已安装并通过身份验证的 [Claude Code](https://claude.ai/code) CLI。
+
+### Codex CLI (OpenAI)
+
+```bash
+codex plugin marketplace add epicsagas/plugins
+```
+
+**前提条件:** 已安装 [Codex CLI](https://github.com/openai/codex) 并配置 OpenAI API 密钥。
+
+### Cursor
+
+Velith 在 `.cursor/rules/` 中提供上下文规则，使 Cursor 的代理能够完全了解出版流程、体裁模式和编辑标准。在 Cursor 中打开项目时，规则会自动加载。
+
+**前提条件:** 已安装 [Cursor](https://cursor.sh)。
+
+### Cline
+
+Velith 在仓库根目录提供 `.clinerules` 项目级指令。在项目目录中工作时，Cline 会自动读取。
+
+**前提条件:** VS Code 或 JetBrains 中已安装 [Cline](https://github.com/cline/cline) 扩展。
+
+### Aider
+
+Velith 在 `CONVENTIONS.md` 中提供写作规范，通过 `.aider.conf.yml` 自动加载。
+
+```bash
+aider  # CONVENTIONS.md 自动加载
+```
+
+**前提条件:** 已安装 [Aider](https://aider.chat) 并配置 API 密钥。
 
 ## 快速开始
 

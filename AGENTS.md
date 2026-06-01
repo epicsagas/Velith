@@ -98,12 +98,15 @@ npm run build     # rebuild dist/ (included in repo for plugin users)
 
 Velith also supports OpenAI Codex CLI discovery via `.codex-plugin/plugin.json`, which points to the same `skills/` and `agents/*.md` used by Claude Code.
 
-### Plugin manifests
+### Multi-Platform Support
 
-| Platform | Manifest | Purpose |
-|----------|----------|---------|
+| Platform | Files | Purpose |
+|----------|-------|---------|
 | Claude Code | `.claude-plugin/plugin.json` | Skills + agent definitions |
-| Codex CLI | `.codex-plugin/plugin.json` | Skill directory pointer |
+| Codex CLI | `.codex-plugin/plugin.json` + `.codex-plugin/agents/*.toml` | Skill directory + agent prompts |
+| Cursor | `.cursor/rules/*.mdc` | Always-on pipeline context (3 rule files) |
+| Cline | `.clinerules` | Project-level instructions |
+| Aider | `CONVENTIONS.md` + `.aider.conf.yml` | Writing conventions (auto-loaded) |
 
 ## Versioning and Release
 

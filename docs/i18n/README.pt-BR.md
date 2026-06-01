@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -60,13 +60,15 @@ Escrever um livro com prompts LLM brutos resulta em capítulos desconectados, vo
 | Detecção de AI-slop | Integrada (style-doctor) | Nenhuma | Nenhuma |
 | Consciência de gênero | 7 sistemas de gênero + personalizado | Depende do prompt | Focado em ficção |
 | Formato de saída | EPUB, PDF, MOBI, TXT, Markdown | Copiar-colar | DOCX, limitado |
-| Requer | Claude Code | Qualquer LLM | Assinatura |
+| Requer | Claude Code, Codex CLI, Cursor, Cline ou Aider | Qualquer LLM | Assinatura |
 | Controle total | Nível de prompt | Total | Caixa preta |
 
 ## Instalação
 
+### Claude Code
+
 ```bash
-# Adicionar o marketplace da epicsagas (se ainda não adicionado)
+# Adicionar o marketplace da epicsagas (primeira vez)
 claude plugin marketplace add epicsagas
 
 # Instalar o velith
@@ -74,6 +76,36 @@ claude plugin install velith@epicsagas
 ```
 
 **Pré-requisitos:** CLI do [Claude Code](https://claude.ai/code) instalado e autenticado.
+
+### Codex CLI (OpenAI)
+
+```bash
+codex plugin marketplace add epicsagas/plugins
+```
+
+**Pré-requisitos:** [Codex CLI](https://github.com/openai/codex) instalado e configurado com uma chave de API OpenAI.
+
+### Cursor
+
+O Velith fornece regras de contexto em `.cursor/rules/` que dão ao agente do Cursor conhecimento completo do pipeline de publicação, padrões de gênero e padrões de edição. As regras são carregadas automaticamente ao abrir um projeto de livro no Cursor.
+
+**Pré-requisitos:** [Cursor](https://cursor.sh) instalado.
+
+### Cline
+
+O Velith fornece instruções de nível de projeto em `.clinerules` na raiz do repositório. O Cline lê automaticamente ao trabalhar no diretório do projeto.
+
+**Pré-requisitos:** Extensão [Cline](https://github.com/cline/cline) instalada no VS Code ou JetBrains.
+
+### Aider
+
+O Velith fornece convenções de escrita em `CONVENTIONS.md`, carregadas automaticamente via `.aider.conf.yml`.
+
+```bash
+aider  # CONVENTIONS.md é carregado automaticamente
+```
+
+**Pré-requisitos:** [Aider](https://aider.chat) instalado e configurado com uma chave de API.
 
 ## Início Rápido
 

@@ -1,0 +1,68 @@
+---
+description: Velith 5-stage editing pipeline, AI-slop detection patterns, and style conventions
+globs:
+  - "**/edits/**"
+  - "**/STYLE.md"
+alwaysApply: false
+---
+
+# Velith — Editing Pipeline and Style Conventions
+
+## 5-Stage Editing Pipeline
+
+| Stage | Focus | What to check |
+|-------|-------|---------------|
+| 1. Editorial Assessment | Macro structure | Chapter order, pacing, gap analysis, argument flow |
+| 2. Developmental Edit | Flow and content | Transitions, evidence quality, redundant sections, missing content |
+| 3. Line Edit | Sentence-level clarity | Word choice, sentence rhythm, paragraph flow, voice consistency |
+| 4. Copy Edit | Grammar and consistency | Grammar, punctuation, terminology consistency, formatting |
+| 5. Proofread | Final polish | Typos, spacing, formatting artifacts, cross-reference accuracy |
+
+## AI-Slop Detection Patterns
+
+These patterns indicate AI-generated text that reads as inauthentic. Flag and fix:
+
+**Excessive modifiers:** revolutionary, game-changer, groundbreaking, cutting-edge, transformative, innovative, seamless, robust, comprehensive
+
+**Repetitive transitions:** overuse of "however", "moreover", "furthermore", "additionally", "notably"
+
+**Generic conclusions:** "in conclusion", "in summary", "ultimately", "at the end of the day", "it's important to note"
+
+**Weak hedging:** "can be", "seems like", "it could be argued", "one might say", "arguably"
+
+**English AI markers:** "delve", "tapestry", "landscape" (metaphorical), "nuanced", "multifaceted", "plethora", "myriad"
+
+**List overuse:** 5+ consecutive bullet points without prose context
+
+## Style Drift Indicators
+
+Quantitative signals that a chapter's style has drifted from the rest:
+
+- **Sentence length variance** — compare per-chapter average against book mean
+- **Paragraph length distribution** — flag chapters with significantly different patterns
+- **Type-token ratio** — vocabulary diversity should remain consistent
+- **POV mixing** — detect shifts between 1st/3rd person within chapters
+
+## Severity Classification
+
+| Level | Criteria | Action |
+|-------|----------|--------|
+| Critical | Breaks reader comprehension, factual error, POV violation | Must fix before proceeding |
+| Major | Style drift, inconsistent tone, structural gap | Should fix, flag for review |
+| Minor | Word choice, transition quality, formatting | Nice to fix, batch at proofread stage |
+
+## Tone Rules
+
+- All tone checks reference `STYLE.md` in the project root
+- Flag abrupt shifts between chapters
+- Detect language mixing violations (e.g., Korean text with unmarked English insertions)
+- Check emphasis overuse (bold, italic, exclamation marks)
+
+## Editing Output
+
+Generate `edits/editorial-report.md` with:
+- Issue location (file, line range)
+- Pattern detected
+- Severity level
+- Fix suggestion
+- Quantitative metrics (sentence length, vocabulary diversity, etc.)

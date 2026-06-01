@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -60,10 +60,12 @@
 | AI 슬롭 감지 | 내장 (style-doctor) | 없음 | 없음 |
 | 장르 인식 | 7가지 장르 시스템 + 커스텀 | 프롬프트에 따라 다름 | 소설 중심 |
 | 출력 형식 | EPUB, PDF, MOBI, TXT, Markdown | 복사-붙여넣기 | DOCX, 제한적 |
-| 필요 조건 | Claude Code | 모든 LLM | 구독 |
+| 필요 조건 | Claude Code, Codex CLI, Cursor, Cline, Aider | 모든 LLM | 구독 |
 | 완전한 제어 | 프롬프트 수준 | 완전 | 블랙박스 |
 
 ## 설치
+
+### Claude Code
 
 ```bash
 # epicsagas 마켓플레이스 추가 (아직 추가하지 않은 경우)
@@ -74,6 +76,38 @@ claude plugin install velith@epicsagas
 ```
 
 **사전 요건:** [Claude Code](https://claude.ai/code) CLI가 설치되고 인증되어 있어야 합니다.
+
+### Codex CLI (OpenAI)
+
+```bash
+codex plugin marketplace add epicsagas/plugins
+```
+
+**사전 요건:** [Codex CLI](https://github.com/openai/codex)가 설치되고 OpenAI API 키가 구성되어 있어야 합니다.
+
+### Cursor
+
+Velith는 `.cursor/rules/`에 컨텍스트 규칙을 제공하여 Cursor 에이전트가 출판 파이프라인, 장르 패턴, 편집 기준을 완전히 인식할 수 있도록 합니다.
+
+프로젝트를 Cursor에서 열면 규칙이 자동으로 로드됩니다. `.cursor/rules/` 디렉토리를 프로젝트에 복사하기만 하면 됩니다.
+
+**사전 요건:** [Cursor](https://cursor.sh)가 설치되어 있어야 합니다.
+
+### Cline
+
+Velith는 저장소 루트에 `.clinerules` 프로젝트 수준 지침을 제공합니다. 프로젝트 디렉토리에서 작업하면 Cline이 자동으로 읽어옵니다.
+
+**사전 요건:** VS Code 또는 JetBrains에 [Cline](https://github.com/cline/cline) 확장이 설치되어 있어야 합니다.
+
+### Aider
+
+Velith는 `CONVENTIONS.md`에 작성 규칙을 제공하며, `.aider.conf.yml`을 통해 자동 로드됩니다.
+
+```bash
+aider  # CONVENTIONS.md가 자동 로드됨
+```
+
+**사전 요건:** [Aider](https://aider.chat)가 설치되고 API 키가 구성되어 있어야 합니다.
 
 ## 빠른 시작
 

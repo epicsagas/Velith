@@ -9,7 +9,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -55,7 +55,7 @@ Writing a book with raw LLM prompts gives you disconnected chapters, inconsisten
 | AI-slop detection | Built-in (style-doctor) | None | None |
 | Genre awareness | 7 genre systems + custom | Depends on prompt | Fiction-focused |
 | Output format | EPUB, PDF, MOBI, TXT, Markdown | Copy-paste | DOCX, limited |
-| Requires | Claude Code | Any LLM | Subscription |
+| Requires | Claude Code, Codex CLI, Cursor, Cline, or Aider | Any LLM | Subscription |
 | Full control | Prompt-level | Full | Black box |
 
 ## Installation
@@ -93,6 +93,36 @@ Velith provides 16 skills (via `.agents/skills/`) and 7 custom subagents (via `.
 Codex auto-discovers skills from `.agents/skills/` and subagents from `.codex/agents/*.toml`. No extra configuration needed.
 
 **Prerequisites:** [Codex CLI](https://github.com/openai/codex) installed and configured with an OpenAI API key.
+
+### Cursor
+
+Velith provides context rules in `.cursor/rules/` that give Cursor's agent full awareness of the book publishing pipeline, genre patterns, and editing standards.
+
+| Rule File | Loaded When |
+|-----------|-------------|
+| `velith-pipeline.mdc` | Always (phases, router, agents, quality gates) |
+| `velith-genres.mdc` | Editing drafts, outlines, or PRD files |
+| `velith-editing.mdc` | Working on edits or STYLE.md |
+
+Rules are automatically loaded when you open a Velith book project in Cursor. No installation needed — just clone or copy the `.cursor/rules/` directory into your project.
+
+**Prerequisites:** [Cursor](https://cursor.sh) installed.
+
+### Cline
+
+Velith provides project-level instructions in `.clinerules` at the repository root. Cline reads this file automatically when working in the project directory — no extra configuration needed.
+
+**Prerequisites:** [Cline](https://github.com/cline/cline) extension installed in VS Code or JetBrains.
+
+### Aider
+
+Velith provides writing conventions in `CONVENTIONS.md`, auto-loaded via `.aider.conf.yml`.
+
+```bash
+aider  # CONVENTIONS.md is auto-loaded
+```
+
+**Prerequisites:** [Aider](https://aider.chat) installed and configured with an API key.
 
 ## Quick Start
 

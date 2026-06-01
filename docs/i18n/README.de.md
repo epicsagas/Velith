@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -60,13 +60,15 @@ Ein Buch mit rohen LLM-Prompts zu schreiben führt zu unzusammenhängenden Kapit
 | KI-Schunddetektion | Eingebaut (style-doctor) | Keine | Keine |
 | Genre-Bewusstsein | 7 Genre-Systeme + benutzerdefiniert | Abhängig vom Prompt | Belletristik-fokussiert |
 | Ausgabeformat | EPUB, PDF, MOBI, TXT, Markdown | Kopieren-Einfügen | DOCX, begrenzt |
-| Erfordert | Claude Code | Beliebiges LLM | Abonnement |
+| Erfordert | Claude Code, Codex CLI, Cursor, Cline oder Aider | Beliebiges LLM | Abonnement |
 | Volle Kontrolle | Prompt-Ebene | Vollständig | Black Box |
 
 ## Installation
 
+### Claude Code
+
 ```bash
-# epicsagas-Marktplatz hinzufügen (falls noch nicht hinzugefügt)
+# epicsagas-Marktplatz hinzufügen (erstmalig)
 claude plugin marketplace add epicsagas
 
 # velith installieren
@@ -74,6 +76,36 @@ claude plugin install velith@epicsagas
 ```
 
 **Voraussetzungen:** [Claude Code](https://claude.ai/code) CLI installiert und authentifiziert.
+
+### Codex CLI (OpenAI)
+
+```bash
+codex plugin marketplace add epicsagas/plugins
+```
+
+**Voraussetzungen:** [Codex CLI](https://github.com/openai/codex) installiert und mit einem OpenAI-API-Schlüssel konfiguriert.
+
+### Cursor
+
+Velith bietet Kontextregeln in `.cursor/rules/`, die dem Cursor-Agent volle Kenntnis des Publishing-Pipelines, Genre-Muster und Bearbeitungsstandards geben. Die Regeln werden beim Öffnen eines Buchprojekts in Cursor automatisch geladen.
+
+**Voraussetzungen:** [Cursor](https://cursor.sh) installiert.
+
+### Cline
+
+Velith bietet Projektanweisungen in `.clinerules` im Repository-Root. Cline liest diese automatisch beim Arbeiten im Projektverzeichnis.
+
+**Voraussetzungen:** [Cline](https://github.com/cline/cline)-Erweiterung in VS Code oder JetBrains installiert.
+
+### Aider
+
+Velith bietet Schreibkonventionen in `CONVENTIONS.md`, die über `.aider.conf.yml` automatisch geladen werden.
+
+```bash
+aider  # CONVENTIONS.md wird automatisch geladen
+```
+
+**Voraussetzungen:** [Aider](https://aider.chat) installiert und mit einem API-Schlüssel konfiguriert.
 
 ## Schnellstart
 

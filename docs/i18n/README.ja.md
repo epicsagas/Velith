@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -60,13 +60,15 @@ Claude Code 向けのエンドツーエンド書籍制作ツールキット。�
 | AI スロップ検出 | 内蔵（style-doctor） | なし | なし |
 | ジャンル認識 | 7ジャンルシステム + カスタム | プロンプト次第 | フィクション中心 |
 | 出力形式 | EPUB、PDF、MOBI、TXT、Markdown | コピー＆ペースト | DOCX、限定的 |
-| 必要条件 | Claude Code | 任意の LLM | サブスクリプション |
+| 必要条件 | Claude Code、Codex CLI、Cursor、Cline、Aider | 任意の LLM | サブスクリプション |
 | 完全なコントロール | プロンプトレベル | 完全 | ブラックボックス |
 
 ## インストール
 
+### Claude Code
+
 ```bash
-# epicsagas マーケットプレイスを追加（まだの場合）
+# epicsagas マーケットプレイスを追加（初回のみ）
 claude plugin marketplace add epicsagas
 
 # velith をインストール
@@ -74,6 +76,36 @@ claude plugin install velith@epicsagas
 ```
 
 **前提条件:** [Claude Code](https://claude.ai/code) CLI がインストール済みで認証されていること。
+
+### Codex CLI (OpenAI)
+
+```bash
+codex plugin marketplace add epicsagas/plugins
+```
+
+**前提条件:** [Codex CLI](https://github.com/openai/codex) がインストールされ、OpenAI API キーが設定されていること。
+
+### Cursor
+
+Velith は `.cursor/rules/` にコンテキストルールを提供し、Cursor のエージェントが出版パイプライン、ジャンルパターン、編集基準を完全に把握できるようにします。プロジェクトを Cursor で開くと、ルールが自動的に読み込まれます。
+
+**前提条件:** [Cursor](https://cursor.sh) がインストールされていること。
+
+### Cline
+
+Velith はリポジトリルートに `.clinerules` を提供します。プロジェクトディレクトリで作業すると、Cline が自動的に読み込みます。
+
+**前提条件:** VS Code または JetBrains に [Cline](https://github.com/cline/cline) 拡張機能がインストールされていること。
+
+### Aider
+
+Velith は `CONVENTIONS.md` に執筆規約を提供し、`.aider.conf.yml` で自動ロードされます。
+
+```bash
+aider  # CONVENTIONS.md が自動ロードされます
+```
+
+**前提条件:** [Aider](https://aider.chat) がインストールされ、API キーが設定されていること。
 
 ## クイックスタート
 
