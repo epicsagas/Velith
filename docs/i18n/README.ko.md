@@ -60,7 +60,7 @@
 | AI 슬롭 감지 | 내장 (style-doctor) | 없음 | 없음 |
 | 장르 인식 | 7가지 장르 시스템 + 커스텀 | 프롬프트에 따라 다름 | 소설 중심 |
 | 출력 형식 | EPUB, PDF, MOBI, TXT, Markdown | 복사-붙여넣기 | DOCX, 제한적 |
-| 필요 조건 | Claude Code, Codex CLI, Cursor, Cline, Aider | 모든 LLM | 구독 |
+| 필요 조건 | Claude Code, Codex CLI, Agy, Cursor, Cline, Aider | 모든 LLM | 구독 |
 | 완전한 제어 | 프롬프트 수준 | 완전 | 블랙박스 |
 
 ## 설치
@@ -108,6 +108,16 @@ aider  # CONVENTIONS.md가 자동 로드됨
 ```
 
 **사전 요건:** [Aider](https://aider.chat)가 설치되고 API 키가 구성되어 있어야 합니다.
+
+### Agy (Antigravity)
+
+```bash
+agy plugin install https://github.com/epicsagas/Velith
+```
+
+Agy가 리포지토리 루트에서 스킬과 에이전트를 자동으로 인식합니다. 별도 설정이 필요 없습니다.
+
+**사전 요건:** [Agy](https://github.com/nicepkg/antigravity)가 설치되고 구성되어 있어야 합니다.
 
 ## 빠른 시작
 

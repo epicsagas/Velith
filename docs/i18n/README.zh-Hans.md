@@ -60,7 +60,7 @@
 | AI 糟糕内容检测 | 内置（style-doctor） | 无 | 无 |
 | 体裁感知 | 7种体裁系统 + 自定义 | 取决于提示 | 以小说为主 |
 | 输出格式 | EPUB、PDF、MOBI、TXT、Markdown | 复制粘贴 | DOCX，有限 |
-| 所需条件 | Claude Code、Codex CLI、Cursor、Cline 或 Aider | 任意 LLM | 订阅 |
+| 所需条件 | Claude Code、Codex CLI、Agy、Cursor、Cline 或 Aider | 任意 LLM | 订阅 |
 | 完全控制 | 提示级别 | 完全 | 黑盒 |
 
 ## 安装
@@ -106,6 +106,16 @@ aider  # CONVENTIONS.md 自动加载
 ```
 
 **前提条件:** 已安装 [Aider](https://aider.chat) 并配置 API 密钥。
+
+### Agy (Antigravity)
+
+```bash
+agy plugin install https://github.com/epicsagas/Velith
+```
+
+Agy 会自动从仓库根目录发现技能和代理。无需额外配置。
+
+**前提条件:** 已安装并配置 [Agy](https://github.com/nicepkg/antigravity)。
 
 ## 快速开始
 

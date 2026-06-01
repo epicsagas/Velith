@@ -60,7 +60,7 @@ Escrever um livro com prompts LLM brutos resulta em capítulos desconectados, vo
 | Detecção de AI-slop | Integrada (style-doctor) | Nenhuma | Nenhuma |
 | Consciência de gênero | 7 sistemas de gênero + personalizado | Depende do prompt | Focado em ficção |
 | Formato de saída | EPUB, PDF, MOBI, TXT, Markdown | Copiar-colar | DOCX, limitado |
-| Requer | Claude Code, Codex CLI, Cursor, Cline ou Aider | Qualquer LLM | Assinatura |
+| Requer | Claude Code, Codex CLI, Agy, Cursor, Cline ou Aider | Qualquer LLM | Assinatura |
 | Controle total | Nível de prompt | Total | Caixa preta |
 
 ## Instalação
@@ -106,6 +106,16 @@ aider  # CONVENTIONS.md é carregado automaticamente
 ```
 
 **Pré-requisitos:** [Aider](https://aider.chat) instalado e configurado com uma chave de API.
+
+### Agy (Antigravity)
+
+```bash
+agy plugin install https://github.com/epicsagas/Velith
+```
+
+O Agy descobre automaticamente skills e agents da raiz do repositório. Nenhuma configuração adicional necessária.
+
+**Pré-requisitos:** [Agy](https://github.com/nicepkg/antigravity) instalado e configurado.
 
 ## Início Rápido
 

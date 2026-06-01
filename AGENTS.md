@@ -104,6 +104,7 @@ Velith also supports OpenAI Codex CLI discovery via `.codex-plugin/plugin.json`,
 |----------|-------|---------|
 | Claude Code | `.claude-plugin/plugin.json` | Skills + agent definitions |
 | Codex CLI | `.codex-plugin/plugin.json` + `.codex-plugin/agents/*.toml` | Skill directory + agent prompts |
+| Agy | GitHub URL install (`agy plugin install`) | Auto-discovers skills/agents from repo root |
 | Cursor | `.cursor/rules/*.mdc` | Always-on pipeline context (3 rule files) |
 | Cline | `.clinerules` | Project-level instructions |
 | Aider | `CONVENTIONS.md` + `.aider.conf.yml` | Writing conventions (auto-loaded) |

@@ -55,7 +55,7 @@ Writing a book with raw LLM prompts gives you disconnected chapters, inconsisten
 | AI-slop detection | Built-in (style-doctor) | None | None |
 | Genre awareness | 7 genre systems + custom | Depends on prompt | Fiction-focused |
 | Output format | EPUB, PDF, MOBI, TXT, Markdown | Copy-paste | DOCX, limited |
-| Requires | Claude Code, Codex CLI, Cursor, Cline, or Aider | Any LLM | Subscription |
+| Requires | Claude Code, Codex CLI, Agy, Cursor, Cline, or Aider | Any LLM | Subscription |
 | Full control | Prompt-level | Full | Black box |
 
 ## Installation
@@ -123,6 +123,16 @@ aider  # CONVENTIONS.md is auto-loaded
 ```
 
 **Prerequisites:** [Aider](https://aider.chat) installed and configured with an API key.
+
+### Agy (Antigravity)
+
+```bash
+agy plugin install https://github.com/epicsagas/Velith
+```
+
+Agy auto-discovers skills and agents from the repository root. No extra configuration needed.
+
+**Prerequisites:** [Agy](https://github.com/nicepkg/antigravity) installed and configured.
 
 ## Quick Start
 

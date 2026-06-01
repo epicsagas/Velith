@@ -60,7 +60,7 @@ Ein Buch mit rohen LLM-Prompts zu schreiben führt zu unzusammenhängenden Kapit
 | KI-Schunddetektion | Eingebaut (style-doctor) | Keine | Keine |
 | Genre-Bewusstsein | 7 Genre-Systeme + benutzerdefiniert | Abhängig vom Prompt | Belletristik-fokussiert |
 | Ausgabeformat | EPUB, PDF, MOBI, TXT, Markdown | Kopieren-Einfügen | DOCX, begrenzt |
-| Erfordert | Claude Code, Codex CLI, Cursor, Cline oder Aider | Beliebiges LLM | Abonnement |
+| Erfordert | Claude Code, Codex CLI, Agy, Cursor, Cline oder Aider | Beliebiges LLM | Abonnement |
 | Volle Kontrolle | Prompt-Ebene | Vollständig | Black Box |
 
 ## Installation
@@ -106,6 +106,16 @@ aider  # CONVENTIONS.md wird automatisch geladen
 ```
 
 **Voraussetzungen:** [Aider](https://aider.chat) installiert und mit einem API-Schlüssel konfiguriert.
+
+### Agy (Antigravity)
+
+```bash
+agy plugin install https://github.com/epicsagas/Velith
+```
+
+Agy erkennt Skills und Agenten automatisch aus dem Repository-Root. Keine zusätzliche Konfiguration erforderlich.
+
+**Voraussetzungen:** [Agy](https://github.com/nicepkg/antigravity) installiert und konfiguriert.
 
 ## Schnellstart
 

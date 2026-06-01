@@ -60,7 +60,7 @@ Claude Code 向けのエンドツーエンド書籍制作ツールキット。�
 | AI スロップ検出 | 内蔵（style-doctor） | なし | なし |
 | ジャンル認識 | 7ジャンルシステム + カスタム | プロンプト次第 | フィクション中心 |
 | 出力形式 | EPUB、PDF、MOBI、TXT、Markdown | コピー＆ペースト | DOCX、限定的 |
-| 必要条件 | Claude Code、Codex CLI、Cursor、Cline、Aider | 任意の LLM | サブスクリプション |
+| 必要条件 | Claude Code、Codex CLI、Agy、Cursor、Cline、Aider | 任意の LLM | サブスクリプション |
 | 完全なコントロール | プロンプトレベル | 完全 | ブラックボックス |
 
 ## インストール
@@ -106,6 +106,16 @@ aider  # CONVENTIONS.md が自動ロードされます
 ```
 
 **前提条件:** [Aider](https://aider.chat) がインストールされ、API キーが設定されていること。
+
+### Agy (Antigravity)
+
+```bash
+agy plugin install https://github.com/epicsagas/Velith
+```
+
+Agy はリポジトリルートからスキルとエージェントを自動検出します。追加設定は不要です。
+
+**前提条件:** [Agy](https://github.com/nicepkg/antigravity) がインストールされ、設定されていること。
 
 ## クイックスタート
 

@@ -60,7 +60,7 @@ Kit d'outils de création de livres de bout en bout pour Claude Code. De la page
 | Détection AI-slop | Intégrée (style-doctor) | Aucune | Aucune |
 | Conscience du genre | 7 systèmes de genre + personnalisé | Dépend du prompt | Centré sur la fiction |
 | Format de sortie | EPUB, PDF, MOBI, TXT, Markdown | Copier-coller | DOCX, limité |
-| Nécessite | Claude Code, Codex CLI, Cursor, Cline ou Aider | N'importe quel LLM | Abonnement |
+| Nécessite | Claude Code, Codex CLI, Agy, Cursor, Cline ou Aider | N'importe quel LLM | Abonnement |
 | Contrôle total | Au niveau du prompt | Total | Boîte noire |
 
 ## Installation
@@ -106,6 +106,16 @@ aider  # CONVENTIONS.md est auto-chargé
 ```
 
 **Prérequis :** [Aider](https://aider.chat) installé et configuré avec une clé API.
+
+### Agy (Antigravity)
+
+```bash
+agy plugin install https://github.com/epicsagas/Velith
+```
+
+Agy découvre automatiquement les skills et agents depuis la racine du dépôt. Aucune configuration supplémentaire nécessaire.
+
+**Prérequis :** [Agy](https://github.com/nicepkg/antigravity) installé et configuré.
 
 ## Démarrage Rapide
 
