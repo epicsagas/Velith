@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.1] - 2026-06-02
+
+### Changed
+- Dashboard: full i18n overhaul (10 locales, all views, genre workflows)
+- Dashboard: accent color & font picker in settings
+- Dashboard: WCAG AA contrast, 16px base font, Tailwind scale cleanup
+- Dashboard: CJK font variants (Noto KR/JP/SC) with locale auto-sync
+- Dashboard: color unification, light/dark sidebar, header icon colors
+- Plugin: llm-context-windows book example via full pipeline
+
 ## [0.5.0] - 2026-06
 
 ### Added
