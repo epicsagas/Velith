@@ -196,12 +196,12 @@ function applyFont(font) {
 }
 
 export const PRESET_COLORS = [
-  { label: 'Orange',  light: '#e8650a', dark: '#ff8c3a' },
-  { label: 'Red',     light: '#c0392b', dark: '#e74c3c' },
-  { label: 'Pink',    light: '#c0185a', dark: '#e91e8c' },
-  { label: 'Purple',  light: '#7b2fa0', dark: '#ab47bc' },
-  { label: 'Indigo',  light: '#3949ab', dark: '#7986cb' },
-  { label: 'Blue',    light: '#1565c0', dark: '#42a5f5' },
-  { label: 'Teal',    light: '#00695c', dark: '#26a69a' },
-  { label: 'Green',   light: '#2e7d32', dark: '#66bb6a' },
+  { label: 'Orange',  light: '#f26419', dark: '#ff8c3a' },
+  { label: 'Red',     light: '#e53935', dark: '#ff5252' },
+  { label: 'Pink',    light: '#e91e8c', dark: '#f06292' },
+  { label: 'Purple',  light: '#9c27b0', dark: '#ce93d8' },
+  { label: 'Indigo',  light: '#5c6bc0', dark: '#9fa8da' },
+  { label: 'Blue',    light: '#1e88e5', dark: '#64b5f6' },
+  { label: 'Teal',    light: '#00897b', dark: '#4db6ac' },
+  { label: 'Green',   light: '#43a047', dark: '#81c784' },
 ];
