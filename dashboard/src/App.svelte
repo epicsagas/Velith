@@ -250,16 +250,19 @@
         <span class="material-symbols-outlined fill-icon" style="font-size:16px;color:{isDark ? '#fbbf24' : '#f97316'}">{isDark ? 'light_mode' : 'dark_mode'}</span>
       </button>
       <!-- Locale -->
-      <select
-        class="h-8 bg-surface text-on-surface rounded px-2 text-xs font-semibold border border-outline-variant uppercase tracking-wider cursor-pointer"
-        style="appearance:none;-webkit-appearance:none;-moz-appearance:none;min-width:3rem"
-        value={currentI18n.locale}
-        onchange={(e) => { locale.set(e.target.value); syncFontToLocale(e.target.value); }}
-      >
-        {#each currentI18n.allLocales as loc}
-          <option value={loc}>{loc.toUpperCase()}</option>
-        {/each}
-      </select>
+      <div class="relative">
+        <select
+          class="h-8 bg-surface text-on-surface rounded pl-2 pr-7 text-xs font-semibold border border-outline-variant uppercase tracking-wider cursor-pointer"
+          style="appearance:none;-webkit-appearance:none;-moz-appearance:none;min-width:3rem"
+          value={currentI18n.locale}
+          onchange={(e) => { locale.set(e.target.value); syncFontToLocale(e.target.value); }}
+        >
+          {#each currentI18n.allLocales as loc}
+            <option value={loc}>{loc.toUpperCase()}</option>
+          {/each}
+        </select>
+        <span class="material-symbols-outlined absolute right-1.5 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" style="font-size:14px">expand_more</span>
+      </div>
     </header>
 
     <!-- Content -->

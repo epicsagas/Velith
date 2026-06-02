@@ -13,7 +13,7 @@
   );
   let currentPhase = $derived(project.phase_status?.[project.current_phase]);
   let currentPhasePct = $derived(currentPhase ? currentPhase.percent : 0);
-  let currentPhaseName = $derived(currentPhase ? i18n.t('phase.' + currentPhase.name.toLowerCase()) || currentPhase.name : '—');
+  let currentPhaseName = $derived(currentPhase ? i18n.t('phase.' + currentPhase.name.toLowerCase().replace(/\s+/g, '-')) || currentPhase.name : '—');
 
   const QUICK_CMDS = [
     { cmd: '/book-init',    icon: 'rocket_launch',        labelKey: 'cmd.init.label',    descKey: 'cmd.init.desc' },
@@ -72,7 +72,7 @@
               <p class="text-xs font-semibold uppercase tracking-wide leading-none
                 {phase.status === 'complete' ? 'text-primary' :
                  phase.status === 'in_progress' ? 'text-on-primary' : 'text-secondary'}">
-                {i18n.t('phase.' + phase.name.toLowerCase()) || phase.name}
+                {i18n.t('phase.' + phase.name.toLowerCase().replace(/\s+/g, '-')) || phase.name}
               </p>
               <p class="text-sm font-bold mt-0.5
                 {phase.status === 'complete' ? 'text-primary' :

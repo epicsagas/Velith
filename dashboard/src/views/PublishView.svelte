@@ -57,9 +57,9 @@
         <div class="mt-3 flex items-center justify-between">
           <span class="text-xs font-mono text-on-surface-variant">{fmtSize(f.size_bytes)}</span>
           {#if f.exists}
-            <span class="text-xs font-bold uppercase tracking-wider border border-primary text-primary px-2 py-0.5 rounded">READY</span>
+            <span class="text-xs font-bold uppercase tracking-wider border border-primary text-primary px-2 py-0.5 rounded">{i18n.t('publish.ready')}</span>
           {:else}
-            <span class="text-xs font-bold uppercase tracking-wider border border-outline-variant text-secondary px-2 py-0.5 rounded">PENDING</span>
+            <span class="text-xs font-bold uppercase tracking-wider border border-outline-variant text-secondary px-2 py-0.5 rounded">{i18n.t('publish.pending')}</span>
           {/if}
         </div>
         {#if f.exists && projectIndex != null}

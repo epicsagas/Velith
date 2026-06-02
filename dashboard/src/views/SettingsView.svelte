@@ -11,7 +11,7 @@
   function phaseStatusLabel(s) {
     if (s === 'complete') return i18n.t('status.complete');
     if (s === 'in_progress') return i18n.t('status.running');
-    return 'Pending';
+    return i18n.t('status.pending');
   }
 </script>
 
@@ -67,7 +67,7 @@
         </tr>
         <tr>
           <td class="px-4 py-2.5 text-xs uppercase tracking-widest text-secondary font-semibold">{i18n.t('settings.currentPhase')}</td>
-          <td class="px-4 py-2.5 text-right font-bold">Phase {project.current_phase}: {project.phase_status?.[project.current_phase] ? (i18n.t('phase.' + project.phase_status[project.current_phase].name.toLowerCase()) || project.phase_status[project.current_phase].name) : '—'}</td>
+          <td class="px-4 py-2.5 text-right font-bold">Phase {project.current_phase}: {project.phase_status?.[project.current_phase] ? (i18n.t('phase.' + project.phase_status[project.current_phase].name.toLowerCase().replace(/\s+/g, '-')) || project.phase_status[project.current_phase].name) : '—'}</td>
         </tr>
       </tbody>
     </table>
@@ -83,7 +83,7 @@
         {#each project.phase_status as phase}
           <div class="px-4 py-3 flex items-center gap-4">
             <span class="text-xs text-secondary font-mono w-4">{phase.phase}</span>
-            <span class="text-xs font-semibold uppercase tracking-widest text-secondary w-24">{i18n.t('phase.' + phase.name.toLowerCase()) || phase.name || ''}</span>
+            <span class="text-xs font-semibold uppercase tracking-widest text-secondary w-24">{i18n.t('phase.' + phase.name.toLowerCase().replace(/\s+/g, '-')) || phase.name || ''}</span>
             <div class="flex-1 h-2 bg-surface-container rounded-full overflow-hidden">
               <div class="h-full rounded-full transition-all
                 {phase.status === 'complete' ? 'bg-primary' :
