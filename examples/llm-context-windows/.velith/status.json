@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-02T09:39:10.128Z",
+  "generated_at": "2026-06-02T10:01:57.292Z",
   "agents": [
     {
       "id": "book-architect",
@@ -169,7 +169,7 @@
         }
       ],
       "cover_path": null,
-      "last_updated": "2026-06-02T09:39:10.128Z"
+      "last_updated": "2026-06-02T10:01:57.292Z"
     }
   ]
 }
