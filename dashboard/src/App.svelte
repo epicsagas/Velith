@@ -221,43 +221,45 @@
       </button>
       <div class="flex-1"></div>
 
+      <!-- Star -->
       <a
         href="https://github.com/epicsagas/Velith"
         target="_blank"
         rel="noopener noreferrer"
-        class="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold border border-outline-variant text-secondary hover:bg-surface-container transition-colors uppercase tracking-wider"
+        class="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold border border-outline-variant hover:bg-surface-container transition-colors uppercase tracking-wider"
       >
-        <span class="material-symbols-outlined text-sm">star</span>
-        Star
+        <span class="material-symbols-outlined fill-icon text-sm" style="color:#eab308">star</span>
+        <span class="text-secondary">Star</span>
       </a>
+      <!-- Sponsor -->
       <a
         href="https://github.com/sponsors/epicsagas"
         target="_blank"
         rel="noopener noreferrer"
-        class="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold border border-outline-variant text-secondary hover:bg-surface-container transition-colors uppercase tracking-wider"
+        class="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold border border-outline-variant hover:bg-surface-container transition-colors uppercase tracking-wider"
       >
-        <span class="material-symbols-outlined text-sm">favorite</span>
-        Sponsor
+        <span class="material-symbols-outlined fill-icon text-sm" style="color:#ec4899">favorite</span>
+        <span class="text-secondary">Sponsor</span>
       </a>
+      <!-- Theme toggle -->
       <button
-        class="p-1.5 rounded border border-outline-variant text-secondary hover:bg-surface-container transition-colors"
+        class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-secondary hover:bg-surface-container transition-colors shrink-0"
         onclick={toggleTheme}
         aria-label="Toggle theme"
       >
-        <span class="material-symbols-outlined text-sm">{isDark ? 'light_mode' : 'dark_mode'}</span>
+        <span class="material-symbols-outlined fill-icon" style="font-size:16px;color:{isDark ? '#fbbf24' : '#f97316'}">{isDark ? 'light_mode' : 'dark_mode'}</span>
       </button>
-      <div class="relative">
-        <select
-          class="appearance-none bg-surface text-on-surface rounded pl-2 pr-7 py-1 text-xs font-semibold border border-outline-variant uppercase tracking-wider cursor-pointer"
-          value={currentI18n.locale}
-          onchange={(e) => { locale.set(e.target.value); syncFontToLocale(e.target.value); }}
-        >
-          {#each currentI18n.allLocales as loc}
-            <option value={loc}>{loc.toUpperCase()}</option>
-          {/each}
-        </select>
-        <span class="pointer-events-none material-symbols-outlined text-secondary" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);font-size:14px;line-height:1;display:block;vertical-align:unset">expand_more</span>
-      </div>
+      <!-- Locale -->
+      <select
+        class="h-8 bg-surface text-on-surface rounded px-2 text-xs font-semibold border border-outline-variant uppercase tracking-wider cursor-pointer"
+        style="appearance:none;-webkit-appearance:none;-moz-appearance:none;min-width:3rem"
+        value={currentI18n.locale}
+        onchange={(e) => { locale.set(e.target.value); syncFontToLocale(e.target.value); }}
+      >
+        {#each currentI18n.allLocales as loc}
+          <option value={loc}>{loc.toUpperCase()}</option>
+        {/each}
+      </select>
     </header>
 
     <!-- Content -->
