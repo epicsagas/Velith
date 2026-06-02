@@ -26,7 +26,6 @@
         theme: {
           extend: {
             colors: {
-              // Theme-switching tokens (via .dark class)
               primary: 'var(--color-primary)',
               'primary-container': 'var(--color-primary-container)',
               'on-primary': 'var(--color-on-primary)',
@@ -50,7 +49,6 @@
               background: 'var(--color-background)',
               error: 'var(--color-error)',
               'error-container': 'var(--color-error-container)',
-              // Sidebar — permanently dark, immune to theme toggle
               'sidebar-bg': 'var(--sidebar-bg)',
               'sidebar-active': 'var(--sidebar-active)',
               'sidebar-hover': 'var(--sidebar-hover)',
@@ -73,16 +71,16 @@
         --sidebar-text: #e5e1ea;
         --sidebar-muted: #9da3c0;
         --sidebar-border: #1f2238;
-        --sidebar-accent: #e07020;      /* bright orange on dark bg: 5.4:1 */
+        --sidebar-accent: #e07020;
       }
 
       /* ── Light theme (WCAG AA verified) ───────────────────────── */
       :root {
-        --color-primary: #c45500;               /* bright amber */
-        --color-primary-container: #ff8a2a;     /* vivid orange accent */
+        --color-primary: #c45500;
+        --color-primary-container: #ff8a2a;
         --color-on-primary: #ffffff;
         --color-on-primary-container: #2f1500;
-        --color-secondary: #565d6f;             /* 6.3:1 on white */
+        --color-secondary: #565d6f;
         --color-secondary-container: #d9dff5;
         --color-on-secondary: #ffffff;
         --color-on-secondary-container: #3e4459;
@@ -92,51 +90,48 @@
         --color-surface-container-lowest: #ffffff;
         --color-surface-container-high: #e7e8e9;
         --color-surface-variant: #e0e3e5;
-        --color-on-surface: #191c1d;            /* 18:1 on surface */
-        --color-on-surface-variant: #44474a;    /* 7.5:1 on surface-variant */
+        --color-on-surface: #191c1d;
+        --color-on-surface-variant: #44474a;
         --color-inverse-surface: #2e3132;
         --color-inverse-on-surface: #f0f1f2;
-        --color-outline: #747779;               /* 4.7:1 on white */
+        --color-outline: #747779;
         --color-outline-variant: #c2c7ca;
         --color-background: #f8f9fa;
-        --color-error: #ba1a1a;                 /* 6.1:1 on white */
+        --color-error: #ba1a1a;
         --color-error-container: #ffdad6;
       }
 
-      /* ── Dark theme — stitch design palette (WCAG AA verified) ── */
+      /* ── Dark theme ── */
       .dark {
-        --color-primary: #e8762a;               /* 5.4:1 on surface */
-        --color-primary-container: #7a3a10;     /* warm amber tint */
+        --color-primary: #e8762a;
+        --color-primary-container: #7a3a10;
         --color-on-primary: #ffffff;
-        --color-on-primary-container: #ffdbba;  /* 10:1 on primary-container */
-        --color-secondary: #9da3c0;             /* 8.1:1 on surface */
+        --color-on-primary-container: #ffdbba;
+        --color-secondary: #9da3c0;
         --color-secondary-container: #2a2e46;
         --color-on-secondary: #ffffff;
         --color-on-secondary-container: #c8cde8;
-        --color-surface: #10121a;               /* deep navy */
+        --color-surface: #10121a;
         --color-surface-container: #161926;
         --color-surface-container-low: #12141e;
         --color-surface-container-lowest: #0d0f17;
         --color-surface-container-high: #1c1f30;
         --color-surface-variant: #1e2132;
-        --color-on-surface: #e8e4f0;            /* 15.7:1 on surface ✓ AAA */
-        --color-on-surface-variant: #c0bdd0;    /* 9.2:1 on surface-variant */
+        --color-on-surface: #e8e4f0;
+        --color-on-surface-variant: #c0bdd0;
         --color-inverse-surface: #e8e4f0;
         --color-inverse-on-surface: #13161f;
-        --color-outline: #7a7d9e;               /* 4.6:1 on surface */
+        --color-outline: #7a7d9e;
         --color-outline-variant: #2c2f45;
         --color-background: #10121a;
-        --color-error: #ffb4ab;                 /* 7.5:1 on surface */
+        --color-error: #ffb4ab;
         --color-error-container: #690005;
       }
 
-      /* ── Base ──────────────────────────────────────────────────── */
       html { color-scheme: light; }
       .dark { color-scheme: dark; }
-
       body { font-family: 'Geist', system-ui, sans-serif; }
 
-      /* ── Material Symbols ──────────────────────────────────────── */
       .material-symbols-outlined {
         font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         display: inline-block;
@@ -145,19 +140,13 @@
       }
       .fill-icon { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
 
-      /* ── WCAG 2.4.11 Focus Appearance ──────────────────────────── */
       :focus-visible {
         outline: 2px solid var(--color-primary);
         outline-offset: 2px;
       }
       :focus:not(:focus-visible) { outline: none; }
+      aside :focus-visible { outline-color: var(--sidebar-accent); }
 
-      /* Sidebar focus ring uses sidebar accent, not theme primary */
-      aside :focus-visible {
-        outline-color: var(--sidebar-accent);
-      }
-
-      /* ── Skip link (WCAG 2.4.1) ────────────────────────────────── */
       .skip-link {
         position: absolute;
         top: -3rem;
@@ -173,7 +162,6 @@
       }
       .skip-link:focus { top: 0.5rem; }
 
-      /* ── Reduced motion ─────────────────────────────────────────── */
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after {
           animation-duration: 0.01ms !important;
@@ -181,8 +169,8 @@
         }
       }
     </style>
-    <script type="module" crossorigin src="/assets/index-CTLvPnAr.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-Di7e76Qr.css">
+    <script type="module" crossorigin src="/assets/index-C37qxnTz.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BY0DrVmg.css">
   </head>
   <body class="bg-background text-on-surface">
     <a href="#main-content" class="skip-link">Skip to main content</a>
