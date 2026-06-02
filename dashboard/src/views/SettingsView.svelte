@@ -67,7 +67,7 @@
         </tr>
         <tr>
           <td class="px-4 py-2.5 text-xs uppercase tracking-widest text-secondary font-semibold">{i18n.t('settings.currentPhase')}</td>
-          <td class="px-4 py-2.5 text-right font-bold">Phase {project.current_phase}: {project.phase_status?.[project.current_phase] ? (i18n.t('phase.' + project.phase_status[project.current_phase].name.toLowerCase().replace(/\s+/g, '-')) || project.phase_status[project.current_phase].name) : '—'}</td>
+          <td class="px-4 py-2.5 text-right font-bold">{i18n.t('help.phase', { n: project.current_phase })}: {project.phase_status?.[project.current_phase] ? (i18n.t('phase.' + project.phase_status[project.current_phase].name.toLowerCase().replace(/\s+/g, '-')) || project.phase_status[project.current_phase].name) : '—'}</td>
         </tr>
       </tbody>
     </table>

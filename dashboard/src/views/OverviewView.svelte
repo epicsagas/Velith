@@ -112,7 +112,7 @@
     <div class="border border-outline-variant rounded bg-surface-container-lowest p-4">
       <p class="text-xs text-secondary uppercase tracking-widest mb-2">{i18n.t('overview.currentPhase')}</p>
       <p class="text-3xl font-bold text-on-surface" style="font-family:'Newsreader',serif;">{currentPhaseName}</p>
-      <p class="text-xs text-secondary mt-0.5">Phase {project.current_phase} / {(project.phase_status?.length ?? 1) - 1}</p>
+      <p class="text-xs text-secondary mt-0.5">{i18n.t('help.phase', { n: project.current_phase })} / {(project.phase_status?.length ?? 1) - 1}</p>
       <div class="mt-3 h-1.5 bg-surface-container rounded-full overflow-hidden">
         <div class="h-full bg-primary rounded-full" style="width:{currentPhasePct}%"></div>
       </div>
