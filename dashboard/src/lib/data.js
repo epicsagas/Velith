@@ -61,55 +61,13 @@ export const GENRE_ICONS = {
 };
 
 export const GENRE_WORKFLOWS = [
-  {
-    id: 'fiction',
-    name: 'Fiction',
-    structure: 'Save the Cat! 15-Beat / 3-Act Structure',
-    highlights: ['Scene generation', 'Beat sheet validation', 'Character arcs'],
-    tip: 'Start with /book-ideation to develop your premise, then /book-outline for the beat sheet.',
-  },
-  {
-    id: 'non-fiction',
-    name: 'Non-Fiction',
-    structure: 'Problem → Principles → Practice → Advanced',
-    highlights: ['Evidence-based structure', 'Research integration', 'Case studies'],
-    tip: 'Gather source materials in sources/ before running /book-outline.',
-  },
-  {
-    id: 'technical',
-    name: 'Technical',
-    structure: 'Intro (15%) → Foundations (25%) → Practice (30%) → Advanced (20%) → Reference (10%)',
-    highlights: ['Code examples', 'Progressive difficulty', 'Hands-on exercises'],
-    tip: 'Place code samples in sources/ and reference them during drafting.',
-  },
-  {
-    id: 'screenplay',
-    name: 'Screenplay',
-    structure: '3-Act (110pp) + 8-Sequence Method',
-    highlights: ['Scene-by-scene breakdown', 'Dialogue focus', 'Visual storytelling'],
-    tip: 'Use /book-ideation to develop the logline before outlining.',
-  },
-  {
-    id: 'poetry',
-    name: 'Poetry',
-    structure: 'Collection Arc: Opening → Center → Resolution',
-    highlights: ['Thematic grouping', 'Rhythm & meter validation', 'Collection flow'],
-    tip: 'Individual poems go in drafts/ — the outline defines collection structure.',
-  },
-  {
-    id: 'game',
-    name: 'Game Narrative',
-    structure: 'Critical Path (60%) + Side Quests (30%) + Hidden (10%)',
-    highlights: ['Branching dialogue', 'World-building', 'Player agency'],
-    tip: 'Define major branches in PRD.md before running /book-outline.',
-  },
-  {
-    id: 'academic',
-    name: 'Academic',
-    structure: 'IMRAD: Introduction → Methods → Results → Discussion',
-    highlights: ['Citation management', 'Methodology validation', 'Peer review prep'],
-    tip: 'Place research papers in sources/ for citation during drafting.',
-  },
+  { id: 'fiction',     nameKey: 'genre.fiction.name',     structureKey: 'genre.fiction.structure',     highlightKeys: ['genre.fiction.h1','genre.fiction.h2','genre.fiction.h3'],     tipKey: 'genre.fiction.tip' },
+  { id: 'non-fiction', nameKey: 'genre.nonfiction.name',  structureKey: 'genre.nonfiction.structure',  highlightKeys: ['genre.nonfiction.h1','genre.nonfiction.h2','genre.nonfiction.h3'], tipKey: 'genre.nonfiction.tip' },
+  { id: 'technical',   nameKey: 'genre.technical.name',   structureKey: 'genre.technical.structure',   highlightKeys: ['genre.technical.h1','genre.technical.h2','genre.technical.h3'],   tipKey: 'genre.technical.tip' },
+  { id: 'screenplay',  nameKey: 'genre.screenplay.name',  structureKey: 'genre.screenplay.structure',  highlightKeys: ['genre.screenplay.h1','genre.screenplay.h2','genre.screenplay.h3'],  tipKey: 'genre.screenplay.tip' },
+  { id: 'poetry',      nameKey: 'genre.poetry.name',      structureKey: 'genre.poetry.structure',      highlightKeys: ['genre.poetry.h1','genre.poetry.h2','genre.poetry.h3'],      tipKey: 'genre.poetry.tip' },
+  { id: 'game',        nameKey: 'genre.game.name',        structureKey: 'genre.game.structure',        highlightKeys: ['genre.game.h1','genre.game.h2','genre.game.h3'],        tipKey: 'genre.game.tip' },
+  { id: 'academic',    nameKey: 'genre.academic.name',    structureKey: 'genre.academic.structure',    highlightKeys: ['genre.academic.h1','genre.academic.h2','genre.academic.h3'],    tipKey: 'genre.academic.tip' },
 ];
 
 export const SAMPLE_DATA = {
