@@ -1,7 +1,7 @@
 <script>
   import { i18n, locale } from './lib/i18n.js';
   import { NAV_ITEMS, VALID_VIEWS, SAMPLE_DATA } from './lib/data.js';
-  import { initAccent, accentColor, initFont, fontId, setFont } from './lib/theme.js';
+  import { initAccent, accentColor, initFont, fontId, setFont, syncFontToLocale } from './lib/theme.js';
   import { get } from 'svelte/store';
   import OverviewView from './views/OverviewView.svelte';
   import StatusView from './views/StatusView.svelte';
@@ -93,7 +93,7 @@
 
   // 초기 액센트·폰트 적용
   let currentAccent = $state(initAccent(isDark));
-  let currentFont = $state(initFont());
+  let currentFont = $state(initFont(get(locale)));
   $effect(() => {
     const unsub = fontId.subscribe(v => { currentFont = v; });
     return unsub;
@@ -250,7 +250,7 @@
         <select
           class="appearance-none bg-surface text-on-surface rounded pl-2 pr-7 py-1 text-xs font-semibold border border-outline-variant uppercase tracking-wider cursor-pointer"
           value={currentI18n.locale}
-          onchange={(e) => locale.set(e.target.value)}
+          onchange={(e) => { locale.set(e.target.value); syncFontToLocale(e.target.value); }}
         >
           {#each currentI18n.allLocales as loc}
             <option value={loc}>{loc.toUpperCase()}</option>

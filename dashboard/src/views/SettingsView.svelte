@@ -155,10 +155,17 @@
             {/if}
           </span>
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold" style="font-family:{opt.stack}">{opt.label}</p>
+            <div class="flex items-center gap-2">
+              <p class="text-sm font-semibold" style="font-family:{opt.stack}">{opt.label}</p>
+              {#if opt.cjk}
+                <span class="text-xs border border-outline-variant text-secondary px-1.5 py-0.5 rounded uppercase tracking-wider">{opt.cjk === 'kr' ? '한' : opt.cjk === 'jp' ? '日' : '中'}</span>
+              {/if}
+            </div>
             <p class="text-xs text-secondary font-mono truncate">{opt.stack.split(',')[0].replace(/'/g, '')}</p>
           </div>
-          <span class="text-sm text-secondary shrink-0" style="font-family:{opt.stack}">가Aa123</span>
+          <span class="text-sm text-secondary shrink-0" style="font-family:{opt.stack}">
+            {opt.cjk === 'kr' ? '가나다 Aa123' : opt.cjk === 'jp' ? 'あいう Aa123' : opt.cjk === 'sc' ? '你好世界 Aa123' : 'Aa123'}
+          </span>
         </button>
       {/each}
     </div>
