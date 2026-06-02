@@ -1,0 +1,77 @@
+Meeting Transcript — Product Team Weekly Sync
+Date: [redacted]
+Attendees: Alex (PM), Jordan (Engineering Lead), Sam (Design), Taylor (Marketing), Riley (Data)
+
+Alex: Okay let's get started, we're already five minutes behind. Quick updates first. Jordan, what's the status on the API rate limiting work?
+
+Jordan: So we finished the implementation on Friday, it's deployed to staging. The issue is we found a regression in the webhook delivery — when a rate limit is hit, webhooks that were queued before the limit are getting dropped in about 3% of cases. It's not data loss because we log everything, but customers would miss real-time notifications.
+
+Alex: Is that blocking the release?
+
+Jordan: I'd say yes, we shouldn't ship this to production with that behavior. We know about it now, if we ship it and customers find it first that's bad. I think we need two more days to fix and verify.
+
+Taylor: That's going to push the blog post we had planned to announce the feature. I had coordinated with three customer advocates who were going to share it this week.
+
+Alex: Yeah, we'll have to delay. Quality over deadlines here. Can you message those advocates today and let them know? Give them a heads-up, not an excuse.
+
+Taylor: Sure, I'll handle it. Do we want to give them a new date or just say "soon"?
+
+Jordan: I can commit to Thursday. If it's not ready Thursday I'll say something by Wednesday.
+
+Alex: Thursday it is then. Sam, how's the onboarding redesign coming?
+
+Sam: We finished the mockups last week, I shared them in the design channel. The main change is we're removing the setup wizard — it had a 60% drop-off rate at step 2, which is the integration setup step. Instead we're going to surface integrations as optional in the dashboard after they've had a chance to explore.
+
+Riley: Yeah, that matches what I was seeing in the funnel data. Users who skipped the wizard and went directly to the dashboard actually had better 7-day retention. The forced setup flow was hurting more than helping.
+
+Alex: That's interesting. So the hypothesis is — let them see value first, then ask them to invest in setup?
+
+Sam: Exactly. And the mockups show the integration prompts in context — when you try to import tasks, it says "connect GitHub to import your issues" right there, not during onboarding when they haven't done anything yet.
+
+Alex: I like it. Is this ready to implement or do we need another review?
+
+Sam: I'd say ready. I want one more pass with Jordan to make sure the technical constraints around OAuth flows are reflected, but design-wise it's final.
+
+Jordan: Yeah, let's sync on that today — I have 30 minutes at 3pm if that works.
+
+Sam: Works for me.
+
+Alex: Great. Riley, you mentioned in the pre-read there was something unusual in last week's data?
+
+Riley: Yeah, so active users were up 8% week over week which is great, but the cohort from two weeks ago is showing higher-than-expected churn at day 30. It's not a huge number but it's outside our normal range. I've been digging into what's different about that cohort. One thing I noticed is a high overlap with users who came in through the LinkedIn ad campaign.
+
+Taylor: Oh interesting. What was different about that campaign?
+
+Riley: The landing page was different — we were testing messaging that emphasized the reporting features rather than the task management core. My hypothesis is we attracted users whose primary job is reporting and analysis, not the PMs and engineers who are our best-fit customers.
+
+Taylor: That actually matches some of the support tickets I saw. People asking about export formats and dashboard customization, which aren't our strength right now.
+
+Alex: So it's a message-market fit problem, not a product problem.
+
+Riley: That's my read, yes. I'd recommend pausing that LinkedIn campaign and going back to the core messaging until we've improved the reporting features enough to back up that promise.
+
+Taylor: Agreed, I'll pause it today. We were spending about $3k a week on that. We can reallocate to the communities that are working — Hacker News and the developer subreddits have been driving better qualified users anyway.
+
+Alex: Good call. What's the timeline on the reporting improvements?
+
+Jordan: We have it on the roadmap for Q3. The data team has been asking for better export functionality too, so there's internal alignment. I'd say realistically 6-8 weeks for a meaningful improvement.
+
+Alex: Okay. Let's make sure the marketing messaging doesn't get ahead of the product again. Taylor, can we review ad copy against the roadmap before any new campaigns?
+
+Taylor: Absolutely, I'll set up a quick review checkpoint with you and Jordan before anything new launches.
+
+Riley: One more thing — I want to flag that our API usage has been growing faster than user growth for the last three weeks. Which means existing customers are using it more, or we have undiscovered integrations being built. I'm trying to trace the source. Jordan, is there any way to see what user agents are hitting the API?
+
+Jordan: We log user agents but I don't think we're surfacing that anywhere useful. I can put together a quick query and send you the results. Give me until end of day.
+
+Riley: That would be great, thank you.
+
+Alex: Okay, anything else before we close? We're at time.
+
+Sam: Just wanted to say the dark mode work we shipped last week has been really well received. Lots of positive comments in the community Slack. Feels like low-hanging fruit that paid off.
+
+Alex: Agreed, nice work on that. And it was a week ahead of schedule. All right, let's wrap up. Action items: Jordan and Sam sync at 3pm on OAuth flows. Taylor messages advocates about Thursday timeline and pauses the LinkedIn campaign. Jordan sends Riley the API user agent data. Riley and Taylor align on messaging guidelines for future campaigns. Next week's sync, let's start with the cohort data update. Any blockers anyone wants to flag before then?
+
+Jordan: Nothing blocking, just the webhook fix.
+
+Alex: Cool. Thanks everyone, see you Thursday or earlier if issues come up.
