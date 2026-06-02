@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.5.1] - 2026-06-02
+## [0.1.2] - 2026-06-02
 
 ### Changed
 - Dashboard: full i18n overhaul (10 locales, all views, genre workflows)
@@ -10,7 +10,7 @@
 - Dashboard: color unification, light/dark sidebar, header icon colors
 - Plugin: llm-context-windows book example via full pipeline
 
-## [0.5.0] - 2026-06
+## [0.1.1] - 2026-06
 
 ### Added
 - Hugging Face Space demo (`hf-space/`) — Gradio app simulating the text analysis and structuring pipeline with heuristic NLP metrics
