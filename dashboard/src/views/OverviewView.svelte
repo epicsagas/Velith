@@ -104,7 +104,7 @@
       <p class="text-3xl font-bold text-on-surface">{project.completed_chapters}</p>
       <p class="text-xs text-secondary mt-0.5">{i18n.t('overview.chapterOf', { n: project.total_chapters })}</p>
       <div class="mt-3 h-1.5 bg-surface-container rounded-full overflow-hidden">
-        <div class="h-full bg-secondary rounded-full" style="width:{chapPercent}%"></div>
+        <div class="h-full bg-primary rounded-full" style="width:{chapPercent}%"></div>
       </div>
       <p class="text-xs text-secondary text-right mt-1">{chapPercent}%</p>
     </div>

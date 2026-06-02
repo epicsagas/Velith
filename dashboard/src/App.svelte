@@ -1,6 +1,7 @@
 <script>
   import { i18n, locale } from './lib/i18n.js';
   import { NAV_ITEMS, VALID_VIEWS, SAMPLE_DATA } from './lib/data.js';
+  import { initAccent, accentColor, initFont, fontId, setFont } from './lib/theme.js';
   import { get } from 'svelte/store';
   import OverviewView from './views/OverviewView.svelte';
   import StatusView from './views/StatusView.svelte';
@@ -90,10 +91,24 @@
     return () => clearInterval(id);
   });
 
+  // 초기 액센트·폰트 적용
+  let currentAccent = $state(initAccent(isDark));
+  let currentFont = $state(initFont());
+  $effect(() => {
+    const unsub = fontId.subscribe(v => { currentFont = v; });
+    return unsub;
+  });
+  $effect(() => {
+    const unsub = accentColor.subscribe(v => { currentAccent = v; });
+    return unsub;
+  });
+
   function toggleTheme() {
     isDark = !isDark;
     document.documentElement.classList.toggle('dark', isDark);
     try { localStorage.setItem('velith-theme', isDark ? 'dark' : 'light'); } catch {}
+    // 테마 전환 시 해당 모드의 저장된 액센트 복원
+    currentAccent = initAccent(isDark);
   }
 
   async function copyToClipboard(text) {
@@ -241,7 +256,7 @@
             <option value={loc}>{loc.toUpperCase()}</option>
           {/each}
         </select>
-        <span class="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-sm text-secondary" style="font-size:14px">expand_more</span>
+        <span class="pointer-events-none material-symbols-outlined text-secondary" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);font-size:14px;line-height:1;display:block;vertical-align:unset">expand_more</span>
       </div>
     </header>
 
@@ -311,7 +326,7 @@
       {:else if activeView === 'publish'}
         <PublishView {project} projectIndex={bookIndex} i18n={currentI18n} {copyToClipboard} />
       {:else if activeView === 'settings'}
-        <SettingsView {project} {agents} i18n={currentI18n} {copyToClipboard} />
+        <SettingsView {project} {agents} i18n={currentI18n} {copyToClipboard} {isDark} accent={currentAccent} font={currentFont} />
       {/if}
     </main>
 
