@@ -84,16 +84,32 @@ export const FONT_OPTIONS = [
     googleFont: 'Geist:wght@100..900',
   },
   {
-    id: 'noto-sans',
+    id: 'noto-sans-kr',
     label: 'Noto Sans KR',
-    stack: "'Noto Sans KR', 'Noto Sans JP', 'Noto Sans SC', 'Noto Sans', sans-serif",
-    googleFont: 'Noto+Sans+KR:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700',
+    stack: "'Noto Sans KR', 'Noto Sans', sans-serif",
+    googleFont: 'Noto+Sans+KR:wght@400;500;600;700',
+    cjk: 'kr',
   },
   {
-    id: 'noto-serif',
+    id: 'noto-sans-jp',
+    label: 'Noto Sans JP',
+    stack: "'Noto Sans JP', 'Noto Sans', sans-serif",
+    googleFont: 'Noto+Sans+JP:wght@400;500;600;700',
+    cjk: 'jp',
+  },
+  {
+    id: 'noto-sans-sc',
+    label: 'Noto Sans SC',
+    stack: "'Noto Sans SC', 'Noto Sans', sans-serif",
+    googleFont: 'Noto+Sans+SC:wght@400;500;600;700',
+    cjk: 'sc',
+  },
+  {
+    id: 'noto-serif-kr',
     label: 'Noto Serif KR',
     stack: "'Noto Serif KR', 'Noto Serif', serif",
     googleFont: 'Noto+Serif+KR:wght@400;500;600;700',
+    cjk: 'kr',
   },
   {
     id: 'inter',
@@ -135,17 +151,35 @@ function loadGoogleFont(font) {
   loadedFonts.add(font.id);
 }
 
-export const fontId = writable('geist');
+// 언어 코드 → 기본 Noto Sans 매핑
+const LOCALE_FONT_MAP = {
+  ko: 'noto-sans-kr',
+  ja: 'noto-sans-jp',
+  zh: 'noto-sans-sc',
+};
 
-export function initFont() {
+export const fontId = writable('noto-sans-kr');
+
+export function initFont(locale) {
   try {
-    const saved = localStorage.getItem(FONT_STORAGE_KEY) || 'geist';
-    const font = FONT_OPTIONS.find(f => f.id === saved) || FONT_OPTIONS[1];
+    const saved = localStorage.getItem(FONT_STORAGE_KEY);
+    // 저장된 값이 없으면 로케일 기반 기본값 적용
+    const defaultId = LOCALE_FONT_MAP[locale] || 'noto-sans-kr';
+    const id = saved || defaultId;
+    const font = FONT_OPTIONS.find(f => f.id === id) || FONT_OPTIONS.find(f => f.id === 'noto-sans-kr');
     applyFont(font);
     return font.id;
   } catch {
-    return 'geist';
+    return 'noto-sans-kr';
   }
+}
+
+// 언어 변경 시 호출 — 사용자가 폰트를 명시적으로 지정하지 않은 경우에만 자동 전환
+export function syncFontToLocale(locale) {
+  const saved = (() => { try { return localStorage.getItem(FONT_STORAGE_KEY); } catch { return null; } })();
+  if (saved) return; // 사용자가 직접 선택한 폰트가 있으면 건드리지 않음
+  const id = LOCALE_FONT_MAP[locale] || 'noto-sans-kr';
+  setFont(id);
 }
 
 export function setFont(id) {
