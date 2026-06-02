@@ -9,11 +9,6 @@
     { id: 'proofread',     icon: 'verified',     file: '05-proofread.md',     labelKey: 'edit.stage.proofread' },
   ];
 
-  const STAGE_LABELS = {
-    assessment: 'Assessment', developmental: 'Developmental',
-    'line-edit': 'Line Edit', 'copy-edit': 'Copy Edit', proofread: 'Proofread',
-  };
-
   let chapters = $derived(project.chapter_details ?? []);
   let editingChapters = $derived(chapters.filter(c => c.status === 'edit' || c.status === 'draft' || c.status === 'wait'));
 
@@ -59,7 +54,7 @@
           <span class="material-symbols-outlined text-sm text-secondary">{stage.icon}</span>
           <span class="text-xs font-bold text-on-surface-variant">{count}</span>
         </div>
-        <p class="text-xs font-bold uppercase tracking-wider text-secondary leading-tight">{STAGE_LABELS[stage.id]}</p>
+        <p class="text-xs font-bold uppercase tracking-wider text-secondary leading-tight">{i18n.t(stage.labelKey)}</p>
         <p class="text-xs text-on-surface-variant font-mono mt-0.5 truncate">{stage.file}</p>
       </div>
     {/each}

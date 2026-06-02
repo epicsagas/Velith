@@ -71,9 +71,9 @@
             </p>
           </div>
           {#if cmd.phase >= 0}
-            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-primary text-primary shrink-0">Phase {cmd.phase}</span>
+            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-primary text-primary shrink-0">{i18n.t('help.phase', { n: cmd.phase })}</span>
           {:else}
-            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-outline-variant text-secondary shrink-0">Utility</span>
+            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-outline-variant text-secondary shrink-0">{i18n.t('help.utility')}</span>
           {/if}
         </button>
       {/each}
@@ -106,7 +106,7 @@
           <div class="flex-1 text-center py-3 rounded border
             {i === 3 ? 'bg-primary border-primary text-on-primary' : 'bg-surface-container border-outline-variant text-secondary'}">
             <p class="text-xs font-bold uppercase tracking-wider leading-none">{phase}</p>
-            <p class="text-xs text-current opacity-60 mt-0.5">Phase {i}</p>
+            <p class="text-xs text-current opacity-60 mt-0.5">{i18n.t('help.phase', { n: i })}</p>
           </div>
           {#if i < 5}
             <span class="text-outline text-xs">›</span>

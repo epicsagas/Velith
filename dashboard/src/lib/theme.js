@@ -7,6 +7,18 @@ const STORAGE_KEY_DARK  = 'velith-accent-dark';
 const DEFAULT_LIGHT = '#e8650a';
 const DEFAULT_DARK  = '#ff8c3a';
 
+// store를 올바른 초기값으로 설정 (initAccent 전에 누군가 구독하더라도 안전)
+function getInitialAccent() {
+  try {
+    const isDark = document.documentElement.classList.contains('dark');
+    return localStorage.getItem(isDark ? STORAGE_KEY_DARK : STORAGE_KEY_LIGHT) || (isDark ? DEFAULT_DARK : DEFAULT_LIGHT);
+  } catch {
+    return DEFAULT_LIGHT;
+  }
+}
+
+export const accentColor = writable(getInitialAccent());
+
 // 사이드바 액센트는 primary보다 약간 밝게
 function sidebarAccent(hex) {
   return hex; // 동일하게 사용, 필요시 밝기 조정 가능
@@ -63,8 +75,6 @@ export function setAccent(hex, isDark) {
   applyAccent(hex, isDark);
   accentColor.set(hex);
 }
-
-export const accentColor = writable(DEFAULT_LIGHT);
 
 // ── Font ─────────────────────────────────────────────────────────────────────
 
@@ -133,6 +143,7 @@ export const FONT_OPTIONS = [
 ];
 
 const loadedFonts = new Set();
+let activeFontId = null;
 
 function loadGoogleFont(font) {
   if (!font.googleFont && !font.cdnUrl) return;
@@ -191,12 +202,19 @@ export function setFont(id) {
 }
 
 function applyFont(font) {
+  // 이전 폰트 link 제거
+  if (activeFontId && activeFontId !== font.id) {
+    const prev = document.getElementById('velith-font-' + activeFontId);
+    if (prev) prev.remove();
+    loadedFonts.delete(activeFontId);
+  }
   loadGoogleFont(font);
   document.body.style.fontFamily = font.stack;
+  activeFontId = font.id;
 }
 
 export const PRESET_COLORS = [
-  { label: 'Orange',  light: '#f26419', dark: '#ff8c3a' },
+  { label: 'Orange',  light: '#e8650a', dark: '#ff8c3a' },
   { label: 'Red',     light: '#e53935', dark: '#ff5252' },
   { label: 'Pink',    light: '#e91e8c', dark: '#f06292' },
   { label: 'Purple',  light: '#9c27b0', dark: '#ce93d8' },

@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.3] - 2026-06-03
+
+### Fixed
+- Dashboard: remove remaining hardcoded English strings (READY/PENDING, Pending, Phase {n}, Utility, edit stage labels)
+- Dashboard: normalize phase name keys for i18n lookup (handles spaces in phase names)
+- Dashboard: fix accent color store initialization to use saved value from localStorage
+- Dashboard: fix PRESET_COLORS Orange default mismatch with actual defaults
+- Dashboard: add dropdown arrow to locale select (appearance:none fix)
+- Dashboard: clean up previous Google Font links on font switch
+- i18n: add 42 missing genre.* keys to all 9 non-English locales (ko, ja, zh, de, es, fr, it, pt, ru)
+- i18n: add status.pending, help.phase, help.utility, publish.ready, publish.pending keys to all locales
+- i18n: add key consistency validation script (dashboard/scripts/check-i18n.js)
+
 ## [0.1.2] - 2026-06-02
 
 ### Changed
