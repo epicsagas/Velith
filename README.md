@@ -9,7 +9,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.5.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.5.1-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://huggingface.co/spaces/epicsagas/velith"><img alt="HF Demo" src="https://img.shields.io/badge/🤗_HF_Space-Demo-ffd700?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
