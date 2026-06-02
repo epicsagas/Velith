@@ -1,6 +1,7 @@
 <script>
   import { i18n, locale } from './lib/i18n.js';
   import { NAV_ITEMS, VALID_VIEWS, SAMPLE_DATA } from './lib/data.js';
+  import { initAccent, accentColor, initFont, fontId, setFont, syncFontToLocale } from './lib/theme.js';
   import { get } from 'svelte/store';
   import OverviewView from './views/OverviewView.svelte';
   import StatusView from './views/StatusView.svelte';
@@ -90,10 +91,24 @@
     return () => clearInterval(id);
   });
 
+  // 초기 액센트·폰트 적용
+  let currentAccent = $state(initAccent(isDark));
+  let currentFont = $state(initFont(get(locale)));
+  $effect(() => {
+    const unsub = fontId.subscribe(v => { currentFont = v; });
+    return unsub;
+  });
+  $effect(() => {
+    const unsub = accentColor.subscribe(v => { currentAccent = v; });
+    return unsub;
+  });
+
   function toggleTheme() {
     isDark = !isDark;
     document.documentElement.classList.toggle('dark', isDark);
     try { localStorage.setItem('velith-theme', isDark ? 'dark' : 'light'); } catch {}
+    // 테마 전환 시 해당 모드의 저장된 액센트 복원
+    currentAccent = initAccent(isDark);
   }
 
   async function copyToClipboard(text) {
@@ -140,10 +155,10 @@
     <!-- Logo -->
     <div class="px-4 py-3 border-b border-sidebar-border shrink-0">
       <button class="flex items-center gap-2.5" onclick={() => { bookIndex = null; syncUrl(); }}>
-        <span class="material-symbols-outlined fill-icon text-xl text-primary-container">book_2</span>
+        <span class="material-symbols-outlined fill-icon text-xl text-sidebar-accent">book_2</span>
         <div class="text-left">
           <p class="font-bold text-base leading-none text-sidebar-text" style="font-family:'Newsreader',serif;">Velith</p>
-          <p class="text-[10px] text-sidebar-muted tracking-widest uppercase mt-0.5">Writing Dashboard</p>
+          <p class="text-xs text-sidebar-muted tracking-widest uppercase mt-0.5">Writing Dashboard</p>
         </div>
       </button>
     </div>
@@ -161,13 +176,13 @@
           aria-current={active ? 'page' : undefined}
         >
           <span class="material-symbols-outlined text-base {active ? 'text-sidebar-accent' : ''}">{item.icon}</span>
-          <span class="text-[11px] tracking-widest uppercase font-semibold">{currentI18n.t(item.labelKey)}</span>
+          <span class="text-xs tracking-widest uppercase font-semibold">{currentI18n.t(item.labelKey)}</span>
         </button>
       {/each}
 
       {#if projects.length > 1}
         <div class="border-t border-sidebar-border mt-1 pt-2 px-3">
-          <p class="text-[10px] text-sidebar-muted mb-1 uppercase tracking-widest px-1">Projects</p>
+          <p class="text-xs text-sidebar-muted mb-1 uppercase tracking-widest px-1">Projects</p>
           {#each projects as p, i}
             <button
               class="w-full text-left px-2 py-1.5 rounded text-xs transition-colors
@@ -182,15 +197,15 @@
     <!-- Bottom: project info -->
     <div class="px-4 py-2.5 border-t border-sidebar-border shrink-0">
       {#if project}
-        <button class="flex items-center gap-1 text-[10px] text-sidebar-muted hover:text-sidebar-text mb-1 uppercase tracking-wider"
+        <button class="flex items-center gap-1 text-xs text-sidebar-muted hover:text-sidebar-text mb-1 uppercase tracking-wider"
           onclick={() => { bookIndex = null; syncUrl(); }}>
           <span class="material-symbols-outlined text-xs">arrow_back</span>
           Select a project
         </button>
         <p class="text-xs text-sidebar-text font-medium truncate">{project.name}</p>
-        <p class="text-[11px] text-sidebar-muted truncate capitalize">{project.genre} · {project.language ?? 'ko'}</p>
+        <p class="text-xs text-sidebar-muted truncate capitalize">{project.genre} · {project.language ?? 'ko'}</p>
       {:else}
-        <p class="text-[11px] text-sidebar-muted">No project</p>
+        <p class="text-xs text-sidebar-muted">No project</p>
       {/if}
     </div>
   </aside>
@@ -206,35 +221,40 @@
       </button>
       <div class="flex-1"></div>
 
+      <!-- Star -->
       <a
         href="https://github.com/epicsagas/Velith"
         target="_blank"
         rel="noopener noreferrer"
-        class="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-semibold border border-outline-variant text-secondary hover:bg-surface-container transition-colors uppercase tracking-wider"
+        class="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold border border-outline-variant hover:bg-surface-container transition-colors uppercase tracking-wider"
       >
-        <span class="material-symbols-outlined text-sm">star</span>
-        Star
+        <span class="material-symbols-outlined fill-icon text-sm" style="color:#eab308">star</span>
+        <span class="text-secondary">Star</span>
       </a>
+      <!-- Sponsor -->
       <a
         href="https://github.com/sponsors/epicsagas"
         target="_blank"
         rel="noopener noreferrer"
-        class="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-semibold border border-outline-variant text-secondary hover:bg-surface-container transition-colors uppercase tracking-wider"
+        class="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold border border-outline-variant hover:bg-surface-container transition-colors uppercase tracking-wider"
       >
-        <span class="material-symbols-outlined text-sm">favorite</span>
-        Sponsor
+        <span class="material-symbols-outlined fill-icon text-sm" style="color:#ec4899">favorite</span>
+        <span class="text-secondary">Sponsor</span>
       </a>
+      <!-- Theme toggle -->
       <button
-        class="p-1.5 rounded border border-outline-variant text-secondary hover:bg-surface-container transition-colors"
+        class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-secondary hover:bg-surface-container transition-colors shrink-0"
         onclick={toggleTheme}
         aria-label="Toggle theme"
       >
-        <span class="material-symbols-outlined text-sm">{isDark ? 'light_mode' : 'dark_mode'}</span>
+        <span class="material-symbols-outlined fill-icon" style="font-size:16px;color:{isDark ? '#fbbf24' : '#f97316'}">{isDark ? 'light_mode' : 'dark_mode'}</span>
       </button>
+      <!-- Locale -->
       <select
-        class="bg-surface text-on-surface rounded px-2 py-1 text-[11px] font-semibold border border-outline-variant uppercase tracking-wider"
+        class="h-8 bg-surface text-on-surface rounded px-2 text-xs font-semibold border border-outline-variant uppercase tracking-wider cursor-pointer"
+        style="appearance:none;-webkit-appearance:none;-moz-appearance:none;min-width:3rem"
         value={currentI18n.locale}
-        onchange={(e) => locale.set(e.target.value)}
+        onchange={(e) => { locale.set(e.target.value); syncFontToLocale(e.target.value); }}
       >
         {#each currentI18n.allLocales as loc}
           <option value={loc}>{loc.toUpperCase()}</option>
@@ -308,12 +328,12 @@
       {:else if activeView === 'publish'}
         <PublishView {project} projectIndex={bookIndex} i18n={currentI18n} {copyToClipboard} />
       {:else if activeView === 'settings'}
-        <SettingsView {project} {agents} i18n={currentI18n} {copyToClipboard} />
+        <SettingsView {project} {agents} i18n={currentI18n} {copyToClipboard} {isDark} accent={currentAccent} font={currentFont} />
       {/if}
     </main>
 
     <!-- Footer -->
-    <footer class="sticky bottom-0 z-10 bg-surface border-t border-outline-variant px-4 py-1.5 flex items-center gap-4 text-[11px] text-secondary">
+    <footer class="sticky bottom-0 z-10 bg-surface border-t border-outline-variant px-4 py-1.5 flex items-center gap-4 text-xs text-secondary">
       {#if project}
         {@const rt = relativeTime(project.last_updated)}
         <span class="{rt?.warn ? 'text-error' : ''}">

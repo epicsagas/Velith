@@ -7,13 +7,13 @@
 
   function iconBg(s) {
     if (s === 'running')  return 'bg-primary border-primary text-on-primary';
-    if (s === 'complete') return 'bg-inverse-surface border-inverse-surface text-inverse-on-surface';
+    if (s === 'complete') return 'bg-primary border-primary text-on-primary';
     if (s === 'error')    return 'bg-error border-error text-on-primary';
     return 'bg-surface-container border-outline-variant text-secondary';
   }
   function badgeClass(s) {
     if (s === 'running')  return 'border-primary text-primary';
-    if (s === 'complete') return 'border-inverse-surface text-inverse-on-surface bg-inverse-surface';
+    if (s === 'complete') return 'border-primary text-on-primary bg-primary';
     if (s === 'error')    return 'border-error text-error';
     return 'border-outline-variant text-secondary';
   }
@@ -24,15 +24,15 @@
   <!-- Summary -->
   <div class="grid grid-cols-3 gap-3">
     <div class="border {runningCount > 0 ? 'border-primary' : 'border-outline-variant'} rounded bg-surface-container-lowest p-4 text-center">
-      <p class="text-[10px] uppercase tracking-widest text-secondary mb-1 font-semibold">Running</p>
+      <p class="text-xs uppercase tracking-widest text-secondary mb-1 font-semibold">{i18n.t('status.running')}</p>
       <p class="text-4xl font-bold {runningCount > 0 ? 'text-primary' : 'text-on-surface-variant'}">{runningCount}</p>
     </div>
     <div class="border border-outline-variant rounded bg-surface-container-lowest p-4 text-center">
-      <p class="text-[10px] uppercase tracking-widest text-secondary mb-1 font-semibold">Idle</p>
+      <p class="text-xs uppercase tracking-widest text-secondary mb-1 font-semibold">{i18n.t('status.idle')}</p>
       <p class="text-4xl font-bold text-on-surface-variant">{idleCount}</p>
     </div>
     <div class="border border-outline-variant rounded bg-surface-container-lowest p-4 text-center">
-      <p class="text-[10px] uppercase tracking-widest text-secondary mb-1 font-semibold">Complete</p>
+      <p class="text-xs uppercase tracking-widest text-secondary mb-1 font-semibold">{i18n.t('status.complete')}</p>
       <p class="text-4xl font-bold text-on-surface">{completeCount}</p>
     </div>
   </div>
@@ -53,25 +53,25 @@
             </div>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-bold uppercase tracking-wide truncate">{agent.name}</p>
-              <p class="text-[10px] text-secondary mt-0.5 truncate">{agent.role}</p>
+              <p class="text-xs text-secondary mt-0.5 truncate">{i18n.t('agent.' + agent.id) || agent.role}</p>
             </div>
           </div>
 
           <div class="mt-3 flex items-center justify-between gap-2">
-            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border {badgeClass(agent.status)}">
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider border {badgeClass(agent.status)}">
               {#if agent.status === 'running'}
                 <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
               {/if}
               {i18n.t('status.' + agent.status) ?? agent.status}
             </span>
             {#if agent.last_run}
-              <span class="text-[10px] text-on-surface-variant font-mono">{i18n.fmtDate(agent.last_run)}</span>
+              <span class="text-xs text-on-surface-variant font-mono">{i18n.fmtDate(agent.last_run)}</span>
             {/if}
           </div>
 
           {#if agent.task}
             <div class="mt-2 bg-surface-container rounded px-2.5 py-1.5">
-              <p class="text-[10px] text-secondary uppercase tracking-wider mb-0.5 font-semibold">Current Task</p>
+              <p class="text-xs text-secondary uppercase tracking-wider mb-0.5 font-semibold">{i18n.t('status.currentTask')}</p>
               <p class="text-xs text-on-surface truncate">{agent.task}</p>
             </div>
           {/if}

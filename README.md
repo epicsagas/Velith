@@ -9,7 +9,8 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.1.1-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.5.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href="https://huggingface.co/spaces/epicsagas/velith"><img alt="HF Demo" src="https://img.shields.io/badge/🤗_HF_Space-Demo-ffd700?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -25,7 +26,7 @@
   <a href="docs/i18n/README.pt-BR.md">Português</a>
 </p>
 
-**Build books like software.** AI-native publishing system for structured long-form creation — from blank page to publishable EPUB/PDF.
+**Structure emergence, not text generation.** AI-native publishing pipeline for structured long-form creation — from blank page to publishable EPUB/PDF.
 
 `Phase 0: Onboarding → Phase 1: Ideation → Phase 2: Outlining → Phase 3: Drafting → Phase 4: Editing → Phase 5: Publishing`
 
@@ -36,6 +37,18 @@
 ## Why Velith?
 
 Writing a book with raw LLM prompts gives you disconnected chapters, inconsistent voice, and no structure. Velith treats books as **structured artifacts — not isolated prompts**. Each phase builds on persistent context to create coherent long-form work, with quality gates at every stage.
+
+## Benchmark
+
+What the pipeline does to unstructured input — [try it yourself →](https://huggingface.co/spaces/epicsagas/velith)
+
+| Metric | Raw Input | After Velith Pipeline |
+|--------|-----------|----------------------|
+| Structure score | 2–4 / 10 | 6–9 / 10 |
+| Redundancy | 20–45% n-gram overlap | < 10% after consolidation |
+| AI-slop markers | 6–20 per 1K words | Flagged & removed by style-doctor |
+| Chapter hierarchy | None | Detected + mapped with cross-references |
+| Coherence score | 0.3–1.5 / 10 | Improved with section restructuring |
 
 | | Feature | Why it matters |
 |--|---------|----------------|
@@ -48,15 +61,16 @@ Writing a book with raw LLM prompts gives you disconnected chapters, inconsisten
 
 ## Comparison
 
-| | Velith | Raw prompts | AI writing tools (Jasper, Sudowrite) |
-|--|-----------|-------------|--------------------------------------|
-| Structure validation | Phase-gated pipeline | None | Basic templates |
-| Cross-chapter continuity | Dedicated agent | Manual | Limited |
-| AI-slop detection | Built-in (style-doctor) | None | None |
-| Genre awareness | 7 genre systems + custom | Depends on prompt | Fiction-focused |
-| Output format | EPUB, PDF, MOBI, TXT, Markdown | Copy-paste | DOCX, limited |
-| Requires | Claude Code, Codex CLI, Agy, Cursor, Cline, or Aider | Any LLM | Subscription |
-| Full control | Prompt-level | Full | Black box |
+| | Velith | Raw prompts | Notion AI | Jasper / Sudowrite | Scrivener |
+|--|-----------|-------------|-----------|-------------------|-----------|
+| Structure validation | Phase-gated pipeline | None | None | Basic templates | Manual |
+| Cross-chapter continuity | Dedicated agent | Manual | None | Limited | Manual |
+| AI-slop detection | Built-in (style-doctor) | None | None | None | None |
+| Genre awareness | 8 genre systems + custom | Prompt-dependent | None | Fiction-focused | None |
+| Output format | EPUB, PDF, MOBI, TXT, Markdown | Copy-paste | Markdown / PDF | DOCX, limited | DOCX, PDF |
+| Quality gates | Every phase | None | None | None | None |
+| Requires | Claude Code, Codex CLI, Agy, Cursor, Cline, or Aider | Any LLM | Notion subscription | Subscription | License |
+| Full control | Prompt-level | Full | Black box | Black box | Full |
 
 ## Installation
 

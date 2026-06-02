@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0] - 2026-06
+
+### Added
+- Hugging Face Space demo (`hf-space/`) — Gradio app simulating the text analysis and structuring pipeline with heuristic NLP metrics
+- Three 1000+ word example inputs (messy notes, meeting transcript, research dump)
+- README: HF Space demo badge, Benchmark section, expanded comparison table (Notion AI, Scrivener)
+- `docs/launch-playbook.md` — 48-hour HN + HF + X launch strategy
+
 ## [0.4.0] - 2026-06
 
 ### Added
