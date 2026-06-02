@@ -38,15 +38,16 @@ Where Models Stand Today
 
 As of mid-2026, here’s what the major models offer:
 
-  Model                Context Window
-  -------------------- ------------------
-  GPT-4o               128,000 tokens
-  Claude Sonnet 4      200,000 tokens
-  Gemini 1.5 Pro       1,000,000 tokens
-  Llama 3 8B (local)   8,192 tokens
-  Mistral 7B (local)   32,768 tokens
+  Model                       Context Window
+  --------------------------- -------------------
+  GPT-5                       1,047,576 tokens
+  Claude Opus 4.8             200,000 tokens
+  Claude Sonnet 4.6           200,000 tokens
+  Gemini 3.1 Pro              1,048,576 tokens
+  Llama 4 Scout (local)       10,000,000 tokens
+  Mistral Small 3.2 (local)   128,000 tokens
 
-The jump from 8k to 200k is significant for practical use. A local model running on your laptop caps out at roughly 6,000 words; a cloud model can handle entire codebases in one shot. But larger windows cost more per token and respond more slowly. You pay for the space you use, so understanding what you actually need in context is worth your time.
+The range is striking: a quantized local model might cap at 128k tokens while frontier cloud models now push past one million. But bigger isn’t always better — million-token windows cost more per request, respond more slowly, and attention quality still degrades over very long contexts. You pay for the space you use, so understanding what you actually need in context is worth your time.
 
 Working Memory, Not Long-Term Memory
 
@@ -108,7 +109,7 @@ The good news: token counts are easy to instrument. Every major API returns usag
 
     response = client.messages.create(...)
     used = response.usage.input_tokens
-    limit = 200_000  # Claude Sonnet 4
+    limit = 200_000  # Claude Sonnet 4.6
     print(f"{used}/{limit} tokens ({used/limit:.0%} full)")
 
 Set an alert threshold — 75-80% of your context window — and flag requests that exceed it for review. You’ll quickly identify which conversation flows are at risk before users notice the degradation.

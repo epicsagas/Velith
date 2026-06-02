@@ -242,33 +242,37 @@ application.</p>
 </thead>
 <tbody>
 <tr>
-<td>GPT-4o</td>
-<td>128,000 tokens</td>
+<td>GPT-5</td>
+<td>1,047,576 tokens</td>
 </tr>
 <tr>
-<td>Claude Sonnet 4</td>
+<td>Claude Opus 4.8</td>
 <td>200,000 tokens</td>
 </tr>
 <tr>
-<td>Gemini 1.5 Pro</td>
-<td>1,000,000 tokens</td>
+<td>Claude Sonnet 4.6</td>
+<td>200,000 tokens</td>
 </tr>
 <tr>
-<td>Llama 3 8B (local)</td>
-<td>8,192 tokens</td>
+<td>Gemini 3.1 Pro</td>
+<td>1,048,576 tokens</td>
 </tr>
 <tr>
-<td>Mistral 7B (local)</td>
-<td>32,768 tokens</td>
+<td>Llama 4 Scout (local)</td>
+<td>10,000,000 tokens</td>
+</tr>
+<tr>
+<td>Mistral Small 3.2 (local)</td>
+<td>128,000 tokens</td>
 </tr>
 </tbody>
 </table>
-<p>The jump from 8k to 200k is significant for practical use. A local
-model running on your laptop caps out at roughly 6,000 words; a cloud
-model can handle entire codebases in one shot. But larger windows cost
-more per token and respond more slowly. You pay for the space you use,
-so understanding what you actually need in context is worth your
-time.</p>
+<p>The range is striking: a quantized local model might cap at 128k
+tokens while frontier cloud models now push past one million. But bigger
+isn’t always better — million-token windows cost more per request,
+respond more slowly, and attention quality still degrades over very long
+contexts. You pay for the space you use, so understanding what you
+actually need in context is worth your time.</p>
 <h2 id="working-memory-not-long-term-memory">Working Memory, Not
 Long-Term Memory</h2>
 <p>Here’s the thing most people get wrong: a context window is
@@ -364,7 +368,7 @@ context resets.</p>
 returns usage metadata on each response:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> client.messages.create(...)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>used <span class="op">=</span> response.usage.input_tokens</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>limit <span class="op">=</span> <span class="dv">200_000</span>  <span class="co"># Claude Sonnet 4</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>limit <span class="op">=</span> <span class="dv">200_000</span>  <span class="co"># Claude Sonnet 4.6</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;</span><span class="sc">{</span>used<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>limit<span class="sc">}</span><span class="ss"> tokens (</span><span class="sc">{</span>used<span class="op">/</span>limit<span class="sc">:.0%}</span><span class="ss"> full)&quot;</span>)</span></code></pre></div>
 <p>Set an alert threshold — 75-80% of your context window — and flag
 requests that exceed it for review. You’ll quickly identify which
