@@ -140,10 +140,10 @@
     <!-- Logo -->
     <div class="px-4 py-3 border-b border-sidebar-border shrink-0">
       <button class="flex items-center gap-2.5" onclick={() => { bookIndex = null; syncUrl(); }}>
-        <span class="material-symbols-outlined fill-icon text-xl text-primary-container">book_2</span>
+        <span class="material-symbols-outlined fill-icon text-xl text-sidebar-accent">book_2</span>
         <div class="text-left">
           <p class="font-bold text-base leading-none text-sidebar-text" style="font-family:'Newsreader',serif;">Velith</p>
-          <p class="text-[10px] text-sidebar-muted tracking-widest uppercase mt-0.5">Writing Dashboard</p>
+          <p class="text-xs text-sidebar-muted tracking-widest uppercase mt-0.5">Writing Dashboard</p>
         </div>
       </button>
     </div>
@@ -161,13 +161,13 @@
           aria-current={active ? 'page' : undefined}
         >
           <span class="material-symbols-outlined text-base {active ? 'text-sidebar-accent' : ''}">{item.icon}</span>
-          <span class="text-[11px] tracking-widest uppercase font-semibold">{currentI18n.t(item.labelKey)}</span>
+          <span class="text-xs tracking-widest uppercase font-semibold">{currentI18n.t(item.labelKey)}</span>
         </button>
       {/each}
 
       {#if projects.length > 1}
         <div class="border-t border-sidebar-border mt-1 pt-2 px-3">
-          <p class="text-[10px] text-sidebar-muted mb-1 uppercase tracking-widest px-1">Projects</p>
+          <p class="text-xs text-sidebar-muted mb-1 uppercase tracking-widest px-1">Projects</p>
           {#each projects as p, i}
             <button
               class="w-full text-left px-2 py-1.5 rounded text-xs transition-colors
@@ -182,15 +182,15 @@
     <!-- Bottom: project info -->
     <div class="px-4 py-2.5 border-t border-sidebar-border shrink-0">
       {#if project}
-        <button class="flex items-center gap-1 text-[10px] text-sidebar-muted hover:text-sidebar-text mb-1 uppercase tracking-wider"
+        <button class="flex items-center gap-1 text-xs text-sidebar-muted hover:text-sidebar-text mb-1 uppercase tracking-wider"
           onclick={() => { bookIndex = null; syncUrl(); }}>
           <span class="material-symbols-outlined text-xs">arrow_back</span>
           Select a project
         </button>
         <p class="text-xs text-sidebar-text font-medium truncate">{project.name}</p>
-        <p class="text-[11px] text-sidebar-muted truncate capitalize">{project.genre} · {project.language ?? 'ko'}</p>
+        <p class="text-xs text-sidebar-muted truncate capitalize">{project.genre} · {project.language ?? 'ko'}</p>
       {:else}
-        <p class="text-[11px] text-sidebar-muted">No project</p>
+        <p class="text-xs text-sidebar-muted">No project</p>
       {/if}
     </div>
   </aside>
@@ -210,7 +210,7 @@
         href="https://github.com/epicsagas/Velith"
         target="_blank"
         rel="noopener noreferrer"
-        class="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-semibold border border-outline-variant text-secondary hover:bg-surface-container transition-colors uppercase tracking-wider"
+        class="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold border border-outline-variant text-secondary hover:bg-surface-container transition-colors uppercase tracking-wider"
       >
         <span class="material-symbols-outlined text-sm">star</span>
         Star
@@ -219,7 +219,7 @@
         href="https://github.com/sponsors/epicsagas"
         target="_blank"
         rel="noopener noreferrer"
-        class="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-semibold border border-outline-variant text-secondary hover:bg-surface-container transition-colors uppercase tracking-wider"
+        class="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold border border-outline-variant text-secondary hover:bg-surface-container transition-colors uppercase tracking-wider"
       >
         <span class="material-symbols-outlined text-sm">favorite</span>
         Sponsor
@@ -231,15 +231,18 @@
       >
         <span class="material-symbols-outlined text-sm">{isDark ? 'light_mode' : 'dark_mode'}</span>
       </button>
-      <select
-        class="bg-surface text-on-surface rounded px-2 py-1 text-[11px] font-semibold border border-outline-variant uppercase tracking-wider"
-        value={currentI18n.locale}
-        onchange={(e) => locale.set(e.target.value)}
-      >
-        {#each currentI18n.allLocales as loc}
-          <option value={loc}>{loc.toUpperCase()}</option>
-        {/each}
-      </select>
+      <div class="relative">
+        <select
+          class="appearance-none bg-surface text-on-surface rounded pl-2 pr-7 py-1 text-xs font-semibold border border-outline-variant uppercase tracking-wider cursor-pointer"
+          value={currentI18n.locale}
+          onchange={(e) => locale.set(e.target.value)}
+        >
+          {#each currentI18n.allLocales as loc}
+            <option value={loc}>{loc.toUpperCase()}</option>
+          {/each}
+        </select>
+        <span class="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-sm text-secondary" style="font-size:14px">expand_more</span>
+      </div>
     </header>
 
     <!-- Content -->
@@ -313,7 +316,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="sticky bottom-0 z-10 bg-surface border-t border-outline-variant px-4 py-1.5 flex items-center gap-4 text-[11px] text-secondary">
+    <footer class="sticky bottom-0 z-10 bg-surface border-t border-outline-variant px-4 py-1.5 flex items-center gap-4 text-xs text-secondary">
       {#if project}
         {@const rt = relativeTime(project.last_updated)}
         <span class="{rt?.warn ? 'text-error' : ''}">

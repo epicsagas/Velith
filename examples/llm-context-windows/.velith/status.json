@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-02T08:48:58.550Z",
+  "generated_at": "2026-06-02T09:39:10.128Z",
   "agents": [
     {
       "id": "book-architect",
@@ -112,15 +112,15 @@
       ],
       "total_chapters": 3,
       "completed_chapters": 3,
-      "total_words": 2409,
+      "total_words": 2419,
       "target_words": 2400,
       "count_unit": "words",
       "chapter_details": [
         {
           "filename": "ch01-what-is-a-context-window.md",
           "title": "what is a context window",
-          "lines": 71,
-          "words": 806,
+          "lines": 72,
+          "words": 816,
           "status": "edit",
           "edit_stage": "proofread"
         },
@@ -145,12 +145,12 @@
         {
           "name": "book.epub",
           "exists": true,
-          "size_bytes": 17290
+          "size_bytes": 17338
         },
         {
           "name": "book.pdf",
           "exists": true,
-          "size_bytes": 258943
+          "size_bytes": 259502
         },
         {
           "name": "book.mobi",
@@ -169,7 +169,7 @@
         }
       ],
       "cover_path": null,
-      "last_updated": "2026-06-02T08:48:58.550Z"
+      "last_updated": "2026-06-02T09:39:10.128Z"
     }
   ]
 }
