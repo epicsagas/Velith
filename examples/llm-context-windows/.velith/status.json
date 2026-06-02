@@ -1,0 +1,175 @@
+{
+  "generated_at": "2026-06-02T08:48:58.550Z",
+  "agents": [
+    {
+      "id": "book-architect",
+      "name": "Book Architect",
+      "icon": "architecture",
+      "role": "Structural design & outline planning",
+      "status": "complete",
+      "last_run": null,
+      "task": null
+    },
+    {
+      "id": "chapter-writer",
+      "name": "Chapter Writer",
+      "icon": "edit_note",
+      "role": "Draft generation",
+      "status": "complete",
+      "last_run": null,
+      "task": null
+    },
+    {
+      "id": "continuity-editor",
+      "name": "Continuity Editor",
+      "icon": "compare_arrows",
+      "role": "Cross-chapter consistency",
+      "status": "idle",
+      "last_run": null,
+      "task": null
+    },
+    {
+      "id": "cover-designer",
+      "name": "Cover Designer",
+      "icon": "palette",
+      "role": "Cover design & brand identity",
+      "status": "complete",
+      "last_run": null,
+      "task": null
+    },
+    {
+      "id": "marketing-expert",
+      "name": "Marketing Expert",
+      "icon": "campaign",
+      "role": "Marketing copy & launch",
+      "status": "idle",
+      "last_run": null,
+      "task": null
+    },
+    {
+      "id": "scene-generator",
+      "name": "Scene Generator",
+      "icon": "theaters",
+      "role": "Scene creation & expansion",
+      "status": "idle",
+      "last_run": null,
+      "task": null
+    },
+    {
+      "id": "style-doctor",
+      "name": "Style Doctor",
+      "icon": "medical_services",
+      "role": "Style consistency & AI-slop detection",
+      "status": "complete",
+      "last_run": null,
+      "task": null
+    }
+  ],
+  "projects": [
+    {
+      "name": "Understanding LLM Context Windows",
+      "path": "/Users/hackme/workspace/projects/epiccounty/Velith/examples/llm-context-windows",
+      "genre": "** technical",
+      "language": "** English",
+      "current_phase": 4,
+      "phase_status": [
+        {
+          "phase": 0,
+          "name": "Onboarding",
+          "percent": 100,
+          "status": "complete"
+        },
+        {
+          "phase": 1,
+          "name": "Ideation",
+          "percent": 100,
+          "status": "complete"
+        },
+        {
+          "phase": 2,
+          "name": "Outlining",
+          "percent": 100,
+          "status": "complete"
+        },
+        {
+          "phase": 3,
+          "name": "Drafting",
+          "percent": 100,
+          "status": "complete"
+        },
+        {
+          "phase": 4,
+          "name": "Editing",
+          "percent": 50,
+          "status": "in_progress"
+        },
+        {
+          "phase": 5,
+          "name": "Publishing",
+          "percent": 83,
+          "status": "complete"
+        }
+      ],
+      "total_chapters": 3,
+      "completed_chapters": 3,
+      "total_words": 2409,
+      "target_words": 2400,
+      "count_unit": "words",
+      "chapter_details": [
+        {
+          "filename": "ch01-what-is-a-context-window.md",
+          "title": "what is a context window",
+          "lines": 71,
+          "words": 806,
+          "status": "edit",
+          "edit_stage": "proofread"
+        },
+        {
+          "filename": "ch02-what-happens-when-context-runs-out.md",
+          "title": "what happens when context runs out",
+          "lines": 66,
+          "words": 773,
+          "status": "edit",
+          "edit_stage": "proofread"
+        },
+        {
+          "filename": "ch03-practical-strategies.md",
+          "title": "practical strategies",
+          "lines": 109,
+          "words": 830,
+          "status": "edit",
+          "edit_stage": "proofread"
+        }
+      ],
+      "output_files": [
+        {
+          "name": "book.epub",
+          "exists": true,
+          "size_bytes": 17290
+        },
+        {
+          "name": "book.pdf",
+          "exists": true,
+          "size_bytes": 258943
+        },
+        {
+          "name": "book.mobi",
+          "exists": false,
+          "size_bytes": 0
+        },
+        {
+          "name": "book.txt",
+          "exists": true,
+          "size_bytes": 15415
+        },
+        {
+          "name": "book.md",
+          "exists": true,
+          "size_bytes": 15933
+        }
+      ],
+      "cover_path": null,
+      "last_updated": "2026-06-02T08:48:58.550Z"
+    }
+  ]
+}

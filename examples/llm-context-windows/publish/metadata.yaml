@@ -1,0 +1,19 @@
+---
+title: "Understanding LLM Context Windows"
+subtitle: "A Practical Guide for Software Engineers"
+author: "Generated with Velith"
+lang: en-US
+keywords:
+  - LLM
+  - context window
+  - RAG
+  - chunking
+  - prompt engineering
+  - production AI
+description: >
+  A concise technical guide covering what context windows are, how they fail,
+  and five production-tested strategies for managing them — without needing
+  a bigger model.
+rights: "Apache-2.0"
+publisher: "Velith Demo"
+date: "2026-06-02"

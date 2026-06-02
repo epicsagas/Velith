@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Generated with Velith" />
+  <meta name="dcterms.date" content="2026-06-02" />
+  <meta name="keywords" content="LLM, context
+window, RAG, chunking, prompt engineering, production AI" />
+  <meta name="description" content="A concise technical guide covering what context windows are, how they fail, and five production-tested strategies for managing them — without needing a bigger model." />
+  <title>Practical Strategies for Managing Context</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">body {
+font-family: Georgia, "Times New Roman", serif;
+font-size: 1em;
+line-height: 1.6;
+max-width: 36em;
+margin: 0 auto;
+color: #1a1a1a;
+}
+h1 { font-size: 1.8em; margin-top: 2em; }
+h2 { font-size: 1.3em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.2em; }
+h3 { font-size: 1.1em; margin-top: 1.4em; }
+code, pre {
+font-family: "SF Mono", "Fira Code", Consolas, monospace;
+font-size: 0.88em;
+background: #f5f5f5;
+border-radius: 3px;
+}
+pre { padding: 1em; overflow-x: auto; }
+code { padding: 0.1em 0.3em; }
+table {
+border-collapse: collapse;
+width: 100%;
+margin: 1.2em 0;
+}
+th, td {
+border: 1px solid #ddd;
+padding: 0.5em 0.8em;
+text-align: left;
+}
+th { background: #f0f0f0; font-weight: bold; }
+blockquote {
+border-left: 3px solid #ccc;
+margin-left: 0;
+padding-left: 1em;
+color: #555;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Practical Strategies for Managing Context</h1>
+<p class="subtitle">A Practical Guide for Software Engineers</p>
+<p class="author">Generated with Velith</p>
+<p class="date">2026-06-02</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#what-is-a-context-window" id="toc-what-is-a-context-window">What Is a Context Window?</a>
+<ul>
+<li><a href="#what-the-model-actually-sees" id="toc-what-the-model-actually-sees">What the Model Actually
+Sees</a></li>
+<li><a href="#what-a-token-is" id="toc-what-a-token-is">What a Token
+Is</a></li>
+<li><a href="#why-windows-are-bounded" id="toc-why-windows-are-bounded">Why Windows Are Bounded</a></li>
+<li><a href="#where-models-stand-today" id="toc-where-models-stand-today">Where Models Stand Today</a></li>
+<li><a href="#working-memory-not-long-term-memory" id="toc-working-memory-not-long-term-memory">Working Memory, Not
+Long-Term Memory</a></li>
+</ul></li>
+<li><a href="#what-happens-when-context-runs-out" id="toc-what-happens-when-context-runs-out">What Happens When Context
+Runs Out</a>
+<ul>
+<li><a href="#how-truncation-happens" id="toc-how-truncation-happens">How Truncation Happens</a></li>
+<li><a href="#recency-bias" id="toc-recency-bias">Recency Bias</a></li>
+<li><a href="#silent-failure-modes" id="toc-silent-failure-modes">Silent
+Failure Modes</a></li>
+<li><a href="#context-poisoning" id="toc-context-poisoning">Context
+Poisoning</a></li>
+<li><a href="#diagnosing-the-problem" id="toc-diagnosing-the-problem">Diagnosing the Problem</a></li>
+</ul></li>
+<li><a href="#practical-strategies-for-managing-context" id="toc-practical-strategies-for-managing-context">Practical Strategies
+for Managing Context</a>
+<ul>
+<li><a href="#chunking" id="toc-chunking">Chunking</a></li>
+<li><a href="#rolling-summarization" id="toc-rolling-summarization">Rolling Summarization</a></li>
+<li><a href="#retrieval-augmented-generation-rag" id="toc-retrieval-augmented-generation-rag">Retrieval-Augmented
+Generation (RAG)</a></li>
+<li><a href="#sliding-window" id="toc-sliding-window">Sliding
+Window</a></li>
+<li><a href="#token-budgeting" id="toc-token-budgeting">Token
+Budgeting</a></li>
+<li><a href="#choosing-a-strategy" id="toc-choosing-a-strategy">Choosing
+a Strategy</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="what-is-a-context-window">What Is a Context Window?</h1>
+<p>You paste 10,000 words into ChatGPT and it forgets the first half.
+Here’s why.</p>
+<p>This isn’t a bug. It’s a fundamental property of how large language
+models work — and once you understand it, a lot of otherwise mysterious
+model behavior starts to make sense.</p>
+<h2 id="what-the-model-actually-sees">What the Model Actually Sees</h2>
+<p>Every time you send a message to a language model, the model starts
+fresh. It has no memory of previous sessions, no persistent storage, no
+internal database it’s consulting. All it has is the text you send it
+right now, in this single request.</p>
+<p>Think of it like a filing cabinet that gets emptied and refilled on
+every request. You hand the model a folder. It reads the folder. It
+writes a response. The folder disappears. Next request, you hand it a
+new folder — which might include the previous response if you’re
+building a chat application, but that’s your code doing that, not the
+model remembering anything.</p>
+<p>This folder is the <strong>context window</strong>: the complete text
+the model can read before generating a response. Everything inside it
+the model can use. Everything outside it doesn’t exist, from the model’s
+perspective.</p>
+<h2 id="what-a-token-is">What a Token Is</h2>
+<p>Models don’t read text the way you do. They work with
+<strong>tokens</strong> — chunks of characters that a tokenizer has
+split the text into. Tokens roughly correspond to words, but not
+exactly.</p>
+<p>Common English words are usually one token each: “cat”, “run”, “the”.
+Longer or less common words get split: “unbelievable” becomes three
+tokens (“un”, “believ”, “able”). Spaces and punctuation count too. A
+rough rule: <strong>1 token ≈ 4 characters</strong>, or about 0.75
+words.</p>
+<p>Why does this matter? Because context window sizes are measured in
+tokens, not words or characters. When a model says it has a
+128,000-token context window, that’s roughly 96,000 words — about the
+length of a long novel. Sounds like a lot. But a large codebase, a
+research paper with appendices, or a day’s worth of chat history can
+fill that faster than you’d expect.</p>
+<p>You can check token counts with the <code>tiktoken</code> library
+(for OpenAI models) or the tokenizer endpoints in Anthropic’s and
+Google’s APIs:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tiktoken</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>enc <span class="op">=</span> tiktoken.encoding_for_model(<span class="st">&quot;gpt-4o&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(enc.encode(<span class="st">&quot;Hello, world!&quot;</span>)))  <span class="co"># → 4 tokens</span></span></code></pre></div>
+<h2 id="why-windows-are-bounded">Why Windows Are Bounded</h2>
+<p>If bigger context windows are better, why not make them infinite?</p>
+<p>The short answer is math. The attention mechanism at the core of
+transformer models — the part that lets the model relate any word to any
+other word — scales <strong>quadratically</strong> with sequence length.
+Double the context, quadruple the compute. At some point the hardware
+cost becomes prohibitive.</p>
+<p>Engineers are actively working around this with sparse attention
+patterns, linear attention variants, and state-space models. Context
+windows have grown dramatically over the past few years. But there’s
+still a ceiling, and hitting it has real consequences for your
+application.</p>
+<h2 id="where-models-stand-today">Where Models Stand Today</h2>
+<p>As of mid-2026, here’s what the major models offer:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Context Window</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPT-4o</td>
+<td>128,000 tokens</td>
+</tr>
+<tr>
+<td>Claude Sonnet 4</td>
+<td>200,000 tokens</td>
+</tr>
+<tr>
+<td>Gemini 1.5 Pro</td>
+<td>1,000,000 tokens</td>
+</tr>
+<tr>
+<td>Llama 3 8B (local)</td>
+<td>8,192 tokens</td>
+</tr>
+<tr>
+<td>Mistral 7B (local)</td>
+<td>32,768 tokens</td>
+</tr>
+</tbody>
+</table>
+<p>The jump from 8k to 200k is significant for practical use. A local
+model running on your laptop caps out at roughly 6,000 words; a cloud
+model can handle entire codebases in one shot. But larger windows cost
+more per token and respond more slowly. You pay for the space you use,
+so understanding what you actually need in context is worth your
+time.</p>
+<h2 id="working-memory-not-long-term-memory">Working Memory, Not
+Long-Term Memory</h2>
+<p>Here’s the thing most people get wrong: a context window is
+<strong>working memory</strong>, not long-term memory.</p>
+<p>Working memory is what you hold in your head right now — the details
+you’re actively juggling while solving a problem. It’s fast, powerful,
+and finite. Long-term memory is everything you’ve ever learned — vast,
+persistent, slow to update.</p>
+<p>A language model’s training is its long-term memory. All the
+patterns, facts, and language it absorbed during training are baked into
+its weights. The context window is its working memory: the active
+scratchpad for this specific task, right now.</p>
+<p>This matters in practice: a model can know a lot about Python from
+training, but if you don’t include your specific function in the context
+window, it can’t see it. Training knowledge doesn’t substitute for
+missing context. A model that knows everything about SQL can still give
+you wrong answers about your schema if you forgot to paste it in.</p>
+<p>In the next chapter, we’ll look at what actually happens when the
+working memory fills up — and why the failures are so hard to
+detect.</p>
+<h1 id="what-happens-when-context-runs-out">What Happens When Context
+Runs Out</h1>
+<p>Your carefully crafted system prompt just got silently truncated.
+Your app has no idea.</p>
+<p>That’s the core danger. When a context window fills up, tokens get
+dropped — and the model never tells you. It keeps generating responses
+as if everything is fine, because from where it sits, it is. It only
+sees what’s currently in context. What’s missing is invisible to it.</p>
+<h2 id="how-truncation-happens">How Truncation Happens</h2>
+<p>When your input exceeds the context window, something has to give.
+Most APIs handle this with <strong>oldest-first truncation</strong>: the
+beginning of the conversation gets cut, the most recent messages are
+kept.</p>
+<p>This makes sense intuitively — recent messages are usually more
+relevant. But it creates a specific failure pattern: long-running
+conversations silently lose their system prompt.</p>
+<p>Picture a customer support bot with a 600-token system prompt:
+persona rules, response policies, things it must never say. After enough
+conversation turns, those 600 tokens scroll out of the window. The model
+is now running without its instructions. It didn’t malfunction — it
+simply can’t see them anymore. From that point on, every response is
+shaped by a policy it can no longer read.</p>
+<p>Some APIs let you configure truncation behavior, or raise an error
+instead of silently truncating. Check the documentation for your
+specific provider. The default behavior is almost always silent.</p>
+<h2 id="recency-bias">Recency Bias</h2>
+<p>Even when nothing gets truncated, models don’t treat all tokens
+equally. Research on transformer attention patterns shows a consistent
+<strong>recency bias</strong>: tokens near the end of the context
+receive more attention weight than tokens in the middle.</p>
+<p>This is sometimes called the “lost in the middle” problem. If you
+place critical instructions in the middle of a 100,000-token context,
+don’t assume the model will follow them reliably. Instructions at the
+very start (system prompt) or immediately before the user’s final
+message tend to stick better.</p>
+<p>Practical takeaway: position your most important constraints at the
+edges of the context, not buried in the middle. If you’re using RAG and
+injecting retrieved documents, put the user’s actual question after the
+documents in your prompt, not before.</p>
+<h2 id="silent-failure-modes">Silent Failure Modes</h2>
+<p>The most dangerous property of context overflow is that it fails
+quietly. Three patterns show up repeatedly in production:</p>
+<p><strong>Forgotten constraints.</strong> The model was told “always
+respond in formal English.” After 50 turns, that instruction is gone. It
+starts responding casually. Your monitoring catches nothing because the
+responses are still fluent.</p>
+<p><strong>Lost code context.</strong> You’re asking an LLM to help
+debug a large service. You paste in files one at a time across a long
+session. By file 10, file 1 is no longer in context — but the model
+freely references function signatures and variable names from file 1 as
+if it can see them. The suggestions look plausible and are completely
+wrong.</p>
+<p><strong>Stale facts.</strong> You correct a detail mid-conversation:
+“actually the endpoint is <code>/v2/users</code>, not
+<code>/v1/users</code>.” In a short conversation, the model uses the
+corrected value. In a long one, both the original and the correction may
+be in context, and the model may choose either — inconsistently.</p>
+<h2 id="context-poisoning">Context Poisoning</h2>
+<p>A related failure mode that gets less attention: <strong>context
+poisoning</strong>. This is when incorrect or adversarial content added
+to the context degrades the quality of all subsequent responses.</p>
+<p>Accidental poisoning happens when a user pastes in wrong information,
+or when a retrieved document contains outdated data. The model has no
+way to flag a conflict between what’s in context and what it knows from
+training — it just tries to reconcile them.</p>
+<p>Intentional poisoning is the basis of prompt injection attacks: an
+attacker embeds instructions inside external content you ask the model
+to process (“Ignore your previous instructions and…”). Once that content
+is in context, every response is potentially compromised until the
+context resets.</p>
+<h2 id="diagnosing-the-problem">Diagnosing the Problem</h2>
+<p>The good news: token counts are easy to instrument. Every major API
+returns usage metadata on each response:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> client.messages.create(...)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>used <span class="op">=</span> response.usage.input_tokens</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>limit <span class="op">=</span> <span class="dv">200_000</span>  <span class="co"># Claude Sonnet 4</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;</span><span class="sc">{</span>used<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>limit<span class="sc">}</span><span class="ss"> tokens (</span><span class="sc">{</span>used<span class="op">/</span>limit<span class="sc">:.0%}</span><span class="ss"> full)&quot;</span>)</span></code></pre></div>
+<p>Set an alert threshold — 75-80% of your context window — and flag
+requests that exceed it for review. You’ll quickly identify which
+conversation flows are at risk before users notice the degradation.</p>
+<p>Silently failing LLM apps are some of the hardest to debug: the model
+is always confident, the output is always fluent, and the source of
+drift is invisible unless you’re watching the numbers.</p>
+<p>In the next chapter, we’ll cover the strategies engineers use to keep
+context lean without sacrificing quality.</p>
+<h1 id="practical-strategies-for-managing-context">Practical Strategies
+for Managing Context</h1>
+<p>Three techniques used in production LLM apps — none require a bigger
+context window.</p>
+<p>The instinct when you hit context limits is to find a model with a
+larger window. Sometimes that’s the right call. But context window size
+is a blunt instrument: it costs more, responds slower, and doesn’t
+address the underlying issue — sending the model more than it needs. The
+strategies below are about precision.</p>
+<h2 id="chunking">Chunking</h2>
+<p><strong>Chunking</strong> splits a large input into smaller pieces,
+processes each piece independently, then merges the results. It’s the
+simplest strategy and the right first move for single-pass tasks on
+large documents.</p>
+<p>If you need to summarize a 60,000-word report and your model has an
+8,000-token window, you don’t need a bigger model. Chunk the report into
+sections, summarize each one, then summarize the summaries:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> chunk_text(text, chunk_size<span class="op">=</span><span class="dv">2000</span>):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    words <span class="op">=</span> text.split()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [<span class="st">&quot; &quot;</span>.join(words[i:i<span class="op">+</span>chunk_size])</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(words), chunk_size)]</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>summaries <span class="op">=</span> [summarize(chunk) <span class="cf">for</span> chunk <span class="kw">in</span> chunk_text(document)]</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>final <span class="op">=</span> summarize(<span class="st">&quot;</span><span class="ch">\n\n</span><span class="st">&quot;</span>.join(summaries))</span></code></pre></div>
+<p>The tradeoff: concepts introduced in chunk 1 may be referenced in
+chunk 3 without definition. Adding overlap — including the last 200
+words of the previous chunk at the start of the next — reduces
+information loss at boundaries.</p>
+<h2 id="rolling-summarization">Rolling Summarization</h2>
+<p>For ongoing conversations, <strong>rolling summarization</strong>
+compresses the oldest turns into a summary and replaces them with it.
+Instead of dropping old turns entirely (the default truncation
+behavior), you distill them.</p>
+<p>After every N turns, take the oldest M messages, summarize them into
+a compact paragraph, and swap them out:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compress_history(messages, keep_recent<span class="op">=</span><span class="dv">6</span>):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(messages) <span class="op">&lt;=</span> keep_recent:</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> messages</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    old <span class="op">=</span> messages[:<span class="op">-</span>keep_recent]</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    summary <span class="op">=</span> summarize_messages(old)  <span class="co"># your summarization function</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    compressed <span class="op">=</span> {<span class="st">&quot;role&quot;</span>: <span class="st">&quot;system&quot;</span>, <span class="st">&quot;content&quot;</span>: <span class="ss">f&quot;Earlier: </span><span class="sc">{</span>summary<span class="sc">}</span><span class="ss">&quot;</span>}</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [compressed] <span class="op">+</span> messages[<span class="op">-</span>keep_recent:]</span></code></pre></div>
+<p>This keeps total context size bounded regardless of conversation
+length. The cost is nuance: a summary loses exact wording, tone, and
+edge cases. For high-stakes flows where a user’s earlier phrasing
+matters, it’s a risk worth knowing about.</p>
+<h2 id="retrieval-augmented-generation-rag">Retrieval-Augmented
+Generation (RAG)</h2>
+<p><strong>RAG</strong> is the right tool when you have a large,
+relatively static knowledge base — documentation, a codebase, a support
+ticket history — and need the model to answer questions about it.</p>
+<p>Instead of loading the entire knowledge base into context (impossible
+at scale), you index it into a vector store, then retrieve only the most
+relevant pieces at query time:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>hits <span class="op">=</span> vector_store.search(user_query, top_k<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>context <span class="op">=</span> <span class="st">&quot;</span><span class="ch">\n\n</span><span class="st">&quot;</span>.join(h.text <span class="cf">for</span> h <span class="kw">in</span> hits)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> llm.complete(system<span class="op">=</span><span class="ss">f&quot;Context:</span><span class="ch">\n</span><span class="sc">{</span>context<span class="sc">}</span><span class="ss">&quot;</span>, user<span class="op">=</span>user_query)</span></code></pre></div>
+<p>RAG keeps context lean by construction. The tradeoff is retrieval
+quality: if the embedding search returns the wrong chunks, the model
+answers from irrelevant material without knowing it. Garbage in,
+confident garbage out.</p>
+<h2 id="sliding-window">Sliding Window</h2>
+<p>When processing a continuous stream — a long document, a transcript,
+a log file — <strong>sliding window</strong> processing maintains
+continuity across chunk boundaries.</p>
+<p>Each window overlaps with the previous one by some amount. A
+2,000-token window with a 400-token overlap means window 2 begins 1,600
+tokens into window 1. Any entity or concept introduced in the final 400
+tokens of window 1 is visible at the start of window 2.</p>
+<pre><code>Window 1: [tokens 0 ──────────────── 2000]
+Window 2:                [tokens 1600 ──────────────── 3600]
+Window 3:                                [tokens 3200 ──────────────── 5200]
+                          ↑ overlap ↑</code></pre>
+<p>This prevents the hard boundary problem of plain chunking, at the
+cost of processing overlap tokens twice. For a 400-token overlap on
+2,000-token windows, that’s a 20% compute overhead — usually worth it
+when continuity matters.</p>
+<h2 id="token-budgeting">Token Budgeting</h2>
+<p>The most underused strategy is also the most direct:
+<strong>explicitly allocate your context window before building a
+request</strong>.</p>
+<p>Treat the context window like memory in an embedded system — you know
+the total, so assign slots:</p>
+<table>
+<thead>
+<tr>
+<th>Slot</th>
+<th>Allocation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>System prompt</td>
+<td>500 tokens (never truncate)</td>
+</tr>
+<tr>
+<td>Conversation history</td>
+<td>2,000 tokens</td>
+</tr>
+<tr>
+<td>Retrieved context (RAG)</td>
+<td>3,000 tokens</td>
+</tr>
+<tr>
+<td>User message</td>
+<td>500 tokens</td>
+</tr>
+<tr>
+<td>Output buffer</td>
+<td>2,000 tokens</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>8,000 tokens</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Enforce these limits in code. Trim history before retrieved context.
+Trim retrieved context before touching the system prompt. The system
+prompt is inviolable.</p>
+<h2 id="choosing-a-strategy">Choosing a Strategy</h2>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Large document, one-shot question</td>
+<td>Chunking</td>
+</tr>
+<tr>
+<td>Long conversation, unbounded turns</td>
+<td>Rolling summarization</td>
+</tr>
+<tr>
+<td>Large knowledge base, dynamic queries</td>
+<td>RAG</td>
+</tr>
+<tr>
+<td>Stream processing with continuity</td>
+<td>Sliding window</td>
+</tr>
+<tr>
+<td>Any app at risk of overflow</td>
+<td>Token budgeting</td>
+</tr>
+</tbody>
+</table>
+<p>These compose. A production chatbot over a documentation corpus might
+use RAG to pull relevant docs, rolling summarization to compress
+history, and token budgeting to enforce hard limits — all in the same
+request pipeline.</p>
+<p>Context management isn’t the interesting part of building LLM
+applications. But it’s the part that determines whether they work
+reliably at scale. A model is only as good as what you put in front of
+it.</p>
+</body>
+</html>
