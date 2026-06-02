@@ -15,22 +15,24 @@
   <!-- Header -->
   <div class="flex items-center justify-between">
     <p class="text-sm font-mono font-semibold text-on-surface">
-      {totalWords.toLocaleString()} / {project.target_words.toLocaleString()} WORDS
+      {totalWords.toLocaleString()} / {project.target_words.toLocaleString()} {i18n.t('outline.words').toUpperCase()}
     </p>
     <div class="flex gap-2">
       <button
-        class="flex items-center gap-1.5 px-3 py-1.5 rounded border border-outline-variant text-[11px] font-semibold uppercase tracking-wider text-secondary hover:bg-surface-container transition-colors"
-        onclick={() => copyToClipboard('/book-outline')}
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded border border-outline-variant text-xs font-semibold uppercase tracking-wider text-secondary hover:bg-surface-container transition-colors"
+        onclick={() => copyToClipboard('/book-outline sync PRD')}
       >
         <span class="material-symbols-outlined text-sm">sync</span>
-        Sync PRD
+        <span class="font-mono">/book-outline</span>
+        <span class="text-on-surface-variant normal-case font-normal">sync PRD</span>
       </button>
       <button
-        class="flex items-center gap-1.5 px-3 py-1.5 rounded border border-outline-variant text-[11px] font-semibold uppercase tracking-wider text-secondary hover:bg-surface-container transition-colors"
-        onclick={() => copyToClipboard('/book-outline')}
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded border border-outline-variant text-xs font-semibold uppercase tracking-wider text-secondary hover:bg-surface-container transition-colors"
+        onclick={() => copyToClipboard('/book-outline add chapter')}
       >
         <span class="material-symbols-outlined text-sm">add</span>
-        Add Chapter
+        <span class="font-mono">/book-outline</span>
+        <span class="text-on-surface-variant normal-case font-normal">add chapter</span>
       </button>
     </div>
   </div>
@@ -38,8 +40,8 @@
   {#if chapters.length === 0}
     <div class="text-center py-16">
       <span class="material-symbols-outlined text-5xl text-outline">format_list_bulleted</span>
-      <p class="mt-2 text-sm uppercase tracking-wider text-secondary">No chapters</p>
-      <p class="text-xs text-on-surface-variant mt-1">Run /book-outline to generate an outline</p>
+      <p class="mt-2 text-sm uppercase tracking-wider text-secondary">{i18n.t('outline.noChapters')}</p>
+      <p class="text-xs text-on-surface-variant mt-1">{i18n.t('outline.noChaptersHint')}</p>
     </div>
   {:else}
     <div class="space-y-1.5">
@@ -63,15 +65,14 @@
               <div class="flex items-center gap-3 shrink-0">
                 <div class="text-right">
                   <span class="text-sm font-semibold font-mono text-on-surface">{ch.words.toLocaleString()}</span>
-                  <span class="text-xs text-secondary ml-1">words</span>
+                  <span class="text-xs text-secondary ml-1">{i18n.t('outline.words')}</span>
                 </div>
-                <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border {statusClass(ch.status)}">
-                  {ch.status === 'edit' ? 'Done' : ch.status === 'draft' ? 'Draft' : 'Wait'}
+                <span class="inline-flex px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider border {statusClass(ch.status)}">
+                  {i18n.t('chStatus.' + ch.status)}
                 </span>
               </div>
             </div>
-            <p class="text-[10px] text-on-surface-variant font-mono mt-0.5">{ch.filename}</p>
-            <!-- Progress bar -->
+            <p class="text-xs text-on-surface-variant font-mono mt-0.5">{ch.filename}</p>
             <div class="mt-2 h-1 bg-surface-container rounded-full overflow-hidden">
               <div class="h-full bg-primary rounded-full" style="width:{pct}%"></div>
             </div>
