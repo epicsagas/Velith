@@ -19,7 +19,7 @@
 
   <!-- Genre Workflow -->
   <div>
-    <p class="text-[10px] uppercase tracking-widest text-secondary mb-2 font-semibold">Genre Workflow</p>
+    <p class="text-[10px] uppercase tracking-widest text-secondary mb-2 font-semibold">{i18n.t('help.genreWorkflow')}</p>
     <!-- Genre tabs -->
     <div class="flex flex-wrap gap-1 mb-3">
       {#each GENRE_WORKFLOWS as g}
@@ -39,11 +39,11 @@
         <h3 class="font-bold uppercase tracking-wide text-sm">{selectedGenre.name}</h3>
       </div>
       <div class="mb-2">
-        <p class="text-[10px] uppercase tracking-widest text-secondary mb-1 font-semibold">Structure Template</p>
+        <p class="text-[10px] uppercase tracking-widest text-secondary mb-1 font-semibold">{i18n.t('help.structure')}</p>
         <p class="text-xs text-on-surface bg-surface-container px-3 py-2 rounded font-mono">{selectedGenre.structure}</p>
       </div>
       <div class="mb-2">
-        <p class="text-[10px] uppercase tracking-widest text-secondary mb-1 font-semibold">Key Features</p>
+        <p class="text-[10px] uppercase tracking-widest text-secondary mb-1 font-semibold">{i18n.t('help.keyFeatures')}</p>
         <div class="flex flex-wrap gap-1.5">
           {#each selectedGenre.highlights as h}
             <span class="px-2 py-0.5 text-[11px] rounded border border-primary text-primary bg-primary/5 font-medium">{h}</span>
@@ -56,7 +56,7 @@
 
   <!-- Skill Reference -->
   <div>
-    <p class="text-[10px] uppercase tracking-widest text-secondary mb-2 font-semibold">Skill Reference</p>
+    <p class="text-[10px] uppercase tracking-widest text-secondary mb-2 font-semibold">{i18n.t('help.skills')}</p>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
       {#each PIPELINE_COMMANDS as cmd}
         <button
@@ -82,7 +82,7 @@
 
   <!-- Agent Reference -->
   <div>
-    <p class="text-[10px] uppercase tracking-widest text-secondary mb-2 font-semibold">Agent Reference</p>
+    <p class="text-[10px] uppercase tracking-widest text-secondary mb-2 font-semibold">{i18n.t('help.agents')}</p>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
       {#each AGENT_DEFS as agent}
         <div class="flex items-center gap-3 p-3 rounded border border-outline-variant bg-surface-container-lowest">
@@ -99,10 +99,10 @@
 
   <!-- Pipeline Overview -->
   <div>
-    <p class="text-[10px] uppercase tracking-widest text-secondary mb-2 font-semibold">Pipeline Overview</p>
+    <p class="text-[10px] uppercase tracking-widest text-secondary mb-2 font-semibold">{i18n.t('help.pipelineOverview')}</p>
     <div class="border border-outline-variant rounded bg-surface-container-lowest p-4">
       <div class="flex items-center gap-1">
-        {#each ['Onboarding','Ideation','Outlining','Drafting','Editing','Publishing'] as phase, i}
+        {#each [i18n.t('phase.onboarding'),i18n.t('phase.ideation'),i18n.t('phase.outlining'),i18n.t('phase.drafting'),i18n.t('phase.editing'),i18n.t('phase.publishing')] as phase, i}
           <div class="flex-1 text-center py-3 rounded border
             {i === 3 ? 'bg-primary border-primary text-on-primary' : 'bg-surface-container border-outline-variant text-secondary'}">
             <p class="text-[10px] font-bold uppercase tracking-wider leading-none">{phase}</p>
@@ -119,7 +119,7 @@
 
   <!-- Quick Start -->
   <div>
-    <p class="text-[10px] uppercase tracking-widest text-secondary mb-2 font-semibold">Quick Start</p>
+    <p class="text-[10px] uppercase tracking-widest text-secondary mb-2 font-semibold">{i18n.t('help.quickStart')}</p>
     <div class="border border-outline-variant rounded bg-surface-container-lowest overflow-hidden">
       {#each [
         { cmd: '/book-init',      icon: 'rocket_launch',        key: 'help.qs.init' },
