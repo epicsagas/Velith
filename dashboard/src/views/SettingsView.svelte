@@ -1,6 +1,7 @@
 <script>
   import { PIPELINE_COMMANDS, AGENT_DEFS } from '../lib/data.js';
-  let { project, agents, i18n, copyToClipboard } = $props();
+  import { setAccent, PRESET_COLORS, setFont, FONT_OPTIONS } from '../lib/theme.js';
+  let { project, agents, i18n, copyToClipboard, isDark = false, accent = '#e8650a', font = 'geist' } = $props();
 
   function phaseStatusClass(s) {
     if (s === 'complete') return 'border-primary text-on-primary bg-primary';
@@ -133,6 +134,75 @@
           <span class="text-xs uppercase tracking-wider text-on-surface-variant border border-outline-variant px-2 py-0.5 rounded">{agent.genre}</span>
         </div>
       {/each}
+    </div>
+  </div>
+
+  <!-- Font -->
+  <div class="border border-outline-variant rounded overflow-hidden">
+    <div class="px-4 py-2 border-b border-outline-variant bg-surface-container">
+      <p class="text-xs font-bold uppercase tracking-widest text-secondary">{i18n.t('settings.font')}</p>
+    </div>
+    <div class="divide-y divide-outline-variant">
+      {#each FONT_OPTIONS as opt}
+        <button
+          class="w-full flex items-center gap-4 px-4 py-3 hover:bg-surface-container transition-colors text-left"
+          onclick={() => setFont(opt.id)}
+        >
+          <span class="w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center
+            {font === opt.id ? 'border-primary' : 'border-outline-variant'}">
+            {#if font === opt.id}
+              <span class="w-2 h-2 rounded-full bg-primary"></span>
+            {/if}
+          </span>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold" style="font-family:{opt.stack}">{opt.label}</p>
+            <p class="text-xs text-secondary font-mono truncate">{opt.stack.split(',')[0].replace(/'/g, '')}</p>
+          </div>
+          <span class="text-sm text-secondary shrink-0" style="font-family:{opt.stack}">가Aa123</span>
+        </button>
+      {/each}
+    </div>
+  </div>
+
+  <!-- Accent Color -->
+  <div class="border border-outline-variant rounded overflow-hidden">
+    <div class="px-4 py-2 border-b border-outline-variant bg-surface-container">
+      <p class="text-xs font-bold uppercase tracking-widest text-secondary">{i18n.t('settings.accentColor')}</p>
+    </div>
+    <div class="p-4 space-y-4">
+      <!-- Presets -->
+      <div class="flex flex-wrap gap-2">
+        {#each PRESET_COLORS as preset}
+          {@const hex = isDark ? preset.dark : preset.light}
+          <button
+            class="w-8 h-8 rounded-full border-2 transition-all hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            style="background-color:{hex}; border-color:{accent === hex ? hex : 'transparent'}; box-shadow:{accent === hex ? '0 0 0 2px white, 0 0 0 4px ' + hex : 'none'}"
+            title={preset.label}
+            onclick={() => setAccent(hex, isDark)}
+          ></button>
+        {/each}
+      </div>
+      <!-- Custom picker -->
+      <div class="flex items-center gap-3">
+        <label class="relative w-10 h-10 rounded-lg border border-outline-variant overflow-hidden cursor-pointer hover:border-primary transition-colors shrink-0">
+          <input
+            type="color"
+            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            value={accent}
+            oninput={(e) => setAccent(e.target.value, isDark)}
+          />
+          <div class="w-full h-full rounded-lg" style="background-color:{accent}"></div>
+          <span class="absolute bottom-0 right-0 material-symbols-outlined text-white" style="font-size:12px; text-shadow:0 0 3px rgba(0,0,0,0.5)">colorize</span>
+        </label>
+        <div class="flex-1">
+          <p class="text-xs font-semibold text-on-surface">{i18n.t('settings.customColor')}</p>
+          <p class="text-xs text-secondary font-mono">{accent}</p>
+        </div>
+        <button
+          class="text-xs text-secondary hover:text-on-surface border border-outline-variant px-3 py-1.5 rounded transition-colors"
+          onclick={() => setAccent(isDark ? '#ff8c3a' : '#e8650a', isDark)}
+        >{i18n.t('settings.resetColor')}</button>
+      </div>
     </div>
   </div>
 
