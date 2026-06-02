@@ -8,7 +8,7 @@ sdk_version: 5.0.0
 app_file: app.py
 pinned: false
 license: apache-2.0
-short_description: Turn messy notes into structured books — with measurable improvement
+short_description: Paste raw notes. Get a structured book outline + metrics.
 ---
 
 # Velith Pipeline Demo
