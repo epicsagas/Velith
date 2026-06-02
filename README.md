@@ -10,7 +10,7 @@
 </p>
 <p>
   <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.5.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
-  <a href="https://huggingface.co/spaces/epicsagas/velith"><img alt="HF Demo" src="https://img.shields.io/badge/🤗_HF_Space-Demo-ffd700?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href="https://huggingface.co/spaces/epicsaga/Velith"><img alt="HF Demo" src="https://img.shields.io/badge/🤗_HF_Space-Demo-ffd700?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -40,7 +40,7 @@ Writing a book with raw LLM prompts gives you disconnected chapters, inconsisten
 
 ## Benchmark
 
-What the pipeline does to unstructured input — [try it yourself →](https://huggingface.co/spaces/epicsagas/velith)
+What the pipeline does to unstructured input — [try it yourself →](https://huggingface.co/spaces/epicsaga/Velith)
 
 | Metric | Raw Input | After Velith Pipeline |
 |--------|-----------|----------------------|
