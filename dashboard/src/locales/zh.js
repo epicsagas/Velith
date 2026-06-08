@@ -158,6 +158,7 @@ export default {
   "settings.totalChapters": "总章节数",
   "status.complete": "已完成",
   "status.currentTask": "当前任务",
+  "status.disabled": "已禁用",
   "status.idle": "空闲中",
   "status.lastRun": "最后运行",
   "status.noAgents": "暂无智能体数据",
