@@ -109,9 +109,8 @@ function buildStatus() {
   if (!cachedStatus) {
     cachedStatus = buildStatusFresh();
   }
-  // Update timestamp even on cache hit so UI knows it's alive
-  cachedStatus.generated_at = new Date().toISOString();
-  return cachedStatus;
+  // Spread to avoid mutating the cached object — generated_at signals server liveness to the UI
+  return { ...cachedStatus, generated_at: new Date().toISOString() };
 }
 
 function serveStatic(res, urlPath) {
