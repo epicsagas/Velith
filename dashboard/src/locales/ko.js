@@ -158,6 +158,7 @@ export default {
   "settings.totalChapters": "총 챕터 수",
   "status.complete": "완료",
   "status.currentTask": "현재 작업",
+  "status.disabled": "비활성화",
   "status.idle": "대기 중",
   "status.lastRun": "마지막 실행",
   "status.noAgents": "에이전트 데이터가 없습니다",

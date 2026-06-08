@@ -158,6 +158,7 @@ export default {
   "settings.totalChapters": "総章数",
   "status.complete": "完了",
   "status.currentTask": "現在のタスク",
+  "status.disabled": "無効",
   "status.idle": "待機中",
   "status.lastRun": "最終実行",
   "status.noAgents": "エージェントデータなし",
