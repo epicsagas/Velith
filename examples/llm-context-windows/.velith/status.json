@@ -51,7 +51,7 @@
       "name": "Scene Generator",
       "icon": "theaters",
       "role": "Scene creation & expansion (fiction only)",
-      "status": "idle",
+      "status": "disabled",
       "last_run": null,
       "task": null
     },

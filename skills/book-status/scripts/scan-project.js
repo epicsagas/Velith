@@ -141,7 +141,7 @@ const agents = agentDefs.map(a => {
   const s = sf ? read(sf, {}) : {};
   let status = s.status || null;
   if (!status) {
-    if (a.id === 'scene-generator' && !FICTION_GENRES.has(meta.genre)) status = 'disabled';
+    if (a.id === 'scene-generator' && meta.genre && !FICTION_GENRES.has(meta.genre)) status = 'disabled';
     else if (a.artifacts.length > 0 && a.artifacts.every(f => existsSync(join(dir, f)))) status = 'complete';
     else if (a.id === 'chapter-writer' && drafts.length > 0) status = drafts.length < (effectivePlanned || Infinity) ? 'running' : 'complete';
     else if (a.id === 'style-doctor' && editStageGte('line-edit')) status = 'complete';
