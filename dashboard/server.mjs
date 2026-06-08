@@ -60,8 +60,15 @@ function buildStatusFresh() {
     // Watch this project's status.json for changes
     if (!statusWatchers.has(sp)) {
       try {
-        const watcher = fs.watch(sp, () => { cachedStatus = null; });
-        watcher.on('error', () => {});
+        const watcher = fs.watch(sp, (eventType) => {
+          cachedStatus = null;
+          // On rename (atomic write via temp-file), the watcher loses the inode — re-register next build
+          if (eventType === 'rename') {
+            watcher.close();
+            statusWatchers.delete(sp);
+          }
+        });
+        watcher.on('error', () => { statusWatchers.delete(sp); });
         statusWatchers.set(sp, watcher);
       } catch {}
     }
