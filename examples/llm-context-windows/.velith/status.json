@@ -69,8 +69,8 @@
     {
       "name": "Understanding LLM Context Windows",
       "path": "/Users/hackme/workspace/projects/epiccounty/Velith/examples/llm-context-windows",
-      "genre": "** technical",
-      "language": "** English",
+      "genre": "technical",
+      "language": "English",
       "current_phase": 4,
       "phase_status": [
         {
