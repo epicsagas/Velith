@@ -158,6 +158,7 @@ export default {
   "settings.totalChapters": "Capitoli totali",
   "status.complete": "Completato",
   "status.currentTask": "Attività corrente",
+  "status.disabled": "Disabilitato",
   "status.idle": "Inattivo",
   "status.lastRun": "Ultima esecuzione",
   "status.noAgents": "Nessun dato agente",

@@ -43,14 +43,35 @@ function getProjectDir(index) {
   return entry?.path || null;
 }
 
-function buildStatus() {
+// In-memory cache invalidated by fs.watch on each project's status.json
+let cachedStatus = null;
+const statusWatchers = new Map();
+
+function buildStatusFresh() {
   const registry = getRegistry();
   const projects = [];
   const agentMap = new Map();
+  const activePaths = new Set();
   for (const [idx, entry] of (registry.projects || []).entries()) {
     const sp = path.join(entry.path, '.velith', 'status.json');
     const data = readJson(sp, null);
     if (!data) continue;
+    activePaths.add(sp);
+    // Watch this project's status.json for changes
+    if (!statusWatchers.has(sp)) {
+      try {
+        const watcher = fs.watch(sp, (eventType) => {
+          cachedStatus = null;
+          // On rename (atomic write via temp-file), the watcher loses the inode — re-register next build
+          if (eventType === 'rename') {
+            watcher.close();
+            statusWatchers.delete(sp);
+          }
+        });
+        watcher.on('error', () => { statusWatchers.delete(sp); });
+        statusWatchers.set(sp, watcher);
+      } catch {}
+    }
     // Extract project records from status.json (format: { generated_at, agents, projects: [...] })
     for (const proj of data.projects || []) {
       // Attach cover image path
@@ -63,15 +84,40 @@ function buildStatus() {
           proj.cover_file = cover;
         }
       } catch {}
+      // Attach per-project agents so each project has its own agent statuses
+      proj.agents = Array.isArray(data.agents) ? data.agents : [];
       projects.push(proj);
     }
+    // Also build a global agent list for backward compat — merge by picking the
+    // most-progressed status per agent id across all projects:
+    //   complete > running > disabled > idle
     if (Array.isArray(data.agents)) {
+      const rank = { complete: 3, running: 2, disabled: 1, idle: 0 };
       for (const a of data.agents) {
-        if (a?.id) agentMap.set(a.id, a);
+        if (!a?.id) continue;
+        const existing = agentMap.get(a.id);
+        if (!existing || (rank[a.status] || 0) > (rank[existing.status] || 0)) {
+          agentMap.set(a.id, a);
+        }
       }
     }
   }
+  // Remove watchers for projects no longer in the registry
+  for (const [sp, watcher] of statusWatchers) {
+    if (!activePaths.has(sp)) {
+      watcher.close();
+      statusWatchers.delete(sp);
+    }
+  }
   return { projects, agents: Array.from(agentMap.values()), generated_at: new Date().toISOString() };
+}
+
+function buildStatus() {
+  if (!cachedStatus) {
+    cachedStatus = buildStatusFresh();
+  }
+  // Spread to avoid mutating the cached object — generated_at signals server liveness to the UI
+  return { ...cachedStatus, generated_at: new Date().toISOString() };
 }
 
 function serveStatic(res, urlPath) {

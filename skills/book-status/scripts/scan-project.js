@@ -91,7 +91,7 @@ const chapter_details = drafts.map(f => {
 // 'wait' entries for planned chapters not yet drafted (parse outline.md)
 const outlineText = has('outline.md') ? readFileSync(join(dir, 'outline.md'), 'utf8') : '';
 const plannedChapters = [...outlineText.matchAll(/^###\s+Chapter\s+(\d+):\s*(.+)$/gm)].map(m => ({ num: parseInt(m[1]), title: m[2].trim() }));
-const draftedNums = new Set(drafts.map(f => { const m = f.match(/^ch(\d+)/i); return m ? parseInt(m[1]) : null; }).filter(Boolean));
+const draftedNums = new Set(drafts.map(f => { const m = f.match(/^ch(\d+)/i); return m ? parseInt(m[1]) : null; }).filter(n => n !== null));
 for (const pc of plannedChapters) {
   if (!draftedNums.has(pc.num)) {
     chapter_details.push({ filename: `ch${String(pc.num).padStart(2, '0')}-${pc.title.replace(/\s+/g, '-')}.md`, title: pc.title, lines: 0, words: 0, status: 'wait', edit_stage: null });
@@ -116,13 +116,19 @@ const output_files = formats.map(fmt => {
   return { name: `book.${fmt}`, exists: existsSync(p), size_bytes: existsSync(p) ? statSync(p).size : 0 };
 });
 
+// Fiction-only agents are disabled for non-fiction genres
+const FICTION_GENRES = new Set(['fiction', 'romance', 'thriller', 'mystery', 'fantasy', 'sci-fi', 'literary-fiction']);
+const EDIT_STAGE_ORDER = ['assessment', 'developmental', 'line-edit', 'copy-edit', 'proofread'];
+const editStageIdx = editStage ? EDIT_STAGE_ORDER.indexOf(editStage) : -1;
+const editStageGte = (stage) => editStageIdx >= EDIT_STAGE_ORDER.indexOf(stage);
+
 // agent defaults + artifact-based status inference
 const agentDefs = [
   { id: 'book-architect', name: 'Book Architect', icon: 'architecture', role: 'Structural design & outline planning', artifacts: ['PRD.md', 'STYLE.md', 'outline.md'] },
   { id: 'chapter-writer', name: 'Chapter Writer', icon: 'edit_note', role: 'Draft generation', artifacts: [] },
   { id: 'continuity-editor', name: 'Continuity Editor', icon: 'compare_arrows', role: 'Cross-chapter consistency', artifacts: [] },
   { id: 'cover-designer', name: 'Cover Designer', icon: 'palette', role: 'Cover design & brand identity', artifacts: ['publish/cover'] },
-  { id: 'marketing-expert', name: 'Marketing Expert', icon: 'campaign', role: 'Marketing copy & launch', artifacts: [] },
+  { id: 'marketing-expert', name: 'Marketing Expert', icon: 'campaign', role: 'Marketing copy & launch', artifacts: ['publish/marketing-plan.md'] },
   { id: 'scene-generator', name: 'Scene Generator', icon: 'theaters', role: 'Scene creation & expansion', artifacts: [] },
   { id: 'style-doctor', name: 'Style Doctor', icon: 'medical_services', role: 'Style consistency & AI-slop detection', artifacts: [] },
 ];
@@ -135,10 +141,11 @@ const agents = agentDefs.map(a => {
   const s = sf ? read(sf, {}) : {};
   let status = s.status || null;
   if (!status) {
-    if (a.artifacts.length > 0 && a.artifacts.every(f => existsSync(join(dir, f)))) status = 'complete';
+    if (a.id === 'scene-generator' && meta.genre && !FICTION_GENRES.has(meta.genre)) status = 'disabled';
+    else if (a.artifacts.length > 0 && a.artifacts.every(f => existsSync(join(dir, f)))) status = 'complete';
     else if (a.id === 'chapter-writer' && drafts.length > 0) status = drafts.length < (effectivePlanned || Infinity) ? 'running' : 'complete';
-    else if (a.id === 'style-doctor' && editStage === 'proofread') status = 'complete';
-    else if (a.id === 'continuity-editor' && editStage === 'developmental') status = 'complete';
+    else if (a.id === 'style-doctor' && editStageGte('line-edit')) status = 'complete';
+    else if (a.id === 'continuity-editor' && editStageGte('developmental')) status = 'complete';
     else status = 'idle';
   }
   return { id: a.id, name: a.name, icon: a.icon, role: a.role, status, last_run: s.last_run || null, task: s.task || null };

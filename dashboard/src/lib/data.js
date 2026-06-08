@@ -24,6 +24,9 @@ export const PIPELINE_COMMANDS = [
 
 export const QUICK_COMMANDS = PIPELINE_COMMANDS.filter((c) => c.phase >= 0 && c.phase <= 5);
 
+// Keep in sync with FICTION_GENRES in skills/book-status/scripts/scan-project.js — both must match exactly
+export const FICTION_GENRES = new Set(['fiction', 'romance', 'thriller', 'mystery', 'fantasy', 'sci-fi', 'literary-fiction']);
+
 export const AGENT_DEFS = [
   { id: 'book-architect', icon: 'architecture', genre: 'all' },
   { id: 'chapter-writer', icon: 'edit_note', genre: 'all' },
@@ -78,7 +81,7 @@ export const SAMPLE_DATA = {
     { id: 'continuity-editor', name: 'Continuity Editor', icon: 'compare_arrows', role: 'Cross-chapter consistency checks', status: 'idle', last_run: '2026-05-15T22:00:00Z', task: null },
     { id: 'cover-designer', name: 'Cover Designer', icon: 'palette', role: 'Visual cover design & brand identity', status: 'idle', last_run: null, task: null },
     { id: 'marketing-expert', name: 'Marketing Expert', icon: 'campaign', role: 'Book description & marketing copy', status: 'idle', last_run: null, task: null },
-    { id: 'scene-generator', name: 'Scene Generator', icon: 'theaters', role: 'Scene creation & expansion', status: 'complete', last_run: '2026-05-16T09:00:00Z', task: null },
+    { id: 'scene-generator', name: 'Scene Generator', icon: 'theaters', role: 'Scene creation & expansion (fiction only)', status: 'complete', last_run: '2026-05-16T09:00:00Z', task: null },
     { id: 'style-doctor', name: 'Style Doctor', icon: 'medical_services', role: 'Style consistency & AI-slop detection', status: 'complete', last_run: '2026-05-16T08:30:00Z', task: null },
   ],
   projects: [

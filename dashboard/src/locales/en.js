@@ -158,6 +158,7 @@ export default {
   "settings.totalChapters": "Total Chapters",
   "status.complete": "Complete",
   "status.currentTask": "Current Task",
+  "status.disabled": "Disabled",
   "status.idle": "Idle",
   "status.lastRun": "Last run",
   "status.noAgents": "No agent data",

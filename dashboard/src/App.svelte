@@ -70,8 +70,8 @@
     dataState.kind === 'ok' ? dataState.data : null
   );
   let projects = $derived(statusData?.projects ?? []);
-  let agents  = $derived(statusData?.agents ?? []);
   let project = $derived(bookIndex !== null ? projects[bookIndex] ?? null : null);
+  let agents  = $derived(project?.agents ?? statusData?.agents ?? []);
 
   $effect(() => {
     parsePath();
