@@ -75,11 +75,21 @@ function buildStatusFresh() {
           proj.cover_file = cover;
         }
       } catch {}
+      // Attach per-project agents so each project has its own agent statuses
+      proj.agents = Array.isArray(data.agents) ? data.agents : [];
       projects.push(proj);
     }
+    // Also build a global agent list for backward compat — merge by picking the
+    // most-progressed status per agent id across all projects:
+    //   complete > running > disabled > idle
     if (Array.isArray(data.agents)) {
+      const rank = { complete: 3, running: 2, disabled: 1, idle: 0 };
       for (const a of data.agents) {
-        if (a?.id) agentMap.set(a.id, a);
+        if (!a?.id) continue;
+        const existing = agentMap.get(a.id);
+        if (!existing || (rank[a.status] || 0) > (rank[existing.status] || 0)) {
+          agentMap.set(a.id, a);
+        }
       }
     }
   }
