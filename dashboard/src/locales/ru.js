@@ -158,6 +158,7 @@ export default {
   "settings.totalChapters": "Всего глав",
   "status.complete": "Завершено",
   "status.currentTask": "Текущая задача",
+  "status.disabled": "Отключено",
   "status.idle": "Простой",
   "status.lastRun": "Последний запуск",
   "status.noAgents": "Нет данных об агентах",

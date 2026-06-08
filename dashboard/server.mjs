@@ -51,11 +51,13 @@ function buildStatusFresh() {
   const registry = getRegistry();
   const projects = [];
   const agentMap = new Map();
+  const activePaths = new Set();
   for (const [idx, entry] of (registry.projects || []).entries()) {
     const sp = path.join(entry.path, '.velith', 'status.json');
     const data = readJson(sp, null);
     if (!data) continue;
-    // Watch this project's status.json for changes (debounced)
+    activePaths.add(sp);
+    // Watch this project's status.json for changes
     if (!statusWatchers.has(sp)) {
       try {
         const watcher = fs.watch(sp, () => { cachedStatus = null; });
@@ -91,6 +93,13 @@ function buildStatusFresh() {
           agentMap.set(a.id, a);
         }
       }
+    }
+  }
+  // Remove watchers for projects no longer in the registry
+  for (const [sp, watcher] of statusWatchers) {
+    if (!activePaths.has(sp)) {
+      watcher.close();
+      statusWatchers.delete(sp);
     }
   }
   return { projects, agents: Array.from(agentMap.values()), generated_at: new Date().toISOString() };

@@ -4,17 +4,20 @@
   let runningCount  = $derived(agents.filter(a => a.status === 'running').length);
   let idleCount     = $derived(agents.filter(a => a.status === 'idle').length);
   let completeCount = $derived(agents.filter(a => a.status === 'complete').length);
+  let disabledCount = $derived(agents.filter(a => a.status === 'disabled').length);
 
   function iconBg(s) {
     if (s === 'running')  return 'bg-primary border-primary text-on-primary';
     if (s === 'complete') return 'bg-primary border-primary text-on-primary';
     if (s === 'error')    return 'bg-error border-error text-on-primary';
+    if (s === 'disabled') return 'bg-surface-container border-outline-variant text-outline';
     return 'bg-surface-container border-outline-variant text-secondary';
   }
   function badgeClass(s) {
     if (s === 'running')  return 'border-primary text-primary';
     if (s === 'complete') return 'border-primary text-on-primary bg-primary';
     if (s === 'error')    return 'border-error text-error';
+    if (s === 'disabled') return 'border-outline-variant text-outline';
     return 'border-outline-variant text-secondary';
   }
 </script>
@@ -22,7 +25,7 @@
 <div class="space-y-4">
 
   <!-- Summary -->
-  <div class="grid grid-cols-3 gap-3">
+  <div class="grid grid-cols-4 gap-3">
     <div class="border {runningCount > 0 ? 'border-primary' : 'border-outline-variant'} rounded bg-surface-container-lowest p-4 text-center">
       <p class="text-xs uppercase tracking-widest text-secondary mb-1 font-semibold">{i18n.t('status.running')}</p>
       <p class="text-4xl font-bold {runningCount > 0 ? 'text-primary' : 'text-on-surface-variant'}">{runningCount}</p>
@@ -35,6 +38,12 @@
       <p class="text-xs uppercase tracking-widest text-secondary mb-1 font-semibold">{i18n.t('status.complete')}</p>
       <p class="text-4xl font-bold text-on-surface">{completeCount}</p>
     </div>
+    {#if disabledCount > 0}
+    <div class="border border-outline-variant rounded bg-surface-container-lowest p-4 text-center">
+      <p class="text-xs uppercase tracking-widest text-secondary mb-1 font-semibold">{i18n.t('status.disabled')}</p>
+      <p class="text-4xl font-bold text-outline">{disabledCount}</p>
+    </div>
+    {/if}
   </div>
 
   {#if agents.length === 0}

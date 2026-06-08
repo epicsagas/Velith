@@ -50,7 +50,7 @@
       "id": "scene-generator",
       "name": "Scene Generator",
       "icon": "theaters",
-      "role": "Scene creation & expansion",
+      "role": "Scene creation & expansion (fiction only)",
       "status": "idle",
       "last_run": null,
       "task": null
