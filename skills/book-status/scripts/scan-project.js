@@ -116,16 +116,21 @@ const output_files = formats.map(fmt => {
   return { name: `book.${fmt}`, exists: existsSync(p), size_bytes: existsSync(p) ? statSync(p).size : 0 };
 });
 
+// Fiction-only agents — shown as 'disabled' for non-fiction genres
+const FICTION_ONLY = new Set(['scene-generator']);
+const FICTION_GENRES = new Set(['fiction', 'romance', 'thriller', 'mystery', 'fantasy', 'sci-fi', 'literary-fiction']);
+
 // agent defaults + artifact-based status inference
 const agentDefs = [
   { id: 'book-architect', name: 'Book Architect', icon: 'architecture', role: 'Structural design & outline planning', artifacts: ['PRD.md', 'STYLE.md', 'outline.md'] },
   { id: 'chapter-writer', name: 'Chapter Writer', icon: 'edit_note', role: 'Draft generation', artifacts: [] },
   { id: 'continuity-editor', name: 'Continuity Editor', icon: 'compare_arrows', role: 'Cross-chapter consistency', artifacts: [] },
   { id: 'cover-designer', name: 'Cover Designer', icon: 'palette', role: 'Cover design & brand identity', artifacts: ['publish/cover'] },
-  { id: 'marketing-expert', name: 'Marketing Expert', icon: 'campaign', role: 'Marketing copy & launch', artifacts: [] },
-  { id: 'scene-generator', name: 'Scene Generator', icon: 'theaters', role: 'Scene creation & expansion', artifacts: [] },
+  { id: 'marketing-expert', name: 'Marketing Expert', icon: 'campaign', role: 'Marketing copy & launch', artifacts: ['publish/marketing-plan.md'] },
+  { id: 'scene-generator', name: 'Scene Generator', icon: 'theaters', role: 'Scene creation & expansion (fiction only)', artifacts: [] },
   { id: 'style-doctor', name: 'Style Doctor', icon: 'medical_services', role: 'Style consistency & AI-slop detection', artifacts: [] },
 ];
+const genreIsFiction = FICTION_GENRES.has((meta.genre || '').toLowerCase());
 const projectAgentsDir = join(dir, '.velith', 'agents');
 const globalAgentsDir = join(VELITH, 'agents');
 const agents = agentDefs.map(a => {
@@ -135,10 +140,12 @@ const agents = agentDefs.map(a => {
   const s = sf ? read(sf, {}) : {};
   let status = s.status || null;
   if (!status) {
-    if (a.artifacts.length > 0 && a.artifacts.every(f => existsSync(join(dir, f)))) status = 'complete';
+    // Fiction-only agents are disabled for non-fiction genres
+    if (FICTION_ONLY.has(a.id) && !genreIsFiction) status = 'disabled';
+    else if (a.artifacts.length > 0 && a.artifacts.every(f => existsSync(join(dir, f)))) status = 'complete';
     else if (a.id === 'chapter-writer' && drafts.length > 0) status = drafts.length < (effectivePlanned || Infinity) ? 'running' : 'complete';
-    else if (a.id === 'style-doctor' && editStage === 'proofread') status = 'complete';
-    else if (a.id === 'continuity-editor' && editStage === 'developmental') status = 'complete';
+    else if (a.id === 'style-doctor' && (editStage === 'line-edit' || editStage === 'copy-edit' || editStage === 'proofread')) status = 'complete';
+    else if (a.id === 'continuity-editor' && (editStage === 'developmental' || editStage === 'line-edit' || editStage === 'copy-edit' || editStage === 'proofread')) status = 'complete';
     else status = 'idle';
   }
   return { id: a.id, name: a.name, icon: a.icon, role: a.role, status, last_run: s.last_run || null, task: s.task || null };

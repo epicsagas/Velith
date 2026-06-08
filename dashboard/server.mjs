@@ -43,7 +43,11 @@ function getProjectDir(index) {
   return entry?.path || null;
 }
 
-function buildStatus() {
+// In-memory cache invalidated by fs.watch on each project's status.json
+let cachedStatus = null;
+const statusWatchers = new Map();
+
+function buildStatusFresh() {
   const registry = getRegistry();
   const projects = [];
   const agentMap = new Map();
@@ -51,6 +55,14 @@ function buildStatus() {
     const sp = path.join(entry.path, '.velith', 'status.json');
     const data = readJson(sp, null);
     if (!data) continue;
+    // Watch this project's status.json for changes (debounced)
+    if (!statusWatchers.has(sp)) {
+      try {
+        const watcher = fs.watch(sp, () => { cachedStatus = null; });
+        watcher.on('error', () => {});
+        statusWatchers.set(sp, watcher);
+      } catch {}
+    }
     // Extract project records from status.json (format: { generated_at, agents, projects: [...] })
     for (const proj of data.projects || []) {
       // Attach cover image path
@@ -72,6 +84,15 @@ function buildStatus() {
     }
   }
   return { projects, agents: Array.from(agentMap.values()), generated_at: new Date().toISOString() };
+}
+
+function buildStatus() {
+  if (!cachedStatus) {
+    cachedStatus = buildStatusFresh();
+  }
+  // Update timestamp even on cache hit so UI knows it's alive
+  cachedStatus.generated_at = new Date().toISOString();
+  return cachedStatus;
 }
 
 function serveStatic(res, urlPath) {
