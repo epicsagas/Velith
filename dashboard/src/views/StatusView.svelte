@@ -25,7 +25,7 @@
 <div class="space-y-4">
 
   <!-- Summary -->
-  <div class="grid grid-cols-4 gap-3">
+  <div class="grid gap-3" style="grid-template-columns: repeat({disabledCount > 0 ? 4 : 3}, minmax(0, 1fr))">
     <div class="border {runningCount > 0 ? 'border-primary' : 'border-outline-variant'} rounded bg-surface-container-lowest p-4 text-center">
       <p class="text-xs uppercase tracking-widest text-secondary mb-1 font-semibold">{i18n.t('status.running')}</p>
       <p class="text-4xl font-bold {runningCount > 0 ? 'text-primary' : 'text-on-surface-variant'}">{runningCount}</p>

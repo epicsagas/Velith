@@ -24,7 +24,7 @@ export const PIPELINE_COMMANDS = [
 
 export const QUICK_COMMANDS = PIPELINE_COMMANDS.filter((c) => c.phase >= 0 && c.phase <= 5);
 
-// Must stay in sync with FICTION_ONLY / FICTION_GENRES in scan-project.js
+// Must stay in sync with FICTION_GENRES in scan-project.js
 export const FICTION_GENRES = new Set(['fiction', 'romance', 'thriller', 'mystery', 'fantasy', 'sci-fi', 'literary-fiction']);
 
 export const AGENT_DEFS = [
