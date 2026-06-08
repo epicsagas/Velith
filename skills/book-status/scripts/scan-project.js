@@ -91,7 +91,7 @@ const chapter_details = drafts.map(f => {
 // 'wait' entries for planned chapters not yet drafted (parse outline.md)
 const outlineText = has('outline.md') ? readFileSync(join(dir, 'outline.md'), 'utf8') : '';
 const plannedChapters = [...outlineText.matchAll(/^###\s+Chapter\s+(\d+):\s*(.+)$/gm)].map(m => ({ num: parseInt(m[1]), title: m[2].trim() }));
-const draftedNums = new Set(drafts.map(f => { const m = f.match(/^ch(\d+)/i); return m ? parseInt(m[1]) : null; }).filter(Boolean));
+const draftedNums = new Set(drafts.map(f => { const m = f.match(/^ch(\d+)/i); return m ? parseInt(m[1]) : null; }).filter(n => n !== null));
 for (const pc of plannedChapters) {
   if (!draftedNums.has(pc.num)) {
     chapter_details.push({ filename: `ch${String(pc.num).padStart(2, '0')}-${pc.title.replace(/\s+/g, '-')}.md`, title: pc.title, lines: 0, words: 0, status: 'wait', edit_stage: null });
