@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.1.6] - 2026-06-08
+
+### Changed
+- Extract `FICTION_GENRES` list to `dashboard/shared/fiction-genres.json` (single source of truth for scan-project.js and data.js)
+- Add `console.error` logging to `fs.watch` catch block in server.mjs
+
+## [0.1.5] - 2026-06-08
+
+### Fixed
+- Dashboard: `fs.watch` cache invalidation for live status updates (atomic write safe)
+- Dashboard: per-project agent status instead of last-writer-wins merge
+- Dashboard: add `disabled` status i18n key (10 locales) and UI card
+- Scan: `filter(Boolean)` drops `ch00` — use `n !== null` instead
+- Scan: strip markdown bold (`**`) from YAML genre/language fields
+- Scan: fiction-only agents (`scene-generator`) show `disabled` for non-fiction genres
+- Scan: `style-doctor` infers `complete` from `line-edit` stage (not just `proofread`)
+
+## [0.1.4] - 2026-06-03
+
+### Fixed
+- Dashboard: add missing `edit.stage.*` i18n keys, remove last hardcoded Phase strings
+- Dashboard: resolve 11 review issues from i18n overhaul
+- Plugin: add icon and fix category for awesome-codex-plugins registration
+
 ## [0.1.3] - 2026-06-03
 
 ### Fixed
