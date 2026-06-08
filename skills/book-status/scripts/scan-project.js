@@ -117,7 +117,8 @@ const output_files = formats.map(fmt => {
 });
 
 // Fiction-only agents are disabled for non-fiction genres
-const FICTION_GENRES = new Set(['fiction', 'romance', 'thriller', 'mystery', 'fantasy', 'sci-fi', 'literary-fiction']);
+const _fgPath = pluginRoot ? join(pluginRoot, 'dashboard', 'shared', 'fiction-genres.json') : join(import.meta.dirname, '..', '..', '..', 'dashboard', 'shared', 'fiction-genres.json');
+const FICTION_GENRES = new Set(JSON.parse(readFileSync(_fgPath, 'utf8')));
 const EDIT_STAGE_ORDER = ['assessment', 'developmental', 'line-edit', 'copy-edit', 'proofread'];
 const editStageIdx = editStage ? EDIT_STAGE_ORDER.indexOf(editStage) : -1;
 const editStageGte = (stage) => editStageIdx >= EDIT_STAGE_ORDER.indexOf(stage);

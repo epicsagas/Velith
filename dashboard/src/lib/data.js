@@ -24,8 +24,8 @@ export const PIPELINE_COMMANDS = [
 
 export const QUICK_COMMANDS = PIPELINE_COMMANDS.filter((c) => c.phase >= 0 && c.phase <= 5);
 
-// Keep in sync with FICTION_GENRES in skills/book-status/scripts/scan-project.js — both must match exactly
-export const FICTION_GENRES = new Set(['fiction', 'romance', 'thriller', 'mystery', 'fantasy', 'sci-fi', 'literary-fiction']);
+import FICTION_GENRES_ARRAY from '../../shared/fiction-genres.json';
+export const FICTION_GENRES = new Set(FICTION_GENRES_ARRAY);
 
 export const AGENT_DEFS = [
   { id: 'book-architect', icon: 'architecture', genre: 'all' },

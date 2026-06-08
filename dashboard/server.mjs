@@ -70,7 +70,7 @@ function buildStatusFresh() {
         });
         watcher.on('error', () => { statusWatchers.delete(sp); });
         statusWatchers.set(sp, watcher);
-      } catch {}
+      } catch (e) { console.error('[velith] fs.watch failed:', sp, e.message); }
     }
     // Extract project records from status.json (format: { generated_at, agents, projects: [...] })
     for (const proj of data.projects || []) {
