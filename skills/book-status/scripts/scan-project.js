@@ -25,8 +25,8 @@ const words = (p) => { try { return parseInt(execSync(`wc -w < "${p}"`, { encodi
 const prd = has('PRD.md') ? readFileSync(join(dir, 'PRD.md'), 'utf8') : '';
 // Extract from YAML frontmatter first, then fall back to body
 const yamlTitle = (prd.match(/^---\n[\s\S]*?^title:\s*["']?(.+?)["']?\s*$/m) || [])[1]?.trim();
-const yamlGenre = (prd.match(/^---\n[\s\S]*?^genre:\s*(.+)$/m) || [])[1]?.trim();
-const yamlLang = (prd.match(/^---\n[\s\S]*?^language:\s*(.+)$/m) || [])[1]?.trim();
+const yamlGenre = (prd.match(/^---\n[\s\S]*?^genre:\s*(.+)$/m) || [])[1]?.trim().replace(/^\*+\s*/, '');
+const yamlLang = (prd.match(/^---\n[\s\S]*?^language:\s*(.+)$/m) || [])[1]?.trim().replace(/^\*+\s*/, '');
 const meta = {
   title: yamlTitle || (prd.match(/\*\*Title\*?\*?:\s*(.+)/i) || prd.match(/\*\*제목:\*\*\s*(.+)/) || prd.match(/^#\s*PRD[—:\-\s]+(.+)/im) || [,'Untitled'])[1]?.trim(),
   genre: (yamlGenre || (prd.match(/\*\*Genre\*?\*?:\s*(.+)/i) || prd.match(/\*\*장르:\*\*\s*(.+)/) || [,'unknown'])[1])?.trim().toLowerCase(),
