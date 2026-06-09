@@ -11,6 +11,8 @@ export default {
   "app.clickHint": "명령어나 챕터를 클릭하면 클립보드에 복사됩니다",
   "app.clickHintShort": "탭하면 복사",
   "app.copied": "클립보드에 복사됨",
+  "app.staleVersion": "새 버전의 Velith을 사용할 수 있습니다.",
+  "app.refreshNow": "새로고침",
   "app.exampleBanner": "샘플 데이터를 표시 중입니다 — 실제 프로젝트 데이터가 아닙니다.",
   "app.exampleMode": "예제 모드",
   "app.generated": "생성됨",

@@ -11,6 +11,8 @@ export default {
   "app.clickHint": "点击任意命令或章节即可复制到剪贴板",
   "app.clickHintShort": "点击复制",
   "app.copied": "已复制到剪贴板",
+  "app.staleVersion": "Velith 有新版本可用。",
+  "app.refreshNow": "刷新",
   "app.exampleBanner": "正在显示示例数据 — 这不是您的真实项目数据。",
   "app.exampleMode": "示例模式",
   "app.generated": "已生成",

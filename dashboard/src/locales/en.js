@@ -11,6 +11,8 @@ export default {
   "app.clickHint": "Click any command or chapter to copy",
   "app.clickHintShort": "Tap to copy",
   "app.copied": "Copied to clipboard",
+  "app.staleVersion": "A new version of Velith is available.",
+  "app.refreshNow": "Refresh",
   "app.exampleBanner": "Viewing sample data — this is not your real project.",
   "app.exampleMode": "Example Mode",
   "app.generated": "Generated",

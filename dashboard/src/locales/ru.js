@@ -11,6 +11,8 @@ export default {
   "app.clickHint": "Нажмите на команду или главу, чтобы скопировать",
   "app.clickHintShort": "Нажмите для копирования",
   "app.copied": "Скопировано в буфер обмена",
+  "app.staleVersion": "Доступна новая версия Velith.",
+  "app.refreshNow": "Обновить",
   "app.exampleBanner": "Отображаются примерные данные — это не данные вашего реального проекта.",
   "app.exampleMode": "Режим примера",
   "app.generated": "Сгенерировано",

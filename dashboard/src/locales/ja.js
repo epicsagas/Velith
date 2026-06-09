@@ -11,6 +11,8 @@ export default {
   "app.clickHint": "コマンドや章をクリックするとクリップボードにコピーされます",
   "app.clickHintShort": "タップしてコピー",
   "app.copied": "クリップボードにコピーしました",
+  "app.staleVersion": "Velithの新バージョンが利用可能です。",
+  "app.refreshNow": "更新",
   "app.exampleBanner": "サンプルデータを表示中 — 実際のプロジェクトデータではありません。",
   "app.exampleMode": "サンプルモード",
   "app.generated": "生成済み",

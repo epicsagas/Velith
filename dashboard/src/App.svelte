@@ -20,6 +20,9 @@
   let showToast = $state(false);
   let autoRefresh = $state(true);
   let hasRestoredState = false;
+  let staleVersion = $state(false);
+
+  const UI_VERSION = '0.3.0';
   let urlSpecifiedProject = false;
 
   let currentI18n = $state(get(i18n));
@@ -82,6 +85,7 @@
       if (res.status === 404) { dataState = { kind: 'empty' }; return; }
       if (!res.ok) throw new Error(res.statusText);
       const data = await res.json();
+      if (data.ui_version && data.ui_version !== UI_VERSION) staleVersion = true;
       dataState = { kind: 'ok', data };
       restoreState();
     } catch (e) {
@@ -167,16 +171,30 @@
   </div>
 {/if}
 
+<!-- Stale version banner -->
+{#if staleVersion}
+  <div class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-error-container px-4 py-1.5 text-xs font-medium text-on-error-container border-b border-error {isExample ? 'top-8' : ''}">
+    <span class="flex items-center gap-1.5">
+      <span class="material-symbols-outlined text-sm">update</span>
+      {currentI18n.t('app.staleVersion')}
+    </span>
+    <div class="flex items-center gap-3">
+      <button class="font-bold underline" onclick={() => location.reload()}>{currentI18n.t('app.refreshNow')}</button>
+      <button class="opacity-60 hover:opacity-100" onclick={() => staleVersion = false}>✕</button>
+    </div>
+  </div>
+{/if}
+
 {#if mobileMenuOpen}
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div class="fixed inset-0 bg-black/50 z-30 md:hidden" onclick={() => mobileMenuOpen = false} role="presentation"></div>
 {/if}
 
-<div class="flex min-h-screen bg-background {isExample ? 'pt-8' : ''}">
+<div class="flex min-h-screen bg-background {isExample || staleVersion ? 'pt-8' : ''}">
 
   <!-- Sidebar -->
   <aside class="fixed left-0 bottom-0 w-52 bg-sidebar-bg text-sidebar-text flex flex-col z-40 shadow-xl
-    {isExample ? 'top-8' : 'top-0'}
+    {isExample || staleVersion ? 'top-8' : 'top-0'}
     {mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
     transition-transform duration-200">
 
@@ -243,7 +261,7 @@
 
     <!-- Header -->
     <header class="sticky z-20 h-11 bg-surface border-b border-outline-variant flex items-center px-4 gap-2
-      {isExample ? 'top-8' : 'top-0'}">
+      {isExample || staleVersion ? 'top-8' : 'top-0'}">
       <button class="md:hidden p-1 rounded hover:bg-surface-container" onclick={() => mobileMenuOpen = !mobileMenuOpen}>
         <span class="material-symbols-outlined text-sm">menu</span>
       </button>
@@ -379,6 +397,7 @@
         <span class="material-symbols-outlined text-xs">{isExample ? 'science' : 'live_tv'}</span>
         {isExample ? 'Example Mode' : 'Live Data'}
       </button>
+      <span class="text-on-surface-variant font-mono">v{UI_VERSION}</span>
     </footer>
   </div>
 </div>

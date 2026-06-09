@@ -12,7 +12,11 @@ const PID_PATH = path.join(VELITH_DIR, 'server.pid');
 const CACHE_DIR = path.join(VELITH_DIR, 'cache');
 const CACHE_STATUS = path.join(CACHE_DIR, 'status.json');
 const DIST_DIR = path.join(path.dirname(new URL(import.meta.url).pathname), 'dist');
+const PLUGIN_JSON = path.join(DIST_DIR, '..', '..', '.claude-plugin', 'plugin.json');
 const DEFAULT_PORT = 9631;
+
+let uiVersion = '0.0.0';
+try { uiVersion = JSON.parse(fs.readFileSync(PLUGIN_JSON, 'utf8')).version || uiVersion; } catch {}
 
 const IMG_EXTS = /\.(jpg|jpeg|png|webp|gif)$/i;
 
@@ -151,7 +155,7 @@ function buildStatus() {
     cachedStatus = buildStatusFresh();
   }
   // Spread to avoid mutating the cached object — generated_at signals server liveness to the UI
-  return { ...cachedStatus, generated_at: new Date().toISOString() };
+  return { ...cachedStatus, generated_at: new Date().toISOString(), ui_version: uiVersion };
 }
 
 function serveStatic(res, urlPath) {
