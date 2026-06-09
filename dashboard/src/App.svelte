@@ -19,6 +19,8 @@
   let mobileMenuOpen = $state(false);
   let showToast = $state(false);
   let autoRefresh = $state(true);
+  let hasRestoredState = false;
+  let urlSpecifiedProject = false;
 
   let currentI18n = $state(get(i18n));
   $effect(() => {
@@ -32,14 +34,39 @@
     const parts = window.location.pathname.replace(/^\//, '').split('/');
     if (parts[0] !== '') {
       const idx = parseInt(parts[0], 10);
-      if (!isNaN(idx)) bookIndex = idx;
+      if (!isNaN(idx)) { bookIndex = idx; urlSpecifiedProject = true; }
     }
     if (parts[1] && VALID_VIEWS.has(parts[1])) activeView = parts[1];
+  }
+
+  function restoreState() {
+    if (projects.length === 0 || hasRestoredState) return;
+    if (!urlSpecifiedProject) {
+      try {
+        const savedPath = localStorage.getItem('velith-selected-path');
+        if (savedPath) {
+          const idx = projects.findIndex(p => p.path === savedPath);
+          if (idx >= 0) bookIndex = idx;
+        }
+        const savedView = localStorage.getItem('velith-active-view');
+        if (savedView && VALID_VIEWS.has(savedView)) activeView = savedView;
+      } catch {}
+    }
+    hasRestoredState = true;
+    syncUrl();
   }
 
   function syncUrl() {
     const path = bookIndex !== null ? `/${bookIndex}/${activeView}` : '/';
     history.replaceState(null, '', path + (isExample ? '?example' : ''));
+    try {
+      if (bookIndex !== null && projects[bookIndex]) {
+        localStorage.setItem('velith-selected-path', projects[bookIndex].path);
+      } else {
+        localStorage.removeItem('velith-selected-path');
+      }
+      localStorage.setItem('velith-active-view', activeView);
+    } catch {}
   }
 
   function setActiveView(id) {
@@ -56,6 +83,7 @@
       if (!res.ok) throw new Error(res.statusText);
       const data = await res.json();
       dataState = { kind: 'ok', data };
+      restoreState();
     } catch (e) {
       if (dataState.kind === 'ok') {
         dataState = { ...dataState, refreshError: e.message };

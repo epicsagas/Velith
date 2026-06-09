@@ -5,6 +5,8 @@ import path from 'path';
 import os from 'os';
 
 const VELITH_DIR = path.join(os.homedir(), '.velith');
+const CACHE_DIR = path.join(VELITH_DIR, 'cache');
+const CACHE_STATUS = path.join(CACHE_DIR, 'status.json');
 
 function readJson(filePath: string): any | null {
   try {
@@ -15,10 +17,32 @@ function readJson(filePath: string): any | null {
 }
 
 function buildStatusJson(): object {
+  // 1. Try centralized cache
+  const cached = readJson(CACHE_STATUS);
+  if (cached?.projects?.length) {
+    return {
+      generated_at: new Date().toISOString(),
+      agents: cached.agents ?? [],
+      projects: cached.projects.map((proj: any, idx: number) => {
+        const p = { ...proj };
+        if (p.path) {
+          const coverDir = path.join(p.path, 'publish', 'cover');
+          for (const ext of ['png', 'jpg', 'jpeg', 'webp']) {
+            if (fs.existsSync(path.join(coverDir, `cover.${ext}`))) {
+              p.cover_path = `/cover/${idx}`;
+              break;
+            }
+          }
+        }
+        return p;
+      }),
+    };
+  }
+
+  // 2. Fallback: per-project reads (pre-cache)
   const registry = readJson(path.join(VELITH_DIR, 'projects.json'));
   const projectPaths: string[] = registry?.projects?.map((p: any) => p.path) ?? [];
 
-  // Collect per-project status (most up-to-date source)
   const allProjects: any[] = [];
   let latestAgents: any[] | null = null;
 
@@ -33,7 +57,6 @@ function buildStatusJson(): object {
     }
   }
 
-  // Fallback to global status if needed
   if (!latestAgents || allProjects.length === 0) {
     const global = readJson(path.join(VELITH_DIR, 'status.json'));
     if (global) {
@@ -89,7 +112,7 @@ function velithApiPlugin() {
         const coverUploadMatch = url.pathname.match(/^\/api\/cover\/(\d+)$/);
         if (req.method === 'POST' && coverUploadMatch) {
           const index = parseInt(coverUploadMatch[1], 10);
-          const filename = url.searchParams.get('filename') || 'cover.jpg';
+          const filename = path.basename(url.searchParams.get('filename') || 'cover.jpg');
           const status = buildStatusJson() as any;
           const project = status.projects?.[index];
           if (project?.path) {
@@ -117,8 +140,9 @@ function velithApiPlugin() {
           const status = buildStatusJson() as any;
           const project = status.projects?.[index];
           if (project?.path) {
-            const f = path.join(project.path, 'publish', filename);
-            if (fs.existsSync(f)) {
+            const f = path.resolve(project.path, 'publish', filename);
+            const pubDir = path.resolve(project.path, 'publish');
+            if (f.startsWith(pubDir + path.sep) && fs.existsSync(f)) {
               res.writeHead(200, {
                 'Content-Type': 'application/octet-stream',
                 'Content-Disposition': `attachment; filename="${filename}"`,
