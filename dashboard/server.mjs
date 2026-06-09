@@ -9,6 +9,8 @@ const VELITH_DIR = path.join(HOME, '.velith');
 const CONFIG_PATH = path.join(VELITH_DIR, 'config.json');
 const REGISTRY_PATH = path.join(VELITH_DIR, 'projects.json');
 const PID_PATH = path.join(VELITH_DIR, 'server.pid');
+const CACHE_DIR = path.join(VELITH_DIR, 'cache');
+const CACHE_STATUS = path.join(CACHE_DIR, 'status.json');
 const DIST_DIR = path.join(path.dirname(new URL(import.meta.url).pathname), 'dist');
 const DEFAULT_PORT = 9631;
 
@@ -43,11 +45,49 @@ function getProjectDir(index) {
   return entry?.path || null;
 }
 
-// In-memory cache invalidated by fs.watch on each project's status.json
+// In-memory cache invalidated by fs.watch
 let cachedStatus = null;
 const statusWatchers = new Map();
+let cacheWatcher = null;
+let cacheWatchRetries = 0;
 
-function buildStatusFresh() {
+function ensureCacheWatcher() {
+  if (cacheWatcher || cacheWatchRetries >= 20) return;
+  cacheWatchRetries++;
+  try {
+    cacheWatcher = fs.watch(CACHE_STATUS, (eventType) => {
+      cachedStatus = null;
+      cacheWatchRetries = 0;
+      if (eventType === 'rename') {
+        cacheWatcher.close();
+        cacheWatcher = null;
+        setTimeout(ensureCacheWatcher, 100);
+      }
+    });
+    cacheWatcher.on('error', () => { cacheWatcher = null; });
+  } catch {}
+}
+
+function enrichFromCache(cached) {
+  const projects = cached.projects.map((proj, idx) => {
+    const p = { ...proj };
+    if (p.path) {
+      const coverDir = path.join(p.path, 'publish', 'cover');
+      try {
+        const files = fs.readdirSync(coverDir).filter(f => IMG_EXTS.test(f));
+        if (files.length > 0) {
+          p.cover_path = `/cover/${idx}`;
+          p.cover_file = files.find(f => /^cover\./i.test(f)) || files[0];
+        }
+      } catch {}
+    }
+    p.agents = Array.isArray(cached.agents) ? [...cached.agents] : [];
+    return p;
+  });
+  return { projects, agents: cached.agents || [], generated_at: new Date().toISOString() };
+}
+
+function buildFromProjectDirs() {
   const registry = getRegistry();
   const projects = [];
   const agentMap = new Map();
@@ -57,24 +97,17 @@ function buildStatusFresh() {
     const data = readJson(sp, null);
     if (!data) continue;
     activePaths.add(sp);
-    // Watch this project's status.json for changes
     if (!statusWatchers.has(sp)) {
       try {
         const watcher = fs.watch(sp, (eventType) => {
           cachedStatus = null;
-          // On rename (atomic write via temp-file), the watcher loses the inode — re-register next build
-          if (eventType === 'rename') {
-            watcher.close();
-            statusWatchers.delete(sp);
-          }
+          if (eventType === 'rename') { watcher.close(); statusWatchers.delete(sp); }
         });
         watcher.on('error', () => { statusWatchers.delete(sp); });
         statusWatchers.set(sp, watcher);
       } catch (e) { console.error('[velith] fs.watch failed:', sp, e.message); }
     }
-    // Extract project records from status.json (format: { generated_at, agents, projects: [...] })
     for (const proj of data.projects || []) {
-      // Attach cover image path
       const coverDir = path.join(entry.path, 'publish', 'cover');
       try {
         const files = fs.readdirSync(coverDir).filter(f => IMG_EXTS.test(f));
@@ -84,13 +117,9 @@ function buildStatusFresh() {
           proj.cover_file = cover;
         }
       } catch {}
-      // Attach per-project agents so each project has its own agent statuses
       proj.agents = Array.isArray(data.agents) ? data.agents : [];
       projects.push(proj);
     }
-    // Also build a global agent list for backward compat — merge by picking the
-    // most-progressed status per agent id across all projects:
-    //   complete > running > disabled > idle
     if (Array.isArray(data.agents)) {
       const rank = { complete: 3, running: 2, disabled: 1, idle: 0 };
       for (const a of data.agents) {
@@ -102,14 +131,19 @@ function buildStatusFresh() {
       }
     }
   }
-  // Remove watchers for projects no longer in the registry
   for (const [sp, watcher] of statusWatchers) {
-    if (!activePaths.has(sp)) {
-      watcher.close();
-      statusWatchers.delete(sp);
-    }
+    if (!activePaths.has(sp)) { watcher.close(); statusWatchers.delete(sp); }
   }
   return { projects, agents: Array.from(agentMap.values()), generated_at: new Date().toISOString() };
+}
+
+function buildStatusFresh() {
+  const cached = readJson(CACHE_STATUS, null);
+  if (cached?.projects?.length) {
+    ensureCacheWatcher();
+    return enrichFromCache(cached);
+  }
+  return buildFromProjectDirs();
 }
 
 function buildStatus() {
@@ -135,9 +169,10 @@ function serveStatic(res, urlPath) {
 }
 
 function serveCover(res, projectIndex) {
-  const projDir = getProjectDir(projectIndex);
-  if (!projDir) { res.writeHead(404); res.end('Not found'); return; }
-  const coverDir = path.join(projDir, 'publish', 'cover');
+  const status = buildStatus();
+  const proj = status.projects?.[projectIndex];
+  if (!proj?.path) { res.writeHead(404); res.end('Not found'); return; }
+  const coverDir = path.join(proj.path, 'publish', 'cover');
   try {
     const files = fs.readdirSync(coverDir).filter(f => IMG_EXTS.test(f));
     if (files.length === 0) { res.writeHead(404); res.end('No cover'); return; }
@@ -152,9 +187,10 @@ function serveCover(res, projectIndex) {
 }
 
 async function handleUpload(req, res, projectIndex) {
-  const projDir = getProjectDir(projectIndex);
-  if (!projDir) { res.writeHead(404, { 'Content-Type': 'application/json' }); res.end('{"error":"Project not found"}'); return; }
-  const coverDir = path.join(projDir, 'publish', 'cover');
+  const status = buildStatus();
+  const proj = status.projects?.[projectIndex];
+  if (!proj?.path) { res.writeHead(404, { 'Content-Type': 'application/json' }); res.end('{"error":"Project not found"}'); return; }
+  const coverDir = path.join(proj.path, 'publish', 'cover');
   fs.mkdirSync(coverDir, { recursive: true });
 
   const chunks = [];
@@ -163,8 +199,8 @@ async function handleUpload(req, res, projectIndex) {
 
   // Read filename from content-disposition or query param
   const url = new URL(req.url, `http://${req.headers.host}`);
-  let filename = url.searchParams.get('filename') || 'cover.jpg';
-  if (!IMG_EXTS.test(filename)) filename += '.jpg';
+  let filename = path.basename(url.searchParams.get('filename') || 'cover.jpg');
+  if (!IMG_EXTS.test(filename)) filename = 'cover.jpg';
 
   const fp = path.join(coverDir, filename);
   fs.writeFileSync(fp, buf);
@@ -198,10 +234,12 @@ const server = http.createServer(async (req, res) => {
   // Download publish file: /download/{projectIndex}/{filename}
   const dlMatch = url.pathname.match(/^\/download\/(\d+)\/(.+)$/);
   if (dlMatch) {
-    const projDir = getProjectDir(parseInt(dlMatch[1]));
-    if (!projDir) { res.writeHead(404); res.end('Not found'); return; }
-    const fp = path.join(projDir, 'publish', dlMatch[2]);
-    if (!fs.existsSync(fp) || fs.statSync(fp).isDirectory()) { res.writeHead(404); res.end('Not found'); return; }
+    const status = buildStatus();
+    const proj = status.projects?.[parseInt(dlMatch[1])];
+    if (!proj?.path) { res.writeHead(404); res.end('Not found'); return; }
+    const fp = path.resolve(proj.path, 'publish', dlMatch[2]);
+    const pubDir = path.resolve(proj.path, 'publish');
+    if (!fp.startsWith(pubDir + path.sep) || !fs.existsSync(fp) || fs.statSync(fp).isDirectory()) { res.writeHead(403); res.end('Forbidden'); return; }
     const ext = path.extname(fp);
     res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream', 'Content-Disposition': `attachment; filename="${dlMatch[2]}"` });
     fs.createReadStream(fp).pipe(res);
