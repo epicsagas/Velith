@@ -29,6 +29,7 @@
   });
 
   const isExample = new URLSearchParams(window.location.search).has('example');
+  const UI_VERSION = '0.3.0';
 
   function parsePath() {
     const parts = window.location.pathname.replace(/^\//, '').split('/');
@@ -323,27 +324,34 @@
             <span class="material-symbols-outlined fill-icon text-5xl text-primary">book_2</span>
             <h1 class="text-5xl font-bold text-on-surface" style="font-family:'Newsreader',serif;">Velith</h1>
           </div>
-          <p class="text-xs tracking-widest uppercase text-secondary mb-10">Select a Project</p>
-          <div class="w-full max-w-lg space-y-2">
-            {#each projects as p, i}
-              <button
-                class="w-full flex items-center gap-4 p-4 rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container transition-colors text-left"
-                onclick={() => { bookIndex = i; setActiveView('overview'); syncUrl(); }}
-              >
-                <div class="w-12 h-16 bg-surface-container rounded flex items-center justify-center shrink-0 border border-outline-variant">
-                  <span class="material-symbols-outlined text-2xl text-outline">menu_book</span>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <p class="font-bold uppercase tracking-wide text-sm truncate">{p.name}</p>
-                  <p class="text-xs text-secondary capitalize mt-0.5">{p.genre} · {p.language ?? 'ko'}</p>
-                  <p class="text-xs text-on-surface-variant mt-1 font-mono">
-                    {(p.total_words ?? 0).toLocaleString()}w · {p.completed_chapters ?? 0}/{p.total_chapters ?? 0} chapters
-                  </p>
-                </div>
-                <span class="material-symbols-outlined text-secondary">chevron_right</span>
-              </button>
-            {/each}
-          </div>
+          {#if projects.length > 0}
+            <p class="text-xs tracking-widest uppercase text-secondary mb-10">Select a Project</p>
+            <div class="w-full max-w-lg space-y-2">
+              {#each projects as p, i}
+                <button
+                  class="w-full flex items-center gap-4 p-4 rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container transition-colors text-left"
+                  onclick={() => { bookIndex = i; setActiveView('overview'); syncUrl(); }}
+                >
+                  <div class="w-12 h-16 bg-surface-container rounded flex items-center justify-center shrink-0 border border-outline-variant">
+                    <span class="material-symbols-outlined text-2xl text-outline">menu_book</span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-bold uppercase tracking-wide text-sm truncate">{p.name}</p>
+                    <p class="text-xs text-secondary capitalize mt-0.5">{p.genre} · {p.language ?? 'ko'}</p>
+                    <p class="text-xs text-on-surface-variant mt-1 font-mono">
+                      {(p.total_words ?? 0).toLocaleString()}w · {p.completed_chapters ?? 0}/{p.total_chapters ?? 0} chapters
+                    </p>
+                  </div>
+                  <span class="material-symbols-outlined text-secondary">chevron_right</span>
+                </button>
+              {/each}
+            </div>
+          {:else}
+            <p class="text-xs tracking-widest uppercase text-secondary mb-6">{currentI18n.t('app.noProject')}</p>
+            <p class="text-xs text-secondary max-w-sm text-center mb-4">{currentI18n.t('app.noDataHint')}</p>
+            <code class="text-primary font-mono text-sm bg-surface-container px-3 py-1 rounded mb-4">{currentI18n.t('app.noDataCmd')}</code>
+            <a href="?example" class="text-primary underline text-sm">{currentI18n.t('app.viewExample')}</a>
+          {/if}
         </div>
 
       {:else if activeView === 'overview'}
@@ -375,10 +383,7 @@
         <span>No project</span>
       {/if}
       <span class="flex-1 text-center hidden sm:block">{currentI18n.t('app.clickHint')}</span>
-      <button class="flex items-center gap-1 hover:text-on-surface uppercase tracking-wider font-semibold" onclick={toggleTheme}>
-        <span class="material-symbols-outlined text-xs">{isExample ? 'science' : 'live_tv'}</span>
-        {isExample ? 'Example Mode' : 'Live Data'}
-      </button>
+      <span class="text-xs text-secondary font-mono uppercase tracking-wider">v{UI_VERSION}</span>
     </footer>
   </div>
 </div>
