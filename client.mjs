@@ -1,7 +1,7 @@
 // Velith CLI — unified client for book project management
 // Usage: node client.mjs <command> [args]
 // Commands: scan, agents, stats, words, list, serve
-import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, renameSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join, basename, resolve } from 'node:path';
 import { execSync } from 'node:child_process';
@@ -505,6 +505,30 @@ async function cmdMigrate() {
 
   save();
   console.log(`\nMigrated ${imported} projects, ${agentCount} agents (${skipped} skipped).`);
+
+  // ─── Backup JSON files after successful migration ───
+  if (imported === 0) return;
+  const renamed = [];
+  const renameSafe = (from, to) => { try { if (existsSync(from)) { renameSync(from, to); return true; } } catch {} return false; };
+  // Centralized cache
+  const cacheStatus = join(VELITH, 'cache', 'status.json');
+  if (renameSafe(cacheStatus, cacheStatus + '.bak')) renamed.push('cache/status.json');
+  // Per-project status.json
+  for (const entry of reg.projects) {
+    const sp = join(entry.path, '.velith', 'status.json');
+    if (renameSafe(sp, sp + '.bak')) renamed.push(sp.replace(HOME, '~'));
+  }
+  // Global agent files
+  if (existsSync(agentsDir)) {
+    for (const f of readdirSync(agentsDir).filter(f => f.endsWith('.json'))) {
+      const from = join(agentsDir, f);
+      if (renameSafe(from, from + '.bak')) renamed.push(`~/.velith/agents/${f}`);
+    }
+  }
+  if (renamed.length) {
+    console.log(`\nBacked up ${renamed.length} JSON files:`);
+    renamed.forEach(f => console.log(`  ${f} → .bak`));
+  }
 }
 
 // ─── serve ────────────────────────────────────────────────────────────────────────
