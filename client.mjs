@@ -40,9 +40,9 @@ export async function getDb() {
       FOREIGN KEY (project_path) REFERENCES projects(path) ON DELETE CASCADE
     )`);
     _db.run(`CREATE TABLE IF NOT EXISTS agents (
-      id TEXT NOT NULL, project_path TEXT, name TEXT, icon TEXT, role TEXT,
+      id TEXT NOT NULL, project_path TEXT NOT NULL DEFAULT '', name TEXT, icon TEXT, role TEXT,
       status TEXT DEFAULT 'idle', last_run TEXT, task TEXT,
-      PRIMARY KEY (id, COALESCE(project_path, ''))
+      PRIMARY KEY (id, project_path)
     )`);
     _db.run(`CREATE TABLE IF NOT EXISTS scan_log (
       id INTEGER PRIMARY KEY AUTOINCREMENT, project_path TEXT NOT NULL,
@@ -362,8 +362,8 @@ async function cmdAgents(args) {
       db.run('UPDATE agents SET status = ?, last_run = ?, task = ? WHERE id = ? AND project_path = ?', [status, now, task, id, pp]);
     }
   } else {
-    // No projects scanned yet — insert with null project_path
-    db.run('INSERT OR REPLACE INTO agents (id, project_path, status, last_run, task) VALUES (?, null, ?, ?, ?)', [id, status, now, task]);
+    // No projects scanned yet — insert with empty project_path
+    db.run('INSERT OR REPLACE INTO agents (id, project_path, status, last_run, task) VALUES (?, ?, ?, ?, ?)', [id, '', status, now, task]);
   }
   save();
   console.log(JSON.stringify({ status, last_run: now, task }));
@@ -417,6 +417,96 @@ async function cmdList() {
   console.log(JSON.stringify(projects, null, 2));
 }
 
+// ─── migrate ──────────────────────────────────────────────────────────────────────
+
+async function cmdMigrate() {
+  const db = await getDb();
+  let imported = 0, skipped = 0;
+
+  // 1. Collect project data from JSON sources
+  const regPath = join(VELITH, 'projects.json');
+  const reg = readJson(regPath, { projects: [] });
+  const cache = readJson(join(VELITH, 'cache', 'status.json'), null);
+  const cacheMap = new Map();
+  if (cache?.projects) cache.projects.forEach(p => cacheMap.set(p.path, p));
+
+  if (reg.projects.length === 0 && !cache) {
+    console.log('No JSON data found to migrate.');
+    return;
+  }
+
+  for (const entry of reg.projects) {
+    // Try per-project status.json first, then cache
+    const perProject = readJson(join(entry.path, '.velith', 'status.json'), null);
+    const source = perProject?.projects?.[0] || cacheMap.get(entry.path);
+    if (!source) { console.log(`  ⚠ ${entry.name || entry.path}: no status data, skipping`); skipped++; continue; }
+
+    const now = new Date().toISOString();
+    db.run(`INSERT OR REPLACE INTO projects (path, name, genre, language, current_phase, total_chapters, completed_chapters, total_words, target_words, count_unit, phase_status, output_files, cover_path, last_updated)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
+      source.path || entry.path,
+      source.name || entry.name || 'Untitled',
+      source.genre || null,
+      source.language || null,
+      source.current_phase ?? 0,
+      source.total_chapters ?? 0,
+      source.completed_chapters ?? 0,
+      source.total_words ?? 0,
+      source.target_words ?? 0,
+      source.count_unit || 'words',
+      JSON.stringify(source.phase_status || []),
+      JSON.stringify(source.output_files || []),
+      source.cover_path || null,
+      source.last_updated || now,
+    ]);
+
+    // Chapters
+    if (source.chapter_details?.length) {
+      const pp = source.path || entry.path;
+      db.run('DELETE FROM chapters WHERE project_path = ?', [pp]);
+      for (const c of source.chapter_details) {
+        db.run('INSERT INTO chapters (project_path, filename, title, lines, words, status, edit_stage) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [pp, c.filename, c.title, c.lines ?? 0, c.words ?? 0, c.status || 'wait', c.edit_stage || null]);
+      }
+    }
+
+    // Agents (from per-project status)
+    if (perProject?.agents?.length) {
+      const pp = source.path || entry.path;
+      for (const a of perProject.agents) {
+        db.run(`INSERT OR REPLACE INTO agents (id, project_path, name, icon, role, status, last_run, task) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          [a.id, pp, a.name, a.icon, a.role, a.status || 'idle', a.last_run || null, a.task || null]);
+      }
+    }
+    imported++;
+    console.log(`  ✓ ${source.name || entry.path}`);
+  }
+
+  // 2. Global agents from ~/.velith/agents/*.json
+  const agentsDir = join(VELITH, 'agents');
+  let agentCount = 0;
+  if (existsSync(agentsDir)) {
+    for (const f of readdirSync(agentsDir).filter(f => f.endsWith('.json'))) {
+      const id = basename(f, '.json');
+      const data = readJson(join(agentsDir, f), {});
+      if (!data.status) continue;
+      // Update existing agent rows, or insert standalone
+      const existing = db.exec('SELECT id FROM agents WHERE id = ?', [id]);
+      if (existing.length && existing[0].values.length) {
+        db.run('UPDATE agents SET status = ?, last_run = ?, task = ? WHERE id = ?',
+          [data.status, data.last_run || null, data.task || null, id]);
+      } else {
+        db.run('INSERT OR REPLACE INTO agents (id, project_path, status, last_run, task) VALUES (?, ?, ?, ?, ?)',
+          [id, data.status, data.last_run || null, data.task || null]);
+      }
+      agentCount++;
+    }
+  }
+
+  save();
+  console.log(`\nMigrated ${imported} projects, ${agentCount} agents (${skipped} skipped).`);
+}
+
 // ─── serve ────────────────────────────────────────────────────────────────────────
 
 function cmdServe(args) {
@@ -427,7 +517,7 @@ function cmdServe(args) {
 // ─── CLI Router ───────────────────────────────────────────────────────────────────
 
 const [,, cmd, ...rest] = process.argv;
-const commands = { scan: cmdScan, agents: cmdAgents, stats: cmdStats, words: cmdWords, list: cmdList, serve: cmdServe };
+const commands = { scan: cmdScan, agents: cmdAgents, stats: cmdStats, words: cmdWords, list: cmdList, migrate: cmdMigrate, serve: cmdServe };
 const fn = commands[cmd];
 if (!fn) {
   console.log('Velith CLI — unified client for book project management');
@@ -439,6 +529,7 @@ if (!fn) {
   console.log('  stats [dir]             Query project stats from SQLite');
   console.log('  words <file>            Count lines/words/chars in file');
   console.log('  list                    List all projects in DB');
+  console.log('  migrate                 Import existing JSON data into SQLite');
   console.log('  serve                   Start dashboard server');
   console.log('');
   console.log('Flags:');
