@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -46,7 +46,7 @@ Ein Buch mit rohen LLM-Prompts zu schreiben führt zu unzusammenhängenden Kapit
 |--|----------|----------------------|
 | 📋 | 6-Phasen-Pipeline | Jede Phase validiert vor dem Weitermachen — kein Nacharbeiten |
 | 📖 | 7 Genre-Vorlagen | Belletristik, Sachbuch, Technik, Drehbuch, Poesie, Spiel, Akademisch (+ benutzerdefiniert via genre-creator) |
-| 🤖 | 7 spezialisierte Agenten | Architektur, Entwurf, Szenengenerierung, Kontinuität, Stil, Cover, Marketing |
+| 🤖 | 8 spezialisierte Agenten | Architektur, Entwurf, Szenengenerierung, Kontinuität, Stil, Cover, Illustrationen, Marketing |
 | ✏️ | 5-stufiges Lektorat | Beurteilung → Entwicklung → Zeile → Korrektorat → Schlusskorrektur |
 | 🔄 | Überall fortsetzen | Abgeschlossene Kapitel überspringen, dort weitermachen wo man aufgehört hat |
 | 📦 | EPUB, PDF, MOBI, TXT, Markdown | Veröffentlichungsfertige Dateien via Pandoc + Calibre |
@@ -146,6 +146,7 @@ Das Plugin führt Sie durch:
 | `/book-draft` | 3 | Kapitel entwerfen (alle/bestimmte/fortsetzen, parallele Agenten) |
 | `/book-edit` | 4 | 5-stufige Lektorierpipeline |
 | `/book-publish` | 5 | EPUB/PDF/MOBI-Konvertierung, Cover, Marketing |
+| `/book-illustrate` | 3-5 | Innenillustrationen — Szenenextraktion, stilistisch konsistente Prompts, Platzierungsplan |
 | `/book-status` | — | Terminal-Dashboard + `--ui` Browser-Dashboard |
 | `/book-fiction` | — | Belletristik-Pattern (15 Beats, Snowflake, Charakterbibel) |
 | `/book-nonfiction` | — | Sachbuch-Pattern (Problem-Lösung, Evidenzhierarchie) |
@@ -166,6 +167,7 @@ Das Plugin führt Sie durch:
 | `style-doctor` | Stimme/Ton-Konsistenz, KI-Schunddetektion |
 | `scene-generator` — Szenenebene-Analyse mit GMC+RDD-Struktur (nur Belletristik) |
 | `cover-designer` | Cover-Konzepte + Midjourney/DALL-E-Bildprompts |
+| `illustrator` | Innenillustrationen — Szenenextraktion, Stilbibel, Prompt-Generierung |
 | `marketing-expert` | Leserpersonas, Kanalstrategie, 12-Wochen-Launchkalender |
 
 ## Visuelles Dashboard

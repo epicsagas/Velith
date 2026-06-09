@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -46,7 +46,7 @@ Kit d'outils de création de livres de bout en bout pour Claude Code. De la page
 |--|---------------|--------------------------|
 | 📋 | Pipeline en 6 phases | Chaque phase valide avant de continuer — pas de retravail |
 | 📖 | 7 modèles de genre | Fiction, non-fiction, technique, scénario, poésie, jeu, académique (+ personnalisé via genre-creator) |
-| 🤖 | 7 agents spécialisés | Architecture, rédaction, génération de scènes, continuité, style, couverture, marketing |
+| 🤖 | 8 agents spécialisés | Architecture, rédaction, génération de scènes, continuité, style, couverture, illustrations, marketing |
 | ✏️ | Édition en 5 étapes | Évaluation → Développement → Ligne → Correction → Relecture finale |
 | 🔄 | Reprendre n'importe où | Ignorer les chapitres terminés, reprendre là où vous vous êtes arrêté |
 | 📦 | EPUB, PDF, MOBI, TXT, Markdown | Fichiers prêts à publier via Pandoc + Calibre |
@@ -146,6 +146,7 @@ Le plugin vous guide à travers :
 | `/book-draft` | 3 | Rédiger les chapitres (tous/spécifiques/reprendre, agents parallèles) |
 | `/book-edit` | 4 | Pipeline d'édition en 5 étapes |
 | `/book-publish` | 5 | Conversion EPUB/PDF/MOBI, couverture, marketing |
+| `/book-illustrate` | 3-5 | Illustrations intérieures — extraction de scènes, prompts cohérents, plan de placement |
 | `/book-status` | — | Tableau de bord terminal + `--ui` tableau de bord navigateur |
 | `/book-fiction` | — | Patterns fiction (15 beats, Snowflake, bible de personnages) |
 | `/book-nonfiction` | — | Patterns non-fiction (problème-solution, hiérarchie de preuves) |
@@ -166,6 +167,7 @@ Le plugin vous guide à travers :
 | `style-doctor` | Cohérence voix/ton, détection d'AI-slop |
 | `scene-generator` | Décomposition au niveau de la scène avec structure GMC+RDD (fiction uniquement) |
 | `cover-designer` | Concepts de couverture + prompts d'images Midjourney/DALL-E |
+| `illustrator` | Illustrations intérieures — extraction de scènes, bible de style, génération de prompts |
 | `marketing-expert` | Personas de lecteurs, stratégie de canaux, calendrier de lancement de 12 semaines |
 
 ## Tableau de Bord Visuel

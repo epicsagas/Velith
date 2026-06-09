@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -46,7 +46,7 @@ Escribir un libro con prompts LLM básicos produce capítulos desconectados, voz
 |--|---------------|-----------------|
 | 📋 | Pipeline de 6 fases | Cada fase valida antes de continuar — sin retrabajo |
 | 📖 | 7 plantillas de género | Ficción, no ficción, técnico, guion, poesía, juego, académico (+ género personalizado vía genre-creator) |
-| 🤖 | 7 agentes especializados | Arquitectura, borradores, generación de escenas, continuidad, estilo, portada, marketing |
+| 🤖 | 8 agentes especializados | Arquitectura, borradores, generación de escenas, continuidad, estilo, portada, ilustraciones, marketing |
 | ✏️ | Edición en 5 etapas | Evaluación → Desarrollo → Línea → Corrección → Revisión final |
 | 🔄 | Reanudar en cualquier punto | Omite capítulos completados, retoma donde lo dejaste |
 | 📦 | EPUB, PDF, MOBI, TXT, Markdown | Archivos listos para publicar via Pandoc + Calibre |
@@ -146,6 +146,7 @@ El plugin te guía a través de:
 | `/book-draft` | 3 | Redactar capítulos (todos/específicos/reanudar, agentes paralelos) |
 | `/book-edit` | 4 | Pipeline de edición en 5 etapas |
 | `/book-publish` | 5 | Conversión EPUB/PDF/MOBI, portada, marketing |
+| `/book-illustrate` | 3-5 | Ilustraciones interiores — extracción de escenas, prompts consistentes, plan de ubicación |
 | `/book-status` | — | Panel de terminal + `--ui` panel en navegador |
 | `/book-fiction` | — | Patrones de ficción (15 beats, Snowflake, biblia de personajes) |
 | `/book-nonfiction` | — | Patrones de no ficción (problema-solución, jerarquía de evidencia) |
@@ -166,6 +167,7 @@ El plugin te guía a través de:
 | `style-doctor` | Consistencia de voz/tono, detección de AI-slop |
 | `scene-generator` | Desglose a nivel de escena con estructura GMC+RDD (solo ficción) |
 | `cover-designer` | Conceptos de portada + prompts de imagen para Midjourney/DALL-E |
+| `illustrator` | Ilustraciones interiores — extracción de escenas, biblia de estilo, generación de prompts |
 | `marketing-expert` | Personas de lectores, estrategia de canales, calendario de lanzamiento de 12 semanas |
 
 ## Panel Visual

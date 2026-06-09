@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0] - 2026-06-10
+
+### Added
+- `illustrator` agent: scene extraction, style bible, multi-tier illustration prompts (background/concept/spot), quality guard, placement metadata
+- `/book-illustrate` skill: 4-step interior illustration pipeline (plan → review → execute → integration)
+- Codex CLI agent: `.codex-plugin/agents/illustrator.toml`
+
+### Changed
+- Enhanced `cover-designer` agent: genre visual language table (9 genres), 3 prompt formats (Midjourney/DALL-E/SD), multi-format specs (ebook/print/audiobook/marketing), quality checklist
+- `loom` router: added `/book-illustrate` routing and `illustrator` agent entry
+- `book-publish` skill: references illustration pipeline
+
 ## [0.1.6] - 2026-06-08
 
 ### Changed
