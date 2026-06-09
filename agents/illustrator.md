@@ -1,5 +1,5 @@
 ---
-name: illustration-generator
+name: illustrator
 description: "Scene-level illustration generation. Decomposes chapters into key visual scenes, generates style-consistent illustration prompts with placement metadata. Fiction/nonfiction."
 tools: ["Read", "Write", "Bash", "Glob", "Grep"]
 ---
@@ -111,4 +111,4 @@ Also write a summary to `publish/illustrations/manifest.json`:
 
 ## Status
 
-Status: `node {PLUGIN_ROOT}/scripts/agent-status.js illustration-generator <running|complete|error> [task]`
+Status: `node {PLUGIN_ROOT}/scripts/agent-status.js illustrator <running|complete|error> [task]`

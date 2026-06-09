@@ -200,7 +200,7 @@ The plugin guides you through:
 | `style-doctor` | Voice/tone consistency, AI-slop detection |
 | `scene-generator` | Scene-level breakdown with GMC+RDD structure (fiction only) |
 | `cover-designer` | Cover concepts + Midjourney/DALL-E image prompts |
-| `illustration-generator` | Interior illustrations — scene extraction, style bible, prompt generation |
+| `illustrator` | Interior illustrations — scene extraction, style bible, prompt generation |
 | `marketing-expert` | Reader personas, channel strategy, 12-week launch calendar |
 
 ## Visual Dashboard

@@ -16,7 +16,7 @@ Orchestrates the illustration generation process for book chapters.
 
 ### Step 1: Generate Illustration Plan
 
-Invoke the `illustration-generator` agent:
+Invoke the `illustrator` agent:
 
 ```
 Read the book's PRD.md, STYLE.md, outline.md, and all chapter drafts in drafts/.

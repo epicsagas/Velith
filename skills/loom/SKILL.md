@@ -86,13 +86,13 @@ Detection: check for `drafts/` directory, `outline.md`, `STYLE.md`, `PRD.md` in 
 ### Phase 5: Publishing (`/book-publish`)
 - Format conversion (EPUB/PDF/MOBI/TXT/MD via Pandoc + Calibre)
 - Agent: `cover-designer` → concepts + image prompts
-- Agent: `illustration-generator` → interior illustration plan (optional, after drafting)
+- Agent: `illustrator` → interior illustration plan (optional, after drafting)
 - Agent: `marketing-expert` → launch strategy
 - Metadata, title candidates, KDP checklist
 
 ### Interior Illustrations (`/book-illustrate`)
 - Can run after Phase 3 (Drafting) or during Phase 5 (Publishing)
-- Agent: `illustration-generator` → scene extraction, style bible, prompts
+- Agent: `illustrator` → scene extraction, style bible, prompts
 - Produces illustration plan with placement metadata
 - Integrates image references into chapter drafts
 
@@ -150,7 +150,7 @@ Each phase has a dedicated skill in `skills/book-{name}/SKILL.md`:
 | `style-doctor` | Voice and tone consistency | Phase 4 |
 | `scene-generator` | Scene-level breakdown with GMC+RDD (fiction only) | Phase 3, fiction |
 | `cover-designer` | Cover concepts + image generation prompts | Phase 5 |
-| `illustration-generator` | Interior illustrations — scene extraction, style, prompts | Phase 3-5 |
+| `illustrator` | Interior illustrations — scene extraction, style, prompts | Phase 3-5 |
 | `marketing-expert` | Reader personas, channel strategy, launch calendar | Phase 5 |
 
 ## Quality Gates

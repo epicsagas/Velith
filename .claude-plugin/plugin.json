@@ -32,7 +32,7 @@
     "./agents/style-doctor.md",
     "./agents/scene-generator.md",
     "./agents/cover-designer.md",
-    "./agents/illustration-generator.md",
+    "./agents/illustrator.md",
     "./agents/marketing-expert.md"
   ]
 }
