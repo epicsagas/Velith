@@ -538,27 +538,30 @@ function cmdServe(args) {
   execSync(`node "${serverPath}"`, { stdio: 'inherit' });
 }
 
-// ─── CLI Router ───────────────────────────────────────────────────────────────────
+// ─── CLI Router (only when run directly, not when imported) ──────────────────────
 
-const [,, cmd, ...rest] = process.argv;
-const commands = { scan: cmdScan, agents: cmdAgents, stats: cmdStats, words: cmdWords, list: cmdList, migrate: cmdMigrate, serve: cmdServe };
-const fn = commands[cmd];
-if (!fn) {
-  console.log('Velith CLI — unified client for book project management');
-  console.log('Usage: node client.mjs <command> [args]');
-  console.log('');
-  console.log('Commands:');
-  console.log('  scan [dir]              Scan project and write to SQLite');
-  console.log('  agents <id> <status>    Update agent status');
-  console.log('  stats [dir]             Query project stats from SQLite');
-  console.log('  words <file>            Count lines/words/chars in file');
-  console.log('  list                    List all projects in DB');
-  console.log('  migrate                 Import existing JSON data into SQLite');
-  console.log('  serve                   Start dashboard server');
-  console.log('');
-  console.log('Flags:');
-  console.log('  --ui                    Open dashboard after scan');
-  console.log('  --plugin-root=<path>    Plugin root path');
-  process.exit(0);
+const isMain = process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.url.replace(/^file:\/\//, ''));
+if (isMain) {
+  const [,, cmd, ...rest] = process.argv;
+  const commands = { scan: cmdScan, agents: cmdAgents, stats: cmdStats, words: cmdWords, list: cmdList, migrate: cmdMigrate, serve: cmdServe };
+  const fn = commands[cmd];
+  if (!fn) {
+    console.log('Velith CLI — unified client for book project management');
+    console.log('Usage: node client.mjs <command> [args]');
+    console.log('');
+    console.log('Commands:');
+    console.log('  scan [dir]              Scan project and write to SQLite');
+    console.log('  agents <id> <status>    Update agent status');
+    console.log('  stats [dir]             Query project stats from SQLite');
+    console.log('  words <file>            Count lines/words/chars in file');
+    console.log('  list                    List all projects in DB');
+    console.log('  migrate                 Import existing JSON data into SQLite');
+    console.log('  serve                   Start dashboard server');
+    console.log('');
+    console.log('Flags:');
+    console.log('  --ui                    Open dashboard after scan');
+    console.log('  --plugin-root=<path>    Plugin root path');
+    process.exit(0);
+  }
+  fn(rest);
 }
-fn(rest);
