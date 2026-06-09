@@ -20,4 +20,4 @@ Read all drafts sequentially (ch00 onward). Build glossary (terms, characters, c
 
 Output: `edits/continuity-report.md`. Minor auto-applied, Critical/Major flagged.
 
-Status: `node {PLUGIN_ROOT}/scripts/agent-status.js continuity-editor <running|complete|error> [task]`
+Status: `node {PLUGIN_ROOT}/client.mjs agents continuity-editor <running|complete|error> [task]`

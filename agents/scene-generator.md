@@ -17,4 +17,4 @@ Chapter outline → scene list → per-scene drafts. Fiction only.
 
 Output: `drafts/ch{NN}-scenes.md`. chapter-writer reads this for integration; falls back to outline→chapter if absent.
 
-Status: `node {PLUGIN_ROOT}/scripts/agent-status.js scene-generator <running|complete|error> [task]`
+Status: `node {PLUGIN_ROOT}/client.mjs agents scene-generator <running|complete|error> [task]`
