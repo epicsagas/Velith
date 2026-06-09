@@ -191,6 +191,19 @@ const entry = { path: dir, name: meta.title, updated: now };
 if (idx >= 0) reg.projects[idx] = entry; else reg.projects.push(entry);
 writeFileSync(regPath, JSON.stringify(reg, null, 2));
 
+// --- centralized cache ---
+try {
+const CACHE_DIR = join(VELITH, 'cache');
+mkdirSync(CACHE_DIR, { recursive: true });
+const cachePath = join(CACHE_DIR, 'status.json');
+const cache = read(cachePath, { generated_at: now, agents: [], projects: [] });
+const cIdx = cache.projects.findIndex(p => p.path === dir);
+if (cIdx >= 0) cache.projects[cIdx] = project; else cache.projects.push(project);
+cache.agents = agents;
+cache.generated_at = now;
+writeFileSync(cachePath, JSON.stringify(cache, null, 2));
+} catch (e) { console.error('[velith] cache write failed:', e.message); }
+
 console.log(`status.json written → ${join(dir, '.velith', 'status.json')}`);
 
 // --- terminal dashboard ---
