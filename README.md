@@ -9,7 +9,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.2.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -53,7 +53,7 @@ What the pipeline does to unstructured input — [try it yourself →](https://h
 |--|---------|----------------|
 | 📋 | 6-phase pipeline | Each phase validates before moving on — no rework |
 | 📖 | 7 genre templates | Fiction, non-fiction, technical, screenplay, poetry, game, academic (+ custom via genre-creator) |
-| 🤖 | 7 specialized agents | Architecture, drafting, scene generation, continuity, style, cover, marketing |
+| 🤖 | 8 specialized agents | Architecture, drafting, scene generation, continuity, style, cover, illustrations, marketing |
 | ✏️ | 5-stage editing | Assessment → Developmental → Line → Copy → Proofread |
 | 🔄 | Resume anywhere | Skip completed chapters, pick up from where you left off |
 | 📦 | EPUB, PDF, MOBI, TXT, Markdown | Publish-ready files via Pandoc + Calibre |
@@ -80,7 +80,7 @@ What the pipeline does to unstructured input — [try it yourself →](https://h
 /plugin install velith@epicsagas
 ```
 
-All 16 skills and 7 agents are available immediately. No further steps needed.
+All 17 skills and 8 agents are available immediately. No further steps needed.
 
 Updates with `/plugin update velith@epicsagas`.
 
@@ -179,6 +179,7 @@ The plugin guides you through:
 | `/book-draft` | 3 | Draft chapters (all/specific/resume) with parallel agents |
 | `/book-edit` | 4 | 5-stage editing pipeline |
 | `/book-publish` | 5 | Format to EPUB/PDF/MOBI, cover, marketing |
+| `/book-illustrate` | 3-5 | Interior illustrations — scene extraction, style-consistent prompts, placement plan |
 | `/book-status` | — | Terminal dashboard + `--ui` for browser dashboard |
 | `/book-fiction` | — | Fiction patterns (15-beat, Snowflake, character bible) |
 | `/book-nonfiction` | — | Non-fiction patterns (problem-solution, evidence hierarchy) |
@@ -199,6 +200,7 @@ The plugin guides you through:
 | `style-doctor` | Voice/tone consistency, AI-slop detection |
 | `scene-generator` | Scene-level breakdown with GMC+RDD structure (fiction only) |
 | `cover-designer` | Cover concepts + Midjourney/DALL-E image prompts |
+| `illustration-generator` | Interior illustrations — scene extraction, style bible, prompt generation |
 | `marketing-expert` | Reader personas, channel strategy, 12-week launch calendar |
 
 ## Visual Dashboard
