@@ -28,22 +28,12 @@ jobs:
       - name: Package plugin archive
         run: |
           mkdir -p dist
-          tar czf dist/velith-${{ github.ref_name }}.tar.gz \
-            agents \
-            skills \
-            scripts \
-            dashboard/dist \
-            .claude-plugin \
-            LICENSE \
-            README.md
-          zip -r dist/velith-${{ github.ref_name }}.zip \
-            agents \
-            skills \
-            scripts \
-            dashboard/dist \
-            .claude-plugin \
-            LICENSE \
-            README.md
+          # Collect all files that exist (avoid tar failures for optional platform dirs)
+          FILES=(agents skills client.mjs vendor dashboard/dist .claude-plugin .codex-plugin .cursor .clinerules CONVENTIONS.md .aider.conf.yml LICENSE README.md)
+          INCLUDE=()
+          for f in "${FILES[@]}"; do [ -e "$f" ] && INCLUDE+=("$f"); done
+          tar czf "dist/velith-${{ github.ref_name }}.tar.gz" "${INCLUDE[@]}"
+          zip -r "dist/velith-${{ github.ref_name }}.zip" "${INCLUDE[@]}"
 
       - name: Generate SHA256 checksums
         run: |
