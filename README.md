@@ -118,7 +118,7 @@ agy plugin install https://github.com/epicsagas/Velith
 
 Agy auto-discovers skills and agents from the repository root. No extra configuration needed.
 
-**Prerequisites:** [Agy](https://github.com/nicepkg/antigravity) installed and configured.
+**Prerequisites:** [Agy](https://antigravity.google/docs/cli-install) installed and configured.
 
 ### Cursor
 
