@@ -16,4 +16,4 @@ Check all chapters against STYLE.md rules.
 
 Output: `edits/style-report.md` (location, pattern, severity, fix suggestion, quantitative metrics).
 
-Status: `node {PLUGIN_ROOT}/scripts/agent-status.js style-doctor <running|complete|error> [task]`
+Status: `node {PLUGIN_ROOT}/client.mjs agents style-doctor <running|complete|error> [task]`

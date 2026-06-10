@@ -21,4 +21,4 @@ Book metadata + audience → positioning → channels → execution calendar.
 
 Output: `publish/marketing-plan.md`.
 
-Status: `node {PLUGIN_ROOT}/scripts/agent-status.js marketing-expert <running|complete|error> [task]`
+Status: `node {PLUGIN_ROOT}/client.mjs agents marketing-expert <running|complete|error> [task]`
