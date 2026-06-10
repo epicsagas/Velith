@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -42,6 +42,18 @@
 
 使用原始 LLM 提示写书会导致章节脱节、文体不一致、缺乏结构。Velith 提供**先计划后执行的流水线** — 写作前验证，每个阶段把控质量，在整个手稿中保持连贯性。
 
+## 基准测试
+
+流水线对非结构化输入的处理效果 — [亲自尝试 →](https://huggingface.co/spaces/epicsaga/Velith)
+
+| 指标 | 原始输入 | Velith 流水线处理后 |
+|------|---------|---------------------|
+| 结构评分 | 2–4 / 10 | 6–9 / 10 |
+| 冗余率 | 20–45% n-gram 重叠 | 合并后 < 10% |
+| AI 糟糕内容标记 | 每千词 6–20 个 | 由 style-doctor 检测并删除 |
+| 章节层级 | 无 | 检测后添加交叉引用并映射 |
+| 连贯性评分 | 0.3–1.5 / 10 | 通过章节重构改善 |
+
 | | 功能 | 重要原因 |
 |--|------|----------|
 | 📋 | 6阶段流水线 | 每个阶段验证后再推进 — 无需返工 |
@@ -53,15 +65,16 @@
 
 ## 对比
 
-| | Velith | 原始提示 | AI 写作工具（Jasper、Sudowrite） |
-|--|-----------|-------------|--------------------------------------|
-| 结构验证 | 阶段关卡流水线 | 无 | 基础模板 |
-| 跨章节连贯性 | 专属智能体 | 手动 | 有限 |
-| AI 糟糕内容检测 | 内置（style-doctor） | 无 | 无 |
-| 体裁感知 | 7种体裁系统 + 自定义 | 取决于提示 | 以小说为主 |
-| 输出格式 | EPUB、PDF、MOBI、TXT、Markdown | 复制粘贴 | DOCX，有限 |
-| 所需条件 | Claude Code、Codex CLI、Agy、Cursor、Cline 或 Aider | 任意 LLM | 订阅 |
-| 完全控制 | 提示级别 | 完全 | 黑盒 |
+| | Velith | 原始提示 | Notion AI | Jasper / Sudowrite | Scrivener |
+|--|-----------|-------------|-----------|-------------------|-----------|
+| 结构验证 | 阶段关卡流水线 | 无 | 无 | 基础模板 | 手动 |
+| 跨章节连贯性 | 专属智能体 | 手动 | 无 | 有限 | 手动 |
+| AI 糟糕内容检测 | 内置（style-doctor） | 无 | 无 | 无 | 无 |
+| 体裁感知 | 8种体裁系统 + 自定义 | 取决于提示 | 无 | 以小说为主 | 无 |
+| 输出格式 | EPUB、PDF、MOBI、TXT、Markdown | 复制粘贴 | Markdown / PDF | DOCX，有限 | DOCX、PDF |
+| 质量关卡 | 每个阶段 | 无 | 无 | 无 | 无 |
+| 所需条件 | Claude Code、Codex CLI、Agy、Cursor、Cline 或 Aider | 任意 LLM | Notion 订阅 | 订阅 | 许可证 |
+| 完全控制 | 提示级别 | 完全 | 黑盒 | 黑盒 | 完全 |
 
 ## 安装
 
@@ -93,7 +106,7 @@ agy plugin install https://github.com/epicsagas/Velith
 
 Agy 会自动从仓库根目录发现技能和代理。无需额外配置。
 
-**前提条件:** 已安装并配置 [Agy](https://github.com/nicepkg/antigravity)。
+**前提条件:** 已安装并配置 [Agy](https://antigravity.google/docs/cli-install)。
 
 ### Cursor
 
@@ -172,14 +185,24 @@ aider  # CONVENTIONS.md 自动加载
 
 <img src="../assets/dashboard.png" width="100%" alt="Dashboard" />
 
-`/book-status --ui` 在浏览器中打开基于 Svelte 的进度仪表盘:
+`/book-status --ui` 在浏览器中打开基于 Svelte 的进度仪表盘。仪表盘每 5 秒自动刷新:
 
-- 阶段进度条（6个阶段）
-- 逐章状态（行数、字数、编辑/草稿/等待）
-- 输出文件状态（EPUB/PDF/MOBI/TXT/MD）
-- 通过标签支持多项目
+- 6阶段流水线追踪器（Onboarding → Ideation → Outlining → Drafting → Editing → Publishing）
+- 7个智能体状态卡片（book-architect、chapter-writer、continuity-editor、cover-designer、marketing-expert、scene-generator、style-doctor）
+- 章节大纲、草稿表和5阶段编辑看板
+- 输出文件状态（EPUB/PDF/MOBI/TXT/MD）及发布清单
+- 项目设置和命令参考
 
-仪表盘从 `ui/public/status.json` 读取数据（每次运行 `/book-status --ui` 时由 Claude 生成）。已内置预构建的 `ui/dist/index.html` — 无需构建步骤。
+仪表盘从每个项目的 `status.json` 文件动态读取。预构建的 `dist/` 已内置 — 插件用户无需构建步骤。
+
+本地开发环境运行:
+
+```bash
+cd dashboard
+npm install
+npm run dev     # http://localhost:5173
+npm run build   # 重新构建 dist/
+```
 
 ## 设计原则
 

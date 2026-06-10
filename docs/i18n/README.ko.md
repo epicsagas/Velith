@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -42,6 +42,18 @@
 
 날것의 LLM 프롬프트로 책을 쓰면 챕터가 단절되고, 문체가 일관되지 않으며, 구조가 없습니다. Velith는 **계획 후 실행 파이프라인**을 제공합니다 — 쓰기 전에 검증하고, 각 단계에서 품질을 관리하며, 원고 전체의 연속성을 유지합니다.
 
+## 벤치마크
+
+파이프라인이 비정형 입력에 무엇을 하는지 — [직접 체험하기 →](https://huggingface.co/spaces/epicsaga/Velith)
+
+| 지표 | 원본 입력 | Velith 파이프라인 적용 후 |
+|------|-----------|---------------------------|
+| 구조 점수 | 2–4 / 10 | 6–9 / 10 |
+| 중복률 | 20–45% n-gram 중복 | < 10% (통합 후) |
+| AI 슬롭 마커 | 1,000단어당 6–20개 | style-doctor가 감지 및 제거 |
+| 챕터 계층 | 없음 | 감지 후 상호 참조 포함 매핑 |
+| 일관성 점수 | 0.3–1.5 / 10 | 섹션 재구성으로 개선 |
+
 | | 기능 | 중요한 이유 |
 |--|------|-------------|
 | 📋 | 6단계 파이프라인 | 각 단계에서 검증 후 진행 — 재작업 없음 |
@@ -53,15 +65,16 @@
 
 ## 비교
 
-| | Velith | 단순 프롬프트 | AI 작성 도구 (Jasper, Sudowrite) |
-|--|-----------|-------------|--------------------------------------|
-| 구조 검증 | 단계별 관문 파이프라인 | 없음 | 기본 템플릿 |
-| 챕터 간 연속성 | 전담 에이전트 | 수동 | 제한적 |
-| AI 슬롭 감지 | 내장 (style-doctor) | 없음 | 없음 |
-| 장르 인식 | 7가지 장르 시스템 + 커스텀 | 프롬프트에 따라 다름 | 소설 중심 |
-| 출력 형식 | EPUB, PDF, MOBI, TXT, Markdown | 복사-붙여넣기 | DOCX, 제한적 |
-| 필요 조건 | Claude Code, Codex CLI, Agy, Cursor, Cline, Aider | 모든 LLM | 구독 |
-| 완전한 제어 | 프롬프트 수준 | 완전 | 블랙박스 |
+| | Velith | 단순 프롬프트 | Notion AI | Jasper / Sudowrite | Scrivener |
+|--|-----------|-------------|-----------|-------------------|-----------|
+| 구조 검증 | 단계별 관문 파이프라인 | 없음 | 없음 | 기본 템플릿 | 수동 |
+| 챕터 간 연속성 | 전담 에이전트 | 수동 | 없음 | 제한적 | 수동 |
+| AI 슬롭 감지 | 내장 (style-doctor) | 없음 | 없음 | 없음 | 없음 |
+| 장르 인식 | 8가지 장르 시스템 + 커스텀 | 프롬프트에 따라 다름 | 없음 | 소설 중심 | 없음 |
+| 출력 형식 | EPUB, PDF, MOBI, TXT, Markdown | 복사-붙여넣기 | Markdown / PDF | DOCX, 제한적 | DOCX, PDF |
+| 품질 관문 | 모든 단계 | 없음 | 없음 | 없음 | 없음 |
+| 필요 조건 | Claude Code, Codex CLI, Agy, Cursor, Cline, Aider | 모든 LLM | Notion 구독 | 구독 | 라이선스 |
+| 완전한 제어 | 프롬프트 수준 | 완전 | 블랙박스 | 블랙박스 | 완전 |
 
 ## 설치
 
@@ -93,7 +106,7 @@ agy plugin install https://github.com/epicsagas/Velith
 
 Agy가 리포지토리 루트에서 스킬과 에이전트를 자동으로 인식합니다. 별도 설정이 필요 없습니다.
 
-**사전 요건:** [Agy](https://github.com/nicepkg/antigravity)가 설치되고 구성되어 있어야 합니다.
+**사전 요건:** [Agy](https://antigravity.google/docs/cli-install)가 설치되고 구성되어 있어야 합니다.
 
 ### Cursor
 
@@ -174,14 +187,24 @@ aider  # CONVENTIONS.md가 자동 로드됨
 
 <img src="../assets/dashboard.png" width="100%" alt="Dashboard" />
 
-`/book-status --ui`는 브라우저에서 Svelte 기반 진행 대시보드를 엽니다:
+`/book-status --ui`는 브라우저에서 Svelte 기반 진행 대시보드를 엽니다. 대시보드는 5초마다 자동 새로고침됩니다:
 
-- 단계 진행 바 (6단계)
-- 챕터별 상태 (줄 수, 단어 수, 편집/초안/대기)
-- 출력 파일 상태 (EPUB/PDF/MOBI/TXT/MD)
-- 탭을 통한 다중 프로젝트 지원
+- 6단계 파이프라인 추적기 (Onboarding → Ideation → Outlining → Drafting → Editing → Publishing)
+- 7개 에이전트 상태 카드 (book-architect, chapter-writer, continuity-editor, cover-designer, marketing-expert, scene-generator, style-doctor)
+- 챕터 개요, 초안 목록, 5단계 편집 칸반
+- 출력 파일 상태 (EPUB/PDF/MOBI/TXT/MD) 및 발행 체크리스트
+- 프로젝트 설정 및 명령어 레퍼런스
 
-대시보드는 `ui/public/status.json`에서 읽습니다 (`/book-status --ui` 실행 시마다 Claude가 생성). 사전 빌드된 `ui/dist/index.html`이 포함되어 있어 빌드 단계가 필요 없습니다.
+대시보드는 프로젝트별 `status.json` 파일에서 동적으로 읽습니다. 사전 빌드된 `dist/`가 포함되어 있어 플러그인 사용자는 빌드 단계가 필요 없습니다.
+
+개발 환경에서 로컬 실행:
+
+```bash
+cd dashboard
+npm install
+npm run dev     # http://localhost:5173
+npm run build   # dist/ 재빌드
+```
 
 ## 설계 원칙
 

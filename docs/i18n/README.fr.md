@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -42,6 +42,18 @@ Kit d'outils de création de livres de bout en bout pour Claude Code. De la page
 
 Écrire un livre avec des prompts LLM bruts produit des chapitres déconnectés, une voix incohérente et aucune structure. Velith fournit un **pipeline planifier-puis-exécuter** — valider avant d'écrire, contrôler la qualité à chaque phase et maintenir la continuité tout au long du manuscrit.
 
+## Benchmark
+
+Ce que le pipeline fait aux entrées non structurées — [essayez par vous-même →](https://huggingface.co/spaces/epicsaga/Velith)
+
+| Métrique | Entrée brute | Après le pipeline Velith |
+|---------|-------------|--------------------------|
+| Score de structure | 2–4 / 10 | 6–9 / 10 |
+| Redondance | 20–45% de chevauchement n-gram | < 10% après consolidation |
+| Marqueurs AI-slop | 6–20 pour 1 000 mots | Détectés et supprimés par style-doctor |
+| Hiérarchie des chapitres | Aucune | Détectée + cartographiée avec références croisées |
+| Score de cohérence | 0,3–1,5 / 10 | Amélioré par restructuration de sections |
+
 | | Fonctionnalité | Pourquoi c'est important |
 |--|---------------|--------------------------|
 | 📋 | Pipeline en 6 phases | Chaque phase valide avant de continuer — pas de retravail |
@@ -53,15 +65,16 @@ Kit d'outils de création de livres de bout en bout pour Claude Code. De la page
 
 ## Comparaison
 
-| | Velith | Prompts bruts | Outils d'écriture IA (Jasper, Sudowrite) |
-|--|-----------|-------------|--------------------------------------|
-| Validation de structure | Pipeline par phases | Aucune | Modèles basiques |
-| Continuité entre chapitres | Agent dédié | Manuelle | Limitée |
-| Détection AI-slop | Intégrée (style-doctor) | Aucune | Aucune |
-| Conscience du genre | 7 systèmes de genre + personnalisé | Dépend du prompt | Centré sur la fiction |
-| Format de sortie | EPUB, PDF, MOBI, TXT, Markdown | Copier-coller | DOCX, limité |
-| Nécessite | Claude Code, Codex CLI, Agy, Cursor, Cline ou Aider | N'importe quel LLM | Abonnement |
-| Contrôle total | Au niveau du prompt | Total | Boîte noire |
+| | Velith | Prompts bruts | Notion AI | Jasper / Sudowrite | Scrivener |
+|--|-----------|-------------|-----------|-------------------|-----------|
+| Validation de structure | Pipeline par phases | Aucune | Aucune | Modèles basiques | Manuelle |
+| Continuité entre chapitres | Agent dédié | Manuelle | Aucune | Limitée | Manuelle |
+| Détection AI-slop | Intégrée (style-doctor) | Aucune | Aucune | Aucune | Aucune |
+| Conscience du genre | 8 systèmes de genre + personnalisé | Dépend du prompt | Aucune | Centré sur la fiction | Aucune |
+| Format de sortie | EPUB, PDF, MOBI, TXT, Markdown | Copier-coller | Markdown / PDF | DOCX, limité | DOCX, PDF |
+| Contrôle qualité | Chaque phase | Aucun | Aucun | Aucun | Aucun |
+| Nécessite | Claude Code, Codex CLI, Agy, Cursor, Cline ou Aider | N'importe quel LLM | Abonnement Notion | Abonnement | Licence |
+| Contrôle total | Au niveau du prompt | Total | Boîte noire | Boîte noire | Total |
 
 ## Installation
 
@@ -93,7 +106,7 @@ agy plugin install https://github.com/epicsagas/Velith
 
 Agy découvre automatiquement les skills et agents depuis la racine du dépôt. Aucune configuration supplémentaire nécessaire.
 
-**Prérequis :** [Agy](https://github.com/nicepkg/antigravity) installé et configuré.
+**Prérequis :** [Agy](https://antigravity.google/docs/cli-install) installé et configuré.
 
 ### Cursor
 
@@ -172,14 +185,24 @@ Le plugin vous guide à travers :
 
 <img src="../assets/dashboard.png" width="100%" alt="Dashboard" />
 
-`/book-status --ui` ouvre un tableau de bord de progression basé sur Svelte dans votre navigateur :
+`/book-status --ui` ouvre un tableau de bord de progression basé sur Svelte dans votre navigateur. Le tableau de bord se rafraîchit automatiquement toutes les 5 secondes :
 
-- Barres de progression par phase (6 phases)
-- Statut chapitre par chapitre (lignes, mots, édition/brouillon/attente)
-- Statut des fichiers de sortie (EPUB/PDF/MOBI/TXT/MD)
-- Support multi-projets via des onglets
+- Suivi du pipeline en 6 phases (Onboarding → Ideation → Outlining → Drafting → Editing → Publishing)
+- 7 cartes de statut d'agents (book-architect, chapter-writer, continuity-editor, cover-designer, marketing-expert, scene-generator, style-doctor)
+- Plan des chapitres, tableau des brouillons et kanban d'édition en 5 étapes
+- Statut des fichiers de sortie (EPUB/PDF/MOBI/TXT/MD) avec liste de contrôle de publication
+- Paramètres du projet et référence des commandes
 
-Le tableau de bord lit depuis `ui/public/status.json` (généré par Claude à chaque exécution de `/book-status --ui`). Le `ui/dist/index.html` pré-compilé est inclus — aucune étape de construction requise.
+Le tableau de bord lit dynamiquement depuis les fichiers `status.json` par projet. Le `dist/` pré-compilé est inclus — aucune étape de construction requise pour les utilisateurs du plugin.
+
+Pour exécuter localement en développement :
+
+```bash
+cd dashboard
+npm install
+npm run dev     # http://localhost:5173
+npm run build   # reconstruire dist/
+```
 
 ## Principes de Conception
 

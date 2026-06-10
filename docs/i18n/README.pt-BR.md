@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -42,6 +42,18 @@ Kit de ferramentas de criação de livros de ponta a ponta para o Claude Code. D
 
 Escrever um livro com prompts LLM brutos resulta em capítulos desconectados, voz inconsistente e sem estrutura. O Velith fornece um **pipeline de planejar-depois-executar** — valida antes de escrever, controla a qualidade em cada fase e mantém a continuidade ao longo de todo o manuscrito.
 
+## Benchmark
+
+O que o pipeline faz com entradas não estruturadas — [experimente você mesmo →](https://huggingface.co/spaces/epicsaga/Velith)
+
+| Métrica | Entrada bruta | Após o pipeline do Velith |
+|---------|--------------|---------------------------|
+| Pontuação de estrutura | 2–4 / 10 | 6–9 / 10 |
+| Redundância | 20–45% de sobreposição n-gram | < 10% após consolidação |
+| Marcadores de AI-slop | 6–20 por 1K palavras | Detectados e removidos pelo style-doctor |
+| Hierarquia de capítulos | Nenhuma | Detectada + mapeada com referências cruzadas |
+| Pontuação de coerência | 0,3–1,5 / 10 | Melhorada com reestruturação de seções |
+
 | | Funcionalidade | Por que importa |
 |--|---------------|-----------------|
 | 📋 | Pipeline de 6 fases | Cada fase valida antes de avançar — sem retrabalho |
@@ -53,15 +65,16 @@ Escrever um livro com prompts LLM brutos resulta em capítulos desconectados, vo
 
 ## Comparação
 
-| | Velith | Prompts básicos | Ferramentas de escrita IA (Jasper, Sudowrite) |
-|--|-----------|-------------|--------------------------------------|
-| Validação de estrutura | Pipeline por fases | Nenhuma | Templates básicos |
-| Continuidade entre capítulos | Agente dedicado | Manual | Limitada |
-| Detecção de AI-slop | Integrada (style-doctor) | Nenhuma | Nenhuma |
-| Consciência de gênero | 7 sistemas de gênero + personalizado | Depende do prompt | Focado em ficção |
-| Formato de saída | EPUB, PDF, MOBI, TXT, Markdown | Copiar-colar | DOCX, limitado |
-| Requer | Claude Code, Codex CLI, Agy, Cursor, Cline ou Aider | Qualquer LLM | Assinatura |
-| Controle total | Nível de prompt | Total | Caixa preta |
+| | Velith | Prompts básicos | Notion AI | Jasper / Sudowrite | Scrivener |
+|--|-----------|-------------|-----------|-------------------|-----------|
+| Validação de estrutura | Pipeline por fases | Nenhuma | Nenhuma | Templates básicos | Manual |
+| Continuidade entre capítulos | Agente dedicado | Manual | Nenhuma | Limitada | Manual |
+| Detecção de AI-slop | Integrada (style-doctor) | Nenhuma | Nenhuma | Nenhuma | Nenhuma |
+| Consciência de gênero | 8 sistemas de gênero + personalizado | Depende do prompt | Nenhuma | Focado em ficção | Nenhuma |
+| Formato de saída | EPUB, PDF, MOBI, TXT, Markdown | Copiar-colar | Markdown / PDF | DOCX, limitado | DOCX, PDF |
+| Controle de qualidade | Cada fase | Nenhum | Nenhum | Nenhum | Nenhum |
+| Requer | Claude Code, Codex CLI, Agy, Cursor, Cline ou Aider | Qualquer LLM | Assinatura Notion | Assinatura | Licença |
+| Controle total | Nível de prompt | Total | Caixa preta | Caixa preta | Total |
 
 ## Instalação
 
@@ -93,7 +106,7 @@ agy plugin install https://github.com/epicsagas/Velith
 
 O Agy descobre automaticamente skills e agents da raiz do repositório. Nenhuma configuração adicional necessária.
 
-**Pré-requisitos:** [Agy](https://github.com/nicepkg/antigravity) instalado e configurado.
+**Pré-requisitos:** [Agy](https://antigravity.google/docs/cli-install) instalado e configurado.
 
 ### Cursor
 
@@ -172,14 +185,24 @@ O plugin guia você por:
 
 <img src="../assets/dashboard.png" width="100%" alt="Dashboard" />
 
-`/book-status --ui` abre um painel de progresso baseado em Svelte no seu navegador:
+`/book-status --ui` abre um painel de progresso baseado em Svelte no seu navegador. O painel atualiza automaticamente a cada 5 segundos:
 
-- Barras de progresso por fase (6 fases)
-- Status capítulo a capítulo (linhas, palavras, edição/rascunho/espera)
-- Status dos arquivos de saída (EPUB/PDF/MOBI/TXT/MD)
-- Suporte a múltiplos projetos via abas
+- Rastreador de pipeline de 6 fases (Onboarding → Ideation → Outlining → Drafting → Editing → Publishing)
+- 7 cartões de status de agentes (book-architect, chapter-writer, continuity-editor, cover-designer, marketing-expert, scene-generator, style-doctor)
+- Esboço de capítulos, tabela de rascunhos e kanban de edição em 5 etapas
+- Status dos arquivos de saída (EPUB/PDF/MOBI/TXT/MD) com lista de verificação de publicação
+- Configurações do projeto e referência de comandos
 
-O painel lê de `ui/public/status.json` (gerado pelo Claude a cada execução de `/book-status --ui`). O `ui/dist/index.html` pré-compilado está incluído — nenhuma etapa de build necessária.
+O painel lê dinamicamente de arquivos `status.json` por projeto. O `dist/` pré-compilado está incluído — nenhuma etapa de build necessária para usuários do plugin.
+
+Para executar localmente em desenvolvimento:
+
+```bash
+cd dashboard
+npm install
+npm run dev     # http://localhost:5173
+npm run build   # reconstruir dist/
+```
 
 ## Princípios de Design
 
