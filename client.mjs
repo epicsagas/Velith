@@ -592,13 +592,27 @@ async function cmdServe(args) {
     }
   }
 
+  // ── ETag cache for status.json ──
+  let cachedStatusJson = null;
+  let cachedEtag = null;
+
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
 
     if (url.pathname === '/status.json') {
       const status = await getStatus();
-      res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
-      res.end(JSON.stringify({ ...status, generated_at: new Date().toISOString() }));
+      const body = JSON.stringify({ ...status, generated_at: new Date().toISOString() });
+      const etag = '"' + Buffer.from(body).length.toString(36) + '-' + Buffer.from(body).slice(0, 64).toString('base64').slice(0, 8) + '"';
+      // 304 Not Modified if ETag matches
+      if (req.headers['if-none-match'] === etag) {
+        res.writeHead(304, { 'ETag': etag });
+        res.end();
+        return;
+      }
+      cachedStatusJson = body;
+      cachedEtag = etag;
+      res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'ETag': etag });
+      res.end(body);
       return;
     }
 
