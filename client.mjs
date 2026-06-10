@@ -1,11 +1,12 @@
 // Velith CLI — unified client for book project management
 // Usage: node client.mjs <command> [args]
 // Commands: scan, agents, stats, words, list, serve
-import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, renameSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, renameSync, createReadStream } from 'node:fs';
+import http from 'node:http';
 import { homedir } from 'node:os';
-import { join, basename, resolve } from 'node:path';
+import { join, basename, resolve, extname } from 'node:path';
 import { execSync } from 'node:child_process';
-import initSqlJs from 'sql.js';
+import initSqlJs from './vendor/sql.js/sql-wasm.js';
 
 const HOME = homedir();
 const VELITH = join(HOME, '.velith');
@@ -121,9 +122,32 @@ const countLines = (p) => { try { return parseInt(execSync(`wc -l < "${p}"`, { e
 const countWords = (p) => { try { return parseInt(execSync(`wc -w < "${p}"`, { encoding: 'utf8' }).trim()); } catch { return 0; } };
 const countChars = (p) => { try { return parseInt(execSync(`tr -d '[:space:]' < "${p}" | wc -m`, { encoding: 'utf8' }).trim()); } catch { return 0; } };
 
+// ─── auto-migration ─────────────────────────────────────────────────────────────
+
+async function needsMigration() {
+  if (existsSync(DB_PATH)) {
+    const db = await getDb();
+    const rows = db.exec('SELECT COUNT(*) FROM projects');
+    if (rows.length && rows[0].values[0][0] > 0) return false;
+  }
+  const reg = readJson(join(VELITH, 'projects.json'), { projects: [] });
+  if (reg.projects.length > 0) return true;
+  const cache = readJson(join(VELITH, 'cache', 'status.json'), null);
+  if (cache?.projects?.length > 0) return true;
+  return false;
+}
+
+async function autoMigrate() {
+  if (await needsMigration()) {
+    console.log('Migrating legacy JSON data to SQLite...');
+    await cmdMigrate();
+  }
+}
+
 // ─── scan ─────────────────────────────────────────────────────────────────────────
 
 async function cmdScan(args) {
+  await autoMigrate();
   const start = Date.now();
   const pluginRoot = (args.find(a => a.startsWith('--plugin-root=')) || '').slice('--plugin-root='.length) || null;
   const dir = resolve(args.find(a => !a.startsWith('--')) || process.cwd());
@@ -332,8 +356,8 @@ async function cmdScan(args) {
     const port = config.port || 9631;
     try { execSync(`curl -sf http://127.0.0.1:${port}/status.json`, { stdio: 'pipe' }); }
     catch {
-      const serverPath = pluginRoot ? join(pluginRoot, 'dashboard', 'server.mjs') : join(import.meta.dirname, 'dashboard', 'server.mjs');
-      execSync(`nohup node "${serverPath}" > /dev/null 2>&1 &`, { stdio: 'ignore' });
+      const clientPath = pluginRoot ? join(pluginRoot, 'client.mjs') : import.meta.url.replace(/^file:\/\//, '');
+      execSync(`nohup node "${clientPath}" serve > /dev/null 2>&1 &`, { stdio: 'ignore' });
     }
     const pidx = Math.max(0, reg.projects.findIndex(p => p.path === dir));
     execSync(`open http://127.0.0.1:${port}/${pidx}/overview`, { stdio: 'ignore' });
@@ -533,9 +557,115 @@ async function cmdMigrate() {
 
 // ─── serve ────────────────────────────────────────────────────────────────────────
 
-function cmdServe(args) {
-  const serverPath = join(import.meta.dirname, 'dashboard', 'server.mjs');
-  execSync(`node "${serverPath}"`, { stdio: 'inherit' });
+async function cmdServe(args) {
+  await autoMigrate();
+  const DIST_DIR = join(import.meta.dirname, 'dashboard', 'dist');
+  const PID_PATH = join(VELITH, 'server.pid');
+  const DEFAULT_PORT = 9631;
+
+  const MIME = {
+    '.html': 'text/html; charset=utf-8',
+    '.js': 'application/javascript',
+    '.css': 'text/css',
+    '.json': 'application/json',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.webp': 'image/webp',
+    '.gif': 'image/gif',
+    '.svg': 'image/svg+xml',
+    '.ico': 'image/x-icon',
+    '.woff2': 'font/woff2',
+  };
+
+  function serveStatic(res, urlPath) {
+    let fp = join(DIST_DIR, urlPath === '/' ? 'index.html' : urlPath);
+    if (!existsSync(fp) || statSync(fp).isDirectory()) fp = join(DIST_DIR, 'index.html');
+    const ext = basename(fp).includes('.') ? '.' + basename(fp).split('.').pop() : '';
+    try {
+      const buf = readFileSync(fp);
+      res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
+      res.end(buf);
+    } catch {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('Not found');
+    }
+  }
+
+  const server = http.createServer(async (req, res) => {
+    const url = new URL(req.url, `http://${req.headers.host}`);
+
+    if (url.pathname === '/status.json') {
+      const status = await getStatus();
+      res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
+      res.end(JSON.stringify({ ...status, generated_at: new Date().toISOString() }));
+      return;
+    }
+
+    const coverMatch = url.pathname.match(/^\/cover\/(\d+)$/);
+    if (coverMatch) {
+      const status = await getStatus();
+      const proj = status.projects?.[parseInt(coverMatch[1])];
+      if (!proj?.path) { res.writeHead(404); res.end('Not found'); return; }
+      const coverDir = join(proj.path, 'publish', 'cover');
+      try {
+        const files = readdirSync(coverDir).filter(f => IMG_EXTS.test(f));
+        if (files.length === 0) { res.writeHead(404); res.end('No cover'); return; }
+        const cover = files.find(f => /^cover\./i.test(f)) || files[0];
+        const fp = join(coverDir, cover);
+        const ext = extname(fp);
+        res.writeHead(200, { 'Content-Type': MIME[ext] || 'image/jpeg', 'Cache-Control': 'public, max-age=60' });
+        createReadStream(fp).pipe(res);
+      } catch {
+        res.writeHead(404); res.end('No cover');
+      }
+      return;
+    }
+
+    const uploadMatch = url.pathname.match(/^\/api\/cover\/(\d+)$/);
+    if (uploadMatch && req.method === 'POST') {
+      const status = await getStatus();
+      const proj = status.projects?.[parseInt(uploadMatch[1])];
+      if (!proj?.path) { res.writeHead(404, { 'Content-Type': 'application/json' }); res.end('{"error":"Project not found"}'); return; }
+      const coverDir = join(proj.path, 'publish', 'cover');
+      mkdirSync(coverDir, { recursive: true });
+      const chunks = [];
+      for await (const chunk of req) chunks.push(chunk);
+      const buf = Buffer.concat(chunks);
+      let filename = basename(url.searchParams.get('filename') || 'cover.jpg');
+      if (!IMG_EXTS.test(filename)) filename = 'cover.jpg';
+      const fp = join(coverDir, filename);
+      writeFileSync(fp, buf);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ok: true, path: fp }));
+      return;
+    }
+
+    const dlMatch = url.pathname.match(/^\/download\/(\d+)\/(.+)$/);
+    if (dlMatch) {
+      const status = await getStatus();
+      const proj = status.projects?.[parseInt(dlMatch[1])];
+      if (!proj?.path) { res.writeHead(404); res.end('Not found'); return; }
+      const fp = resolve(proj.path, 'publish', dlMatch[2]);
+      const pubDir = resolve(proj.path, 'publish');
+      if (!fp.startsWith(pubDir + '/') || !existsSync(fp) || statSync(fp).isDirectory()) { res.writeHead(403); res.end('Forbidden'); return; }
+      const ext = extname(fp);
+      res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream', 'Content-Disposition': `attachment; filename="${dlMatch[2]}"` });
+      createReadStream(fp).pipe(res);
+      return;
+    }
+
+    serveStatic(res, url.pathname);
+  });
+
+  const config = readJson(join(VELITH, 'config.json'), {});
+  const port = config.port || DEFAULT_PORT;
+  const host = config.host || '127.0.0.1';
+
+  server.listen(port, host, () => {
+    writeFileSync(PID_PATH, String(process.pid));
+    console.log(`velith:${host === '0.0.0.0' ? '0.0.0.0' : '127.0.0.1'}:${port}`);
+  });
 }
 
 // ─── CLI Router (only when run directly, not when imported) ──────────────────────
@@ -563,5 +693,5 @@ if (isMain) {
     console.log('  --plugin-root=<path>    Plugin root path');
     process.exit(0);
   }
-  fn(rest);
+  Promise.resolve(fn(rest)).catch(err => { console.error(err.message || err); process.exit(1); });
 }

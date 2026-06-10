@@ -1,0 +1,17 @@
+pre-push:
+  commands:
+    dashboard-build:
+      tags: build
+      env:
+        CI: "1"
+      run: |
+        exec </dev/null
+        # Auto-rebuild dashboard if source changed but dist is stale
+        changed=$(git diff --name-only origin/main...HEAD -- dashboard/src/ dashboard/shared/ dashboard/index.html)
+        if [ -n "$changed" ]; then
+          echo "⚙ Dashboard source changed, rebuilding..."
+          cd dashboard && npm run build
+          git add dashboard/dist/
+          echo "✓ Dashboard rebuilt. Stage the dist/ changes and re-push."
+          exit 1
+        fi

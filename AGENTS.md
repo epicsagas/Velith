@@ -13,8 +13,8 @@ A Claude Code plugin for AI-native book publishing. 6-phase pipeline (Onboarding
 ```
 skills/{skill-name}/SKILL.md    — Skills (slash commands): frontmatter (name, description) + prompt
 agents/{agent-name}.md          — Agents: frontmatter (name, description, tools[]) + prompt
-scripts/agent-status.js         — Shared agent status tracker (writes ~/.velith/agents/{id}.json) — DEPRECATED, use client.mjs
-client.mjs                      — Unified CLI with SQLite backend (scan/agents/stats/words/list/migrate/serve)
+client.mjs                      — Unified CLI + HTTP server (scan/agents/stats/words/list/migrate/serve)
+vendor/sql.js/sql-wasm.js/wasm  — Vendored SQLite WASM binary (no npm install required)
 .claude-plugin/plugin.json      — Plugin manifest (skills path, agent list)
 ```
 
@@ -66,7 +66,7 @@ Svelte 5 + Vite + Tailwind CSS (CDN). Single-file app architecture in `dashboard
 - **Routing**: Manual URL path parsing with `View` union type and `VALID_VIEWS` set. No router library.
 - **Styling**: Tailwind via CDN with CSS custom properties for theming. Light/dark mode via `.dark` class on `<html>`. Sidebar is permanently dark.
 - **i18n**: 10 locales (en, ko, ja, zh, es, fr, de, pt, it, ru). Source of truth is `en.ts` with `StringKey` type. All locales must have the same keys. Locale stored in `localStorage` as `bf-locale`, defaults to `ko`.
-- **Data**: SQLite (`sql.js`, WASM) at `~/.velith/velith.db`. Both `vite.config.ts` (dev) and `server.mjs` (production) read via `getStatus()` from `client.mjs`. Cover images served via `/cover/{index}`. Legacy JSON files (`status.json`, `agents/*.json`) maintained as backward compat; `client.mjs migrate` converts them and renames to `.bak`.
+- **Data**: SQLite (`sql.js`, WASM, vendored in `vendor/sql.js/`) at `~/.velith/velith.db`. Zero npm dependencies at root — plugin works after git clone. Both `vite.config.ts` (dev) and `client.mjs serve` (production) read via `getStatus()`. Legacy JSON files auto-migrate on first `scan`/`serve` and rename to `.bak`.
 - **Help view**: Accessible without project selection — sidebar onclick has `|| item.id === 'help'` guard, and render chain checks `activeView === 'help'` before project-selection landing.
 
 ### Dashboard commands
@@ -93,7 +93,7 @@ npm run build     # rebuild dist/ (included in repo for plugin users)
 - **License**: Apache-2.0
 - **i18n**: All user-facing strings must go through the i18n system. When adding keys, add to all 10 locale files.
 - **Idempotent agents**: Agents must skip already-completed work (e.g., chapter-writer skips existing draft files).
-- **Agent status tracking**: All agents call `node {PLUGIN_ROOT}/client.mjs agents {id} {running|complete|error} [task]` to update status (SQLite + JSON backward compat).
+- **Agent status tracking**: All agents call `node {PLUGIN_ROOT}/client.mjs agents {id} {running|complete|error} [task]` to update status (SQLite + JSON backward compat). Auto-migration runs on `scan`/`serve` when legacy JSON data is detected.
 
 ## Codex (OpenAI) Plugin Support
 
