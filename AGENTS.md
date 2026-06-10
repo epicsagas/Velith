@@ -112,14 +112,21 @@ Velith also supports OpenAI Codex CLI discovery via `.codex-plugin/plugin.json`,
 
 ## Versioning and Release
 
-This is a Claude Code plugin. Before every push to `main`, bump the `version` field in `.claude-plugin/plugin.json` semantically based on the change scope:
+This is a multi-platform plugin. Before every push to `main`, bump the `version` field in **all four** version-bearing files to the same value:
+
+| File | Purpose |
+|------|---------|
+| `.claude-plugin/plugin.json` | Claude Code plugin manifest |
+| `.codex-plugin/plugin.json` | OpenAI Codex CLI plugin manifest |
+| `plugin.json` (root) | Agy auto-discovery manifest |
+| `README.md` badge URL | `badge/version-{version}` |
+
+Also bump the **UI version** constant in `dashboard/src/App.svelte` (`UI_VERSION`) to match.
+
+Version bump semantics:
 
 - **PATCH** (`0.1.0` → `0.1.1`): Bug fixes, typo corrections, minor dashboard styling tweaks, i18n string fixes — no new functionality.
 - **MINOR** (`0.1.0` → `0.2.0`): New skills, new agents, new genre support, new dashboard views, new i18n keys, feature additions to existing skills/agents.
 - **MAJOR** (`0.1.0` → `1.0.0`): Breaking changes to skill/agent interfaces, pipeline phase restructuring, removed skills or agents, incompatible plugin manifest changes.
 
-Also bump `version` in `README.md` badge URL (`badge/version-{version}`) to match.
-
-Additionally, bump the **UI version** constant in `dashboard/src/App.svelte` (`UI_VERSION`) to match the plugin version. Both must stay in sync.
-
-**Process**: bump version → commit all changes → push. Do not push without bumping.
+**Process**: bump all five locations → rebuild dashboard (`cd dashboard && npm run build`) → commit → tag `v{version}` → push with `--tags`. Do not push without bumping.
