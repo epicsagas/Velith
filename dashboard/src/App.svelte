@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from 'svelte';
   import { i18n, locale } from './lib/i18n.js';
   import { NAV_ITEMS, VALID_VIEWS, SAMPLE_DATA } from './lib/data.js';
   import { initAccent, accentColor, initFont, fontId, setFont, syncFontToLocale } from './lib/theme.js';
@@ -30,6 +31,10 @@
 
   const isExample = new URLSearchParams(window.location.search).has('example');
   const UI_VERSION = '0.3.0';
+
+  // ── ETag-based caching ──
+  let lastEtag = $state(null);
+  let refreshTimer = null;
 
   function parsePath() {
     const parts = window.location.pathname.replace(/^\//, '').split('/');
@@ -79,9 +84,14 @@
   async function fetchData() {
     if (isExample) return;
     try {
-      const res = await fetch('/status.json?t=' + Date.now());
+      const headers = {};
+      if (lastEtag) headers['If-None-Match'] = lastEtag;
+      const res = await fetch('/status.json', { headers });
+      if (res.status === 304) return; // Not Modified — use cached data
       if (res.status === 404) { dataState = { kind: 'empty' }; return; }
       if (!res.ok) throw new Error(res.statusText);
+      const etag = res.headers.get('ETag');
+      if (etag) lastEtag = etag;
       const data = await res.json();
       dataState = { kind: 'ok', data };
       restoreState();
@@ -102,7 +112,8 @@
   let project = $derived(bookIndex !== null ? projects[bookIndex] ?? null : null);
   let agents  = $derived(project?.agents ?? statusData?.agents ?? []);
 
-  $effect(() => {
+  // ── Initialization: run once on mount (not in $effect to avoid re-triggers) ──
+  onMount(() => {
     parsePath();
     if (isExample) {
       dataState = { kind: 'ok', data: SAMPLE_DATA };
@@ -111,13 +122,20 @@
     }
     const onPop = () => parsePath();
     window.addEventListener('popstate', onPop);
-    return () => window.removeEventListener('popstate', onPop);
+    return () => {
+      window.removeEventListener('popstate', onPop);
+      if (refreshTimer) clearInterval(refreshTimer);
+    };
   });
 
+  // ── Auto-refresh: 15s interval (reduced from 5s), paused when tab hidden ──
   $effect(() => {
     if (!autoRefresh || isExample) return;
-    const id = setInterval(() => { if (!document.hidden) fetchData(); }, 5000);
-    return () => clearInterval(id);
+    if (refreshTimer) clearInterval(refreshTimer);
+    refreshTimer = setInterval(() => {
+      if (!document.hidden) fetchData();
+    }, 15000);
+    return () => { if (refreshTimer) clearInterval(refreshTimer); };
   });
 
   // 초기 액센트·폰트 적용
@@ -136,7 +154,6 @@
     isDark = !isDark;
     document.documentElement.classList.toggle('dark', isDark);
     try { localStorage.setItem('velith-theme', isDark ? 'dark' : 'light'); } catch {}
-    // 테마 전환 시 해당 모드의 저장된 액센트 복원
     currentAccent = initAccent(isDark);
   }
 

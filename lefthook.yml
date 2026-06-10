@@ -11,7 +11,9 @@ pre-push:
         if [ -n "$changed" ]; then
           echo "⚙ Dashboard source changed, rebuilding..."
           cd dashboard && npm run build
+          cd ..
           git add dashboard/dist/
-          echo "✓ Dashboard rebuilt. Stage the dist/ changes and re-push."
-          exit 1
+          # Amend the commit with rebuilt dist
+          git commit --amend --no-edit
+          echo "✓ Dashboard rebuilt and amended into commit."
         fi
