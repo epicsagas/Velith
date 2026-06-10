@@ -30,7 +30,7 @@
   });
 
   const isExample = new URLSearchParams(window.location.search).has('example');
-  const UI_VERSION = '0.3.1';
+  const UI_VERSION = '0.3.0';
 
   // ── ETag-based caching ──
   let lastEtag = $state(null);
