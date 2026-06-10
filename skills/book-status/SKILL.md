@@ -7,7 +7,7 @@ allowed-tools: Bash(node), Read, Write
 
 # Book Status
 
-Run: `node {PLUGIN_ROOT}/client.mjs scan [dir] [--ui] --plugin-root={PLUGIN_ROOT}`
+Run: `node {PLUGIN_ROOT}/velith.mjs scan [dir] [--ui] --plugin-root={PLUGIN_ROOT}`
 
 Outputs: `{dir}/.velith/status.json`, `~/.velith/projects.json`, terminal ASCII dashboard.
 

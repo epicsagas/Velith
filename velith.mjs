@@ -1,5 +1,5 @@
 // Velith CLI — unified client for book project management
-// Usage: node client.mjs <command> [args]
+// Usage: node velith.mjs <command> [args]
 // Commands: scan, agents, stats, words, list, serve
 import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, renameSync, createReadStream } from 'node:fs';
 import http from 'node:http';
@@ -356,7 +356,7 @@ async function cmdScan(args) {
     const port = config.port || 9631;
     try { execSync(`curl -sf http://127.0.0.1:${port}/status.json`, { stdio: 'pipe' }); }
     catch {
-      const clientPath = pluginRoot ? join(pluginRoot, 'client.mjs') : import.meta.url.replace(/^file:\/\//, '');
+      const clientPath = pluginRoot ? join(pluginRoot, 'velith.mjs') : import.meta.url.replace(/^file:\/\//, '');
       execSync(`nohup node "${clientPath}" serve > /dev/null 2>&1 &`, { stdio: 'ignore' });
     }
     const pidx = Math.max(0, reg.projects.findIndex(p => p.path === dir));
@@ -368,7 +368,7 @@ async function cmdScan(args) {
 
 async function cmdAgents(args) {
   const [id, status, ...taskParts] = args;
-  if (!id || !status) { console.error('Usage: client.mjs agents <id> <running|complete|error> [task]'); process.exit(1); }
+  if (!id || !status) { console.error('Usage: velith.mjs agents <id> <running|complete|error> [task]'); process.exit(1); }
   const now = new Date().toISOString();
   const task = status === 'complete' ? null : (taskParts.join(' ') || null);
 
@@ -400,7 +400,7 @@ async function cmdStats(args) {
   const db = await getDb();
   const rows = db.exec('SELECT name, genre, language, current_phase, total_chapters, completed_chapters, total_words, target_words, count_unit, last_updated FROM projects WHERE path = ?', [dir]);
   if (!rows.length || !rows[0].values.length) {
-    console.log(JSON.stringify({ error: 'Project not found in DB. Run `client.mjs scan` first.' }));
+    console.log(JSON.stringify({ error: 'Project not found in DB. Run `velith.mjs scan` first.' }));
     return;
   }
   const r = rows[0].values[0];
@@ -430,7 +430,7 @@ async function cmdList() {
   const db = await getDb();
   const rows = db.exec('SELECT path, name, genre, language, current_phase, total_chapters, completed_chapters, total_words, count_unit, last_updated FROM projects ORDER BY last_updated DESC');
   if (!rows.length || !rows[0].values.length) {
-    console.log('No projects in DB. Run `client.mjs scan <dir>` to add one.');
+    console.log('No projects in DB. Run `velith.mjs scan <dir>` to add one.');
     return;
   }
   const projects = rows[0].values.map(r => ({
@@ -691,7 +691,7 @@ if (isMain) {
   const fn = commands[cmd];
   if (!fn) {
     console.log('Velith CLI — unified client for book project management');
-    console.log('Usage: node client.mjs <command> [args]');
+    console.log('Usage: node velith.mjs <command> [args]');
     console.log('');
     console.log('Commands:');
     console.log('  scan [dir]              Scan project and write to SQLite');
