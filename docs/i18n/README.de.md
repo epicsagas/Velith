@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -42,6 +42,18 @@
 
 Ein Buch mit rohen LLM-Prompts zu schreiben führt zu unzusammenhängenden Kapiteln, inkonsistenter Stimme und fehlender Struktur. Velith bietet eine **Pipeline nach dem Prinzip Planen-dann-Ausführen** — vor dem Schreiben validieren, Qualität in jeder Phase sichern und die Kontinuität über das gesamte Manuskript aufrechterhalten.
 
+## Benchmark
+
+Was die Pipeline mit unstrukturiertem Input macht — [selbst ausprobieren →](https://huggingface.co/spaces/epicsaga/Velith)
+
+| Metrik | Roheingabe | Nach der Velith-Pipeline |
+|--------|-----------|--------------------------|
+| Strukturbewertung | 2–4 / 10 | 6–9 / 10 |
+| Redundanz | 20–45% n-gram-Überlappung | < 10% nach Konsolidierung |
+| KI-Schund-Marker | 6–20 pro 1.000 Wörter | Erkannt und entfernt von style-doctor |
+| Kapitelhierarchie | Keine | Erkannt + mit Querverweisen kartiert |
+| Kohärenzbewertung | 0,3–1,5 / 10 | Verbessert durch Abschnittsumstrukturierung |
+
 | | Funktion | Warum es wichtig ist |
 |--|----------|----------------------|
 | 📋 | 6-Phasen-Pipeline | Jede Phase validiert vor dem Weitermachen — kein Nacharbeiten |
@@ -53,15 +65,16 @@ Ein Buch mit rohen LLM-Prompts zu schreiben führt zu unzusammenhängenden Kapit
 
 ## Vergleich
 
-| | Velith | Rohe Prompts | KI-Schreibwerkzeuge (Jasper, Sudowrite) |
-|--|-----------|-------------|--------------------------------------|
-| Strukturvalidierung | Phasengesteuerter Pipeline | Keine | Grundvorlagen |
-| Kapitelübergreifende Kontinuität | Dedizierter Agent | Manuell | Begrenzt |
-| KI-Schunddetektion | Eingebaut (style-doctor) | Keine | Keine |
-| Genre-Bewusstsein | 7 Genre-Systeme + benutzerdefiniert | Abhängig vom Prompt | Belletristik-fokussiert |
-| Ausgabeformat | EPUB, PDF, MOBI, TXT, Markdown | Kopieren-Einfügen | DOCX, begrenzt |
-| Erfordert | Claude Code, Codex CLI, Agy, Cursor, Cline oder Aider | Beliebiges LLM | Abonnement |
-| Volle Kontrolle | Prompt-Ebene | Vollständig | Black Box |
+| | Velith | Rohe Prompts | Notion AI | Jasper / Sudowrite | Scrivener |
+|--|-----------|-------------|-----------|-------------------|-----------|
+| Strukturvalidierung | Phasengesteuerter Pipeline | Keine | Keine | Grundvorlagen | Manuell |
+| Kapitelübergreifende Kontinuität | Dedizierter Agent | Manuell | Keine | Begrenzt | Manuell |
+| KI-Schunddetektion | Eingebaut (style-doctor) | Keine | Keine | Keine | Keine |
+| Genre-Bewusstsein | 8 Genre-Systeme + benutzerdefiniert | Abhängig vom Prompt | Keine | Belletristik-fokussiert | Keine |
+| Ausgabeformat | EPUB, PDF, MOBI, TXT, Markdown | Kopieren-Einfügen | Markdown / PDF | DOCX, begrenzt | DOCX, PDF |
+| Qualitätskontrolle | Jede Phase | Keine | Keine | Keine | Keine |
+| Erfordert | Claude Code, Codex CLI, Agy, Cursor, Cline oder Aider | Beliebiges LLM | Notion-Abo | Abonnement | Lizenz |
+| Volle Kontrolle | Prompt-Ebene | Vollständig | Black Box | Black Box | Vollständig |
 
 ## Installation
 
@@ -93,7 +106,7 @@ agy plugin install https://github.com/epicsagas/Velith
 
 Agy erkennt Skills und Agenten automatisch aus dem Repository-Root. Keine zusätzliche Konfiguration erforderlich.
 
-**Voraussetzungen:** [Agy](https://github.com/nicepkg/antigravity) installiert und konfiguriert.
+**Voraussetzungen:** [Agy](https://antigravity.google/docs/cli-install) installiert und konfiguriert.
 
 ### Cursor
 
@@ -172,14 +185,24 @@ Das Plugin führt Sie durch:
 
 <img src="../assets/dashboard.png" width="100%" alt="Dashboard" />
 
-`/book-status --ui` öffnet ein Svelte-basiertes Fortschritts-Dashboard in Ihrem Browser:
+`/book-status --ui` öffnet ein Svelte-basiertes Fortschritts-Dashboard in Ihrem Browser. Das Dashboard aktualisiert sich alle 5 Sekunden automatisch:
 
-- Phasenfortschrittsbalken (6 Phasen)
-- Kapitelweiser Status (Zeilen, Wörter, Lektorat/Entwurf/Warten)
-- Status der Ausgabedateien (EPUB/PDF/MOBI/TXT/MD)
-- Multi-Projekt-Unterstützung über Tabs
+- 6-Phasen-Pipeline-Tracker (Onboarding → Ideation → Outlining → Drafting → Editing → Publishing)
+- 7 Agenten-Statuskarten (book-architect, chapter-writer, continuity-editor, cover-designer, marketing-expert, scene-generator, style-doctor)
+- Kapitelgliederung, Entwurfstabelle und 5-stufiges Lektorats-Kanban
+- Status der Ausgabedateien (EPUB/PDF/MOBI/TXT/MD) mit Veröffentlichungs-Checkliste
+- Projekteinstellungen und Befehlsreferenz
 
-Das Dashboard liest aus `ui/public/status.json` (bei jedem `/book-status --ui`-Aufruf von Claude generiert). Das vorkompilierte `ui/dist/index.html` ist enthalten — kein Build-Schritt erforderlich.
+Das Dashboard liest dynamisch aus projektspezifischen `status.json`-Dateien. Das vorkompilierte `dist/` ist enthalten — kein Build-Schritt für Plugin-Nutzer erforderlich.
+
+Für lokale Entwicklung ausführen:
+
+```bash
+cd dashboard
+npm install
+npm run dev     # http://localhost:5173
+npm run build   # dist/ neu bauen
+```
 
 ## Designprinzipien
 

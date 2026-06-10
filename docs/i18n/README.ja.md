@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -42,6 +42,18 @@ Claude Code 向けのエンドツーエンド書籍制作ツールキット。�
 
 生の LLM プロンプトで本を書くと、章がバラバラになり、文体が一貫せず、構造がありません。Velith は**計画してから実行するパイプライン**を提供します — 書く前に検証し、各フェーズで品質を管理し、原稿全体の継続性を維持します。
 
+## ベンチマーク
+
+パイプラインが非構造化入力に何をするか — [自分で試してみる →](https://huggingface.co/spaces/epicsaga/Velith)
+
+| 指標 | 元の入力 | Velithパイプライン適用後 |
+|------|----------|--------------------------|
+| 構造スコア | 2–4 / 10 | 6–9 / 10 |
+| 重複率 | 20–45% n-gram重複 | 統合後 < 10% |
+| AI スロップマーカー | 1,000単語あたり6–20個 | style-doctorが検出・除去 |
+| 章の階層 | なし | 相互参照付きで検出・マッピング |
+| 一貫性スコア | 0.3–1.5 / 10 | セクション再構成で改善 |
+
 | | 機能 | 重要な理由 |
 |--|------|------------|
 | 📋 | 6フェーズ パイプライン | 各フェーズで検証してから次へ — 手戻りなし |
@@ -53,15 +65,16 @@ Claude Code 向けのエンドツーエンド書籍制作ツールキット。�
 
 ## 比較
 
-| | Velith | 単純なプロンプト | AI 執筆ツール（Jasper、Sudowrite） |
-|--|-----------|-------------|--------------------------------------|
-| 構造検証 | フェーズゲート パイプライン | なし | 基本テンプレート |
-| 章間継続性 | 専任エージェント | 手動 | 限定的 |
-| AI スロップ検出 | 内蔵（style-doctor） | なし | なし |
-| ジャンル認識 | 7ジャンルシステム + カスタム | プロンプト次第 | フィクション中心 |
-| 出力形式 | EPUB、PDF、MOBI、TXT、Markdown | コピー＆ペースト | DOCX、限定的 |
-| 必要条件 | Claude Code、Codex CLI、Agy、Cursor、Cline、Aider | 任意の LLM | サブスクリプション |
-| 完全なコントロール | プロンプトレベル | 完全 | ブラックボックス |
+| | Velith | 単純なプロンプト | Notion AI | Jasper / Sudowrite | Scrivener |
+|--|-----------|-------------|-----------|-------------------|-----------|
+| 構造検証 | フェーズゲート パイプライン | なし | なし | 基本テンプレート | 手動 |
+| 章間継続性 | 専任エージェント | 手動 | なし | 限定的 | 手動 |
+| AI スロップ検出 | 内蔵（style-doctor） | なし | なし | なし | なし |
+| ジャンル認識 | 8ジャンルシステム + カスタム | プロンプト次第 | なし | フィクション中心 | なし |
+| 出力形式 | EPUB、PDF、MOBI、TXT、Markdown | コピー＆ペースト | Markdown / PDF | DOCX、限定的 | DOCX、PDF |
+| 品質ゲート | 全フェーズ | なし | なし | なし | なし |
+| 必要条件 | Claude Code、Codex CLI、Agy、Cursor、Cline、Aider | 任意の LLM | Notionサブスク | サブスクリプション | ライセンス |
+| 完全なコントロール | プロンプトレベル | 完全 | ブラックボックス | ブラックボックス | 完全 |
 
 ## インストール
 
@@ -93,7 +106,7 @@ agy plugin install https://github.com/epicsagas/Velith
 
 Agy はリポジトリルートからスキルとエージェントを自動検出します。追加設定は不要です。
 
-**前提条件:** [Agy](https://github.com/nicepkg/antigravity) がインストールされ、設定されていること。
+**前提条件:** [Agy](https://antigravity.google/docs/cli-install) がインストールされ、設定されていること。
 
 ### Cursor
 
@@ -172,14 +185,24 @@ aider  # CONVENTIONS.md が自動ロードされます
 
 <img src="../assets/dashboard.png" width="100%" alt="Dashboard" />
 
-`/book-status --ui` はブラウザで Svelte ベースの進捗ダッシュボードを開きます:
+`/book-status --ui` はブラウザで Svelte ベースの進捗ダッシュボードを開きます。ダッシュボードは5秒ごとに自動更新されます:
 
-- フェーズ進捗バー（6フェーズ）
-- 章ごとのステータス（行数、単語数、編集/草稿/待機）
-- 出力ファイルのステータス（EPUB/PDF/MOBI/TXT/MD）
-- タブによるマルチプロジェクト対応
+- 6フェーズパイプライントラッカー（Onboarding → Ideation → Outlining → Drafting → Editing → Publishing）
+- 7エージェントステータスカード（book-architect、chapter-writer、continuity-editor、cover-designer、marketing-expert、scene-generator、style-doctor）
+- 章のアウトライン、草稿テーブル、5段階編集カンバン
+- 出力ファイルのステータス（EPUB/PDF/MOBI/TXT/MD）と出版チェックリスト
+- プロジェクト設定とコマンドリファレンス
 
-ダッシュボードは `ui/public/status.json` から読み込みます（`/book-status --ui` 実行ごとに Claude が生成）。ビルド済みの `ui/dist/index.html` が含まれているため、ビルド手順は不要です。
+ダッシュボードはプロジェクトごとの `status.json` ファイルから動的に読み込みます。事前ビルド済みの `dist/` が含まれているため、プラグインユーザーにビルド手順は不要です。
+
+ローカル開発環境での実行:
+
+```bash
+cd dashboard
+npm install
+npm run dev     # http://localhost:5173
+npm run build   # dist/ を再ビルド
+```
 
 ## 設計原則
 

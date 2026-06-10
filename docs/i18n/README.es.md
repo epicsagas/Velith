@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -42,6 +42,18 @@ Kit de herramientas de creación de libros de extremo a extremo para Claude Code
 
 Escribir un libro con prompts LLM básicos produce capítulos desconectados, voz inconsistente y sin estructura. Velith proporciona un **pipeline de planificación previa a la ejecución** — valida antes de escribir, controla la calidad en cada fase y mantiene la continuidad a lo largo de todo el manuscrito.
 
+## Benchmark
+
+Lo que el pipeline hace con la entrada no estructurada — [pruébalo tú mismo →](https://huggingface.co/spaces/epicsaga/Velith)
+
+| Métrica | Entrada sin procesar | Después del pipeline de Velith |
+|---------|---------------------|-------------------------------|
+| Puntuación de estructura | 2–4 / 10 | 6–9 / 10 |
+| Redundancia | 20–45% solapamiento n-gram | < 10% tras consolidación |
+| Marcadores de AI-slop | 6–20 por 1K palabras | Detectados y eliminados por style-doctor |
+| Jerarquía de capítulos | Ninguna | Detectada + mapeada con referencias cruzadas |
+| Puntuación de coherencia | 0,3–1,5 / 10 | Mejorada con reestructuración de secciones |
+
 | | Característica | Por qué importa |
 |--|---------------|-----------------|
 | 📋 | Pipeline de 6 fases | Cada fase valida antes de continuar — sin retrabajo |
@@ -53,15 +65,16 @@ Escribir un libro con prompts LLM básicos produce capítulos desconectados, voz
 
 ## Comparación
 
-| | Velith | Prompts básicos | Herramientas de escritura IA (Jasper, Sudowrite) |
-|--|-----------|-------------|--------------------------------------|
-| Validación de estructura | Pipeline con fases | Ninguna | Plantillas básicas |
-| Continuidad entre capítulos | Agente dedicado | Manual | Limitada |
-| Detección de AI-slop | Integrada (style-doctor) | Ninguna | Ninguna |
-| Consciencia de género | 7 sistemas de género + personalizado | Depende del prompt | Centrado en ficción |
-| Formato de salida | EPUB, PDF, MOBI, TXT, Markdown | Copiar-pegar | DOCX, limitado |
-| Requiere | Claude Code, Codex CLI, Agy, Cursor, Cline o Aider | Cualquier LLM | Suscripción |
-| Control total | A nivel de prompt | Total | Caja negra |
+| | Velith | Prompts básicos | Notion AI | Jasper / Sudowrite | Scrivener |
+|--|-----------|-------------|-----------|-------------------|-----------|
+| Validación de estructura | Pipeline por fases | Ninguna | Ninguna | Plantillas básicas | Manual |
+| Continuidad entre capítulos | Agente dedicado | Manual | Ninguna | Limitada | Manual |
+| Detección de AI-slop | Integrada (style-doctor) | Ninguna | Ninguna | Ninguna | Ninguna |
+| Consciencia de género | 8 sistemas de género + personalizado | Depende del prompt | Ninguna | Centrado en ficción | Ninguna |
+| Formato de salida | EPUB, PDF, MOBI, TXT, Markdown | Copiar-pegar | Markdown / PDF | DOCX, limitado | DOCX, PDF |
+| Control de calidad | Cada fase | Ninguno | Ninguno | Ninguno | Ninguno |
+| Requiere | Claude Code, Codex CLI, Agy, Cursor, Cline o Aider | Cualquier LLM | Suscripción Notion | Suscripción | Licencia |
+| Control total | A nivel de prompt | Total | Caja negra | Caja negra | Total |
 
 ## Instalación
 
@@ -93,7 +106,7 @@ agy plugin install https://github.com/epicsagas/Velith
 
 Agy descubre automáticamente las skills y agentes desde la raíz del repositorio. No requiere configuración adicional.
 
-**Requisitos previos:** [Agy](https://github.com/nicepkg/antigravity) instalado y configurado.
+**Requisitos previos:** [Agy](https://antigravity.google/docs/cli-install) instalado y configurado.
 
 ### Cursor
 
@@ -172,14 +185,24 @@ El plugin te guía a través de:
 
 <img src="../assets/dashboard.png" width="100%" alt="Dashboard" />
 
-`/book-status --ui` abre un panel de progreso basado en Svelte en tu navegador:
+`/book-status --ui` abre un panel de progreso basado en Svelte en tu navegador. El panel se actualiza automáticamente cada 5 segundos:
 
-- Barras de progreso por fase (6 fases)
-- Estado capítulo por capítulo (líneas, palabras, edición/borrador/espera)
-- Estado de archivos de salida (EPUB/PDF/MOBI/TXT/MD)
-- Soporte para múltiples proyectos mediante pestañas
+- Rastreador de pipeline de 6 fases (Onboarding → Ideation → Outlining → Drafting → Editing → Publishing)
+- 7 tarjetas de estado de agentes (book-architect, chapter-writer, continuity-editor, cover-designer, marketing-expert, scene-generator, style-doctor)
+- Esquema de capítulos, tabla de borradores y kanban de edición en 5 etapas
+- Estado de archivos de salida (EPUB/PDF/MOBI/TXT/MD) con lista de verificación de publicación
+- Configuración del proyecto y referencia de comandos
 
-El panel lee desde `ui/public/status.json` (generado por Claude en cada ejecución de `/book-status --ui`). El `ui/dist/index.html` precompilado está incluido — no se requiere paso de compilación.
+El panel lee dinámicamente desde archivos `status.json` por proyecto. El `dist/` precompilado está incluido — no se requiere paso de compilación para usuarios del plugin.
+
+Para ejecutar localmente en desarrollo:
+
+```bash
+cd dashboard
+npm install
+npm run dev     # http://localhost:5173
+npm run build   # reconstruir dist/
+```
 
 ## Principios de Diseño
 
