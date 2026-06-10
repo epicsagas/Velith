@@ -11,4 +11,4 @@ Generate single chapter draft. Supports parallel execution (independent context 
 **Self-QA**: word target ±10% · frontmatter correct · heading structure · no STYLE.md violations · all key concepts · natural connection to prev chapter.
 **Output**: `drafts/ch{NN}-{slug}.md`. Skip if already exists (idempotent).
 
-Status: `node {PLUGIN_ROOT}/scripts/agent-status.js chapter-writer <running|complete|error> [task]`
+Status: `node {PLUGIN_ROOT}/client.mjs agents chapter-writer <running|complete|error> [task]`

@@ -18,4 +18,4 @@ Output: score (X/10), issue table (severity|chapter|issue|recommendation), depen
 
 Thresholds: forward dep = Critical, difficulty jump ≥2x = Major, chapter ±50% avg length = Minor. Score <7 → restructure recommendation.
 
-Status: `node {PLUGIN_ROOT}/scripts/agent-status.js book-architect <running|complete|error> [task]`
+Status: `node {PLUGIN_ROOT}/client.mjs agents book-architect <running|complete|error> [task]`

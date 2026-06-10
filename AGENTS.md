@@ -13,7 +13,8 @@ A Claude Code plugin for AI-native book publishing. 6-phase pipeline (Onboarding
 ```
 skills/{skill-name}/SKILL.md    — Skills (slash commands): frontmatter (name, description) + prompt
 agents/{agent-name}.md          — Agents: frontmatter (name, description, tools[]) + prompt
-scripts/agent-status.js         — Shared agent status tracker (writes ~/.velith/agents/{id}.json)
+scripts/agent-status.js         — Shared agent status tracker (writes ~/.velith/agents/{id}.json) — DEPRECATED, use client.mjs
+client.mjs                      — Unified CLI with SQLite backend (scan/agents/stats/words/list/migrate/serve)
 .claude-plugin/plugin.json      — Plugin manifest (skills path, agent list)
 ```
 
@@ -65,7 +66,7 @@ Svelte 5 + Vite + Tailwind CSS (CDN). Single-file app architecture in `dashboard
 - **Routing**: Manual URL path parsing with `View` union type and `VALID_VIEWS` set. No router library.
 - **Styling**: Tailwind via CDN with CSS custom properties for theming. Light/dark mode via `.dark` class on `<html>`. Sidebar is permanently dark.
 - **i18n**: 10 locales (en, ko, ja, zh, es, fr, de, pt, it, ru). Source of truth is `en.ts` with `StringKey` type. All locales must have the same keys. Locale stored in `localStorage` as `bf-locale`, defaults to `ko`.
-- **Data**: Vite dev server (`vite.config.ts`) reads `~/.velith/projects.json` registry, then per-project `.velith/status.json` to build `/status.json` API. Cover images served via `/cover/{index}`. No backend — all filesystem reads at build/dev time.
+- **Data**: SQLite (`sql.js`, WASM) at `~/.velith/velith.db`. Both `vite.config.ts` (dev) and `server.mjs` (production) read via `getStatus()` from `client.mjs`. Cover images served via `/cover/{index}`. Legacy JSON files (`status.json`, `agents/*.json`) maintained as backward compat; `client.mjs migrate` converts them and renames to `.bak`.
 - **Help view**: Accessible without project selection — sidebar onclick has `|| item.id === 'help'` guard, and render chain checks `activeView === 'help'` before project-selection landing.
 
 ### Dashboard commands
@@ -92,7 +93,7 @@ npm run build     # rebuild dist/ (included in repo for plugin users)
 - **License**: Apache-2.0
 - **i18n**: All user-facing strings must go through the i18n system. When adding keys, add to all 10 locale files.
 - **Idempotent agents**: Agents must skip already-completed work (e.g., chapter-writer skips existing draft files).
-- **Agent status tracking**: All agents call `node {PLUGIN_ROOT}/scripts/agent-status.js {id} {running|complete|error} [task]` to update status.
+- **Agent status tracking**: All agents call `node {PLUGIN_ROOT}/client.mjs agents {id} {running|complete|error} [task]` to update status (SQLite + JSON backward compat).
 
 ## Codex (OpenAI) Plugin Support
 
@@ -118,5 +119,7 @@ This is a Claude Code plugin. Before every push to `main`, bump the `version` fi
 - **MAJOR** (`0.1.0` → `1.0.0`): Breaking changes to skill/agent interfaces, pipeline phase restructuring, removed skills or agents, incompatible plugin manifest changes.
 
 Also bump `version` in `README.md` badge URL (`badge/version-{version}`) to match.
+
+Additionally, bump the **UI version** constant in `dashboard/src/App.svelte` (`UI_VERSION`) to match the plugin version. Both must stay in sync.
 
 **Process**: bump version → commit all changes → push. Do not push without bumping.

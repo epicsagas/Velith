@@ -21,4 +21,4 @@ Per concept: direction, color palette (hex), typography (title/subtitle/author s
 
 Output: `publish/cover/concepts.md` with top pick recommendation.
 
-Status: `node {PLUGIN_ROOT}/scripts/agent-status.js cover-designer <running|complete|error> [task]`
+Status: `node {PLUGIN_ROOT}/client.mjs agents cover-designer <running|complete|error> [task]`
