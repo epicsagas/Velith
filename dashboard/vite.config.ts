@@ -5,11 +5,11 @@ import path from 'path';
 
 const IMG_EXTS = /\.(jpg|jpeg|png|webp|gif)$/i;
 
-// Lazy-load getStatus from client.mjs (SQLite-backed)
+// Lazy-load getStatus from velith.mjs (SQLite-backed)
 let _getStatus: (() => Promise<any>) | null = null;
 async function getStatus() {
   if (!_getStatus) {
-    const mod = await import('../client.mjs');
+    const mod = await import('../velith.mjs');
     _getStatus = mod.getStatus;
   }
   return _getStatus();

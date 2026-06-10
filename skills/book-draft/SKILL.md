@@ -24,5 +24,5 @@ Gate: all chapters exist, ±10% word target, continuity passed.
 Update the project dashboard status:
 
 ```bash
-node {PLUGIN_ROOT}/client.mjs scan [project-dir] --plugin-root={PLUGIN_ROOT}
+node {PLUGIN_ROOT}/velith.mjs scan [project-dir] --plugin-root={PLUGIN_ROOT}
 ```
