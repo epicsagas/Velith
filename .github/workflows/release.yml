@@ -29,7 +29,7 @@ jobs:
         run: |
           mkdir -p dist
           # Collect all files that exist (avoid tar failures for optional platform dirs)
-          FILES=(agents skills client.mjs vendor dashboard/dist .claude-plugin .codex-plugin .cursor .clinerules CONVENTIONS.md .aider.conf.yml LICENSE README.md)
+          FILES=(agents skills client.mjs vendor dashboard/dist .claude-plugin .codex-plugin plugin.json .cursor .clinerules CONVENTIONS.md .aider.conf.yml LICENSE README.md)
           INCLUDE=()
           for f in "${FILES[@]}"; do [ -e "$f" ] && INCLUDE+=("$f"); done
           tar czf "dist/velith-${{ github.ref_name }}.tar.gz" "${INCLUDE[@]}"
