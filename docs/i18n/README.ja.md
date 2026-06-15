@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.1-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -30,7 +30,7 @@
   <a href="README.pt-BR.md">Português</a>
 </p>
 
-Claude Code 向けのエンドツーエンド書籍制作ツールキット。白紙から6フェーズで完成した EPUB/PDF まで。
+**本をソフトウェアのように作る。** 書籍、RFC、ホワイトペーパー、デザインドキュメント、技術ガイドなどの長文ナレッジを、孤立したプロンプトではなく構造化された成果物に変えるマルチフェーズパイプライン。白紙から出版可能な EPUB/PDF まで。
 
 `Phase 0: Onboarding → Phase 1: Ideation → Phase 2: Outlining → Phase 3: Drafting → Phase 4: Editing → Phase 5: Publishing`
 
@@ -62,6 +62,19 @@ Claude Code 向けのエンドツーエンド書籍制作ツールキット。�
 | ✏️ | 5段階編集 | 評価 → 開発編集 → ライン編集 → 校閲 → 最終校正 |
 | 🔄 | どこからでも再開 | 完了した章をスキップ、中断地点から再開 |
 | 📦 | EPUB、PDF、MOBI、TXT、Markdown | Pandoc + Calibre で出版準備済みファイルを生成 |
+
+## 1つのパイプライン、多様な成果物
+
+Velith は書籍パイプラインとして提供されますが、同じ6フェーズは**あらゆる長文の構造化ナレッジ**に適用できます。成果物が300ページの小説でも12ページのRFCでも同じこと — plan-then-execute フロー、品質ゲート、エージェントはすべて同一です。
+
+| 成果物 | ジャンルスキル | 典型的な出力 |
+|----------|-------------|----------------|
+| 小説 / ストーリー | `book-fiction` | EPUB / PDF / MOBI |
+| ノンフィクション | `book-nonfiction` | EPUB / PDF |
+| RFC / デザインドキュメント | `book-technical` | Markdown / PDF |
+| ホワイトペーパー / 研究報告 | `book-academic` | PDF（引用） |
+| コース資料 / チュートリアル | `book-technical` | EPUB / PDF |
+| ゲームシナリオ / ロアバイブル | `book-game` | Markdown / EPUB |
 
 ## 比較
 

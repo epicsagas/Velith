@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.1-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -62,6 +62,19 @@ Was die Pipeline mit unstrukturiertem Input macht — [selbst ausprobieren →](
 | ✏️ | 5-stufiges Lektorat | Beurteilung → Entwicklung → Zeile → Korrektorat → Schlusskorrektur |
 | 🔄 | Überall fortsetzen | Abgeschlossene Kapitel überspringen, dort weitermachen wo man aufgehört hat |
 | 📦 | EPUB, PDF, MOBI, TXT, Markdown | Veröffentlichungsfertige Dateien via Pandoc + Calibre |
+
+## Eine Pipeline, viele Artefakte
+
+Velith wird als Buch-Pipeline ausgeliefert, aber dieselben 6 Phasen gelten für **jedes strukturierte Langform-Wissen**. Ob das Artefakt ein 300-seitiger Roman oder ein 12-seitiges RFC ist — der Plan-then-Execute-Fluss, die Quality Gates und die Agenten sind identisch.
+
+| Artefakt | Genre-Skill | Typische Ausgabe |
+|----------|-------------|----------------|
+| Roman / Geschichte | `book-fiction` | EPUB / PDF / MOBI |
+| Sachbuch | `book-nonfiction` | EPUB / PDF |
+| RFC / Design-Doc | `book-technical` | Markdown / PDF |
+| Whitepaper / Forschungsbericht | `book-academic` | PDF (Zitate) |
+| Kursmaterial / Tutorial | `book-technical` | EPUB / PDF |
+| Spielszenario / Lore-Bibel | `book-game` | Markdown / EPUB |
 
 ## Vergleich
 

@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.1-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -30,7 +30,7 @@
   <a href="README.pt-BR.md">Português</a>
 </p>
 
-Kit d'outils de création de livres de bout en bout pour Claude Code. De la page blanche à l'EPUB/PDF publié en 6 phases.
+**Construisez des livres comme du logiciel.** Un pipeline multi-phases qui transforme la connaissance longue-forme —livres, RFC, livres blancs, docs de design, guides techniques— en artefacts structurés, pas en prompts isolés. De la page blanche à l'EPUB/PDF publiable.
 
 `Phase 0: Onboarding → Phase 1: Ideation → Phase 2: Outlining → Phase 3: Drafting → Phase 4: Editing → Phase 5: Publishing`
 
@@ -62,6 +62,19 @@ Ce que le pipeline fait aux entrées non structurées — [essayez par vous-mêm
 | ✏️ | Édition en 5 étapes | Évaluation → Développement → Ligne → Correction → Relecture finale |
 | 🔄 | Reprendre n'importe où | Ignorer les chapitres terminés, reprendre là où vous vous êtes arrêté |
 | 📦 | EPUB, PDF, MOBI, TXT, Markdown | Fichiers prêts à publier via Pandoc + Calibre |
+
+## Un pipeline, plusieurs artefacts
+
+Velith est livré comme un pipeline de livres, mais les mêmes 6 phases s'appliquent à **toute connaissance longue-forme structurée**. Que l'artefact soit un roman de 300 pages ou un RFC de 12 pages importe peu — le flux plan-then-execute, les portes de qualité et les agents sont identiques.
+
+| Artefact | Skill de genre | Sortie typique |
+|----------|-------------|----------------|
+| Roman / Histoire | `book-fiction` | EPUB / PDF / MOBI |
+| Livre non-fiction | `book-nonfiction` | EPUB / PDF |
+| RFC / Doc de design | `book-technical` | Markdown / PDF |
+| Livre blanc / Rapport de recherche | `book-academic` | PDF (citations) |
+| Support de cours / Tutoriel | `book-technical` | EPUB / PDF |
+| Scénario de jeu / Lore bible | `book-game` | Markdown / EPUB |
 
 ## Comparaison
 
