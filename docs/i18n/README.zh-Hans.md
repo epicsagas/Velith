@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.1-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -30,7 +30,7 @@
   <a href="README.pt-BR.md">Português</a>
 </p>
 
-面向 Claude Code 的端到端图书创作工具包。从空白页经过 6 个阶段到完成的 EPUB/PDF。
+**像构建软件一样构建书籍。** 一个多阶段流水线，将长篇知识——书籍、RFC、白皮书、设计文档、技术指南——转化为结构化的产物，而非孤立的提示词。从空白页到可发布的 EPUB/PDF。
 
 `Phase 0: Onboarding → Phase 1: Ideation → Phase 2: Outlining → Phase 3: Drafting → Phase 4: Editing → Phase 5: Publishing`
 
@@ -62,6 +62,19 @@
 | ✏️ | 5阶段编辑 | 评估 → 内容编辑 → 行文编辑 → 校对 → 终校 |
 | 🔄 | 随时恢复 | 跳过已完成章节，从中断处继续 |
 | 📦 | EPUB、PDF、MOBI、TXT、Markdown | 通过 Pandoc + Calibre 生成可出版文件 |
+
+## 一个流水线，多种产物
+
+Velith 以图书流水线的形式发布，但同样的 6 个阶段适用于**任何长篇结构化知识**。产出物是 300 页的小说还是 12 页的 RFC 都不重要——先规划后执行的流程、质量关卡和 agent 完全一致。
+
+| 产出物 | 体裁技能 | 典型输出 |
+|----------|-------------|----------------|
+| 小说 / 故事 | `book-fiction` | EPUB / PDF / MOBI |
+| 非虚构图书 | `book-nonfiction` | EPUB / PDF |
+| RFC / 设计文档 | `book-technical` | Markdown / PDF |
+| 白皮书 / 研究报告 | `book-academic` | PDF（引用） |
+| 课程材料 / 教程 | `book-technical` | EPUB / PDF |
+| 游戏剧本 / 世界观设定 | `book-game` | Markdown / EPUB |
 
 ## 对比
 

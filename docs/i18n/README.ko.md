@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.1-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -30,7 +30,7 @@
   <a href="README.pt-BR.md">Português</a>
 </p>
 
-**소프트웨어처럼 책을 만들자.** 구조화된 장폼 창작을 위한 AI 네이티브 출판 시스템 — 백지에서 출판 가능한 EPUB/PDF까지.
+**소프트웨어처럼 책을 만들자.** 책, RFC, 백서, 디자인 문서, 기술 가이드 같은 장폼 지식을 고립된 프롬프트가 아닌 **구조화된 산출물**로 만드는 다단계 파이프라인. 백지에서 출판 가능한 EPUB/PDF까지.
 
 `Phase 0: Onboarding → Phase 1: Ideation → Phase 2: Outlining → Phase 3: Drafting → Phase 4: Editing → Phase 5: Publishing`
 
@@ -40,7 +40,9 @@
 
 ## 왜 Velith인가?
 
-날것의 LLM 프롬프트로 책을 쓰면 챕터가 단절되고, 문체가 일관되지 않으며, 구조가 없습니다. Velith는 **계획 후 실행 파이프라인**을 제공합니다 — 쓰기 전에 검증하고, 각 단계에서 품질을 관리하며, 원고 전체의 연속성을 유지합니다.
+대부분의 AI "글쓰기 도구"는 프롬프트 하나와 빈 화면이 전부입니다 — 챕터가 단절되고, 문체가 흔들리며, 구조가 없습니다. Velith는 정반대입니다: 쓰기 전에 검증하고, 각 단계에서 품질을 관리하며, 원고 전체의 연속성을 끝까지 유지하는 **계획 후 실행 파이프라인**입니다.
+
+스펙·테스트·리뷰 없이 코드를 배포하지 않듯이 — 개요, 연속성 검사, 편집 패스 없이 책(또는 RFC, 백서)을 배포하지 마세요. Velith는 소프트웨어 엔지니어링의 규율을 장폼 지식으로 가져옵니다.
 
 ## 벤치마크
 
@@ -62,6 +64,19 @@
 | ✏️ | 5단계 편집 | 평가 → 개발 편집 → 라인 편집 → 교열 → 최종 교정 |
 | 🔄 | 어디서든 재개 | 완료된 챕터 건너뜀, 중단 지점에서 재개 |
 | 📦 | EPUB, PDF, MOBI, TXT, Markdown | Pandoc + Calibre로 출판 준비 완료 파일 생성 |
+
+## 하나의 파이프라인, 다양한 산출물
+
+Velith는 책 파이프라인으로 출시되지만, 동일한 6단계는 **모든 장폼 구조화 지식**에 적용됩니다. 산출물이 300페이지 소설이든 12페이지 RFC든 관계없습니다 — 계획 후 실행 흐름, 품질 관문, 에이전트가 모두 동일합니다.
+
+| 산출물 | 장르 스킬 | 일반적 출력 |
+|--------|----------|-------------|
+| 소설 / 스토리 | `book-fiction` | EPUB / PDF / MOBI |
+| 논픽션 도서 | `book-nonfiction` | EPUB / PDF |
+| RFC / 디자인 문서 | `book-technical` | Markdown / PDF |
+| 백서 / 연구 보고서 | `book-academic` | PDF (인용 포함) |
+| 강의 자료 / 튜토리얼 | `book-technical` | EPUB / PDF |
+| 게임 시나리오 / 로어 바이블 | `book-game` | Markdown / EPUB |
 
 ## 비교
 

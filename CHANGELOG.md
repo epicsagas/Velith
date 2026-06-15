@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.3.1] - 2026-06-15
+
+### Changed
+- README: reposition Velith from "AI-native publishing system" to **"Build books like software"** across all 7 language READMEs (en, ko, ja, zh, es, fr, de, pt)
+- README: add "One pipeline, many artifacts" section — same pipeline applies to RFCs, whitepapers, design docs, course material, and game scenarios, not just books
+
+## [0.3.0] - 2026-06-10
+
+### Changed
+- Migrate dashboard data store from JSON files to SQLite (`sql.js` WASM, vendored in `vendor/sql.js/`) — zero npm install for plugin users
+- Rename `client.mjs` → `velith.mjs` (unified CLI + HTTP server: scan/agents/stats/words/list/migrate/serve)
+- Auto-migrate legacy JSON to SQLite on `scan`/`serve`, backing up originals to `.bak`
+- Centralize data in `~/.velith/` (SQLite DB + cache)
+
+### Added
+- `velith.mjs migrate` subcommand for explicit JSON → SQLite import
+- Root `plugin.json` for Agy auto-discovery
+- Codex plugin version sync with Claude Code manifest
+- AGENTS.md versioning guide (5-location version bump process)
+
+### Fixed
+- Dashboard: ETag caching, onMount init, poll interval tuning
+- Release: remove archive packaging; fix Agy install link
+
 ## [0.1.6] - 2026-06-08
 
 ### Changed
