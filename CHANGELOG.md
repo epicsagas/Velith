@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.0] - 2026-06-19
+
+### Added
+- New `illustrator` agent — interior illustration pipeline (scene extraction, style bible, 3-tier prompts, placement metadata)
+- New `/book-illustrate` skill — illustration plan orchestration for chapter drafts (Phase 3-5)
+- `cover-designer` agent expanded — structured concept development (palette/typography/layout/moodboard), multi-format support (ebook/print/audiobook)
+
+### Changed
+- `loom` and `book-publish` skills updated with illustrator entry points
+- `illustrator` and `cover-designer` status tracking via `velith.mjs agents` subcommand
+
 ## [0.3.1] - 2026-06-15
 
 ### Changed
