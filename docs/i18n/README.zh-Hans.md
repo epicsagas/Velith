@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.1-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -58,7 +58,7 @@
 |--|------|----------|
 | 📋 | 6阶段流水线 | 每个阶段验证后再推进 — 无需返工 |
 | 📖 | 7种体裁模板 | 小说、非虚构、技术书、剧本、诗歌、游戏脚本、学术（+ genre-creator自定义） |
-| 🤖 | 7个专业智能体 | 架构、起草、场景生成、连贯性、文体、封面、营销 |
+| 🤖 | 8个专业智能体 | 架构、起草、场景生成、连贯性、文体、封面、插图、营销 |
 | ✏️ | 5阶段编辑 | 评估 → 内容编辑 → 行文编辑 → 校对 → 终校 |
 | 🔄 | 随时恢复 | 跳过已完成章节，从中断处继续 |
 | 📦 | EPUB、PDF、MOBI、TXT、Markdown | 通过 Pandoc + Calibre 生成可出版文件 |
@@ -172,6 +172,7 @@ aider  # CONVENTIONS.md 自动加载
 | `/book-draft` | 3 | 起草章节（全部/特定/恢复，并行智能体） |
 | `/book-edit` | 4 | 5阶段编辑流水线 |
 | `/book-publish` | 5 | EPUB/PDF/MOBI转换、封面、营销 |
+| `/book-illustrate` | 3-5 | 内页插图 — 场景提取、风格一致的提示词、布局方案 |
 | `/book-status` | — | 终端仪表盘 + `--ui` 浏览器仪表盘 |
 | `/book-fiction` | — | 小说模式（15节拍、Snowflake、角色设定集） |
 | `/book-nonfiction` | — | 非虚构模式（问题解决、证据层级） |
@@ -192,6 +193,7 @@ aider  # CONVENTIONS.md 自动加载
 | `style-doctor` | 文体/语调一致性、AI 糟糕内容检测 |
 | `scene-generator` | 使用 GMC+RDD 结构进行场景级分析（仅小说） |
 | `cover-designer` | 封面概念 + Midjourney/DALL-E 图像提示 |
+| `illustrator` | 内页插图 — 场景提取、风格指南、提示词生成 |
 | `marketing-expert` | 读者画像、渠道策略、12周上市日历 |
 
 ## 可视化仪表盘
@@ -201,7 +203,7 @@ aider  # CONVENTIONS.md 自动加载
 `/book-status --ui` 在浏览器中打开基于 Svelte 的进度仪表盘。仪表盘每 5 秒自动刷新:
 
 - 6阶段流水线追踪器（Onboarding → Ideation → Outlining → Drafting → Editing → Publishing）
-- 7个智能体状态卡片（book-architect、chapter-writer、continuity-editor、cover-designer、marketing-expert、scene-generator、style-doctor）
+- 8个智能体状态卡片（book-architect、chapter-writer、continuity-editor、cover-designer、illustrator、marketing-expert、scene-generator、style-doctor）
 - 章节大纲、草稿表和5阶段编辑看板
 - 输出文件状态（EPUB/PDF/MOBI/TXT/MD）及发布清单
 - 项目设置和命令参考

@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.1-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -58,7 +58,7 @@ O que o pipeline faz com entradas não estruturadas — [experimente você mesmo
 |--|---------------|-----------------|
 | 📋 | Pipeline de 6 fases | Cada fase valida antes de avançar — sem retrabalho |
 | 📖 | 7 templates de gênero | Ficção, não-ficção, técnico, roteiro, poesia, jogo, acadêmico (+ personalizado via genre-creator) |
-| 🤖 | 7 agentes especializados | Arquitetura, rascunho, geração de cenas, continuidade, estilo, capa, marketing |
+| 🤖 | 8 agentes especializados | Arquitetura, rascunho, geração de cenas, continuidade, estilo, capa, ilustrações, marketing |
 | ✏️ | Edição em 5 etapas | Avaliação → Desenvolvimento → Linha → Revisão → Leitura final |
 | 🔄 | Retomar em qualquer lugar | Pular capítulos concluídos, continuar de onde parou |
 | 📦 | EPUB, PDF, MOBI, TXT, Markdown | Arquivos prontos para publicar via Pandoc + Calibre |
@@ -172,6 +172,7 @@ O plugin guia você por:
 | `/book-draft` | 3 | Rascunhar capítulos (todos/específicos/retomar, agentes paralelos) |
 | `/book-edit` | 4 | Pipeline de edição em 5 etapas |
 | `/book-publish` | 5 | Conversão EPUB/PDF/MOBI, capa, marketing |
+| `/book-illustrate` | 3-5 | Ilustrações internas — extração de cenas, prompts de estilo consistente, plano de posicionamento |
 | `/book-status` | — | Painel de terminal + `--ui` painel no navegador |
 | `/book-fiction` | — | Padrões de ficção (15 beats, Snowflake, bíblia de personagens) |
 | `/book-nonfiction` | — | Padrões de não-ficção (problema-solução, hierarquia de evidência) |
@@ -192,6 +193,7 @@ O plugin guia você por:
 | `style-doctor` | Consistência de voz/tom, detecção de AI-slop |
 | `scene-generator` | Análise em nível de cena com estrutura GMC+RDD (somente ficção) |
 | `cover-designer` | Conceitos de capa + prompts de imagem para Midjourney/DALL-E |
+| `illustrator` | Ilustrações internas — extração de cenas, bíblia de estilo, geração de prompts |
 | `marketing-expert` | Personas de leitores, estratégia de canais, calendário de lançamento de 12 semanas |
 
 ## Painel Visual
@@ -201,7 +203,7 @@ O plugin guia você por:
 `/book-status --ui` abre um painel de progresso baseado em Svelte no seu navegador. O painel atualiza automaticamente a cada 5 segundos:
 
 - Rastreador de pipeline de 6 fases (Onboarding → Ideation → Outlining → Drafting → Editing → Publishing)
-- 7 cartões de status de agentes (book-architect, chapter-writer, continuity-editor, cover-designer, marketing-expert, scene-generator, style-doctor)
+- 8 cartões de status de agentes (book-architect, chapter-writer, continuity-editor, cover-designer, illustrator, marketing-expert, scene-generator, style-doctor)
 - Esboço de capítulos, tabela de rascunhos e kanban de edição em 5 etapas
 - Status dos arquivos de saída (EPUB/PDF/MOBI/TXT/MD) com lista de verificação de publicação
 - Configurações do projeto e referência de comandos

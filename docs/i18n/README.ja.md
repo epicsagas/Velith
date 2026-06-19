@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.1-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -58,7 +58,7 @@
 |--|------|------------|
 | 📋 | 6フェーズ パイプライン | 各フェーズで検証してから次へ — 手戻りなし |
 | 📖 | 7ジャンル テンプレート | フィクション、ノンフィクション、技術書、脚本、詩、ゲームシナリオ、学術（+ genre-creatorでカスタム） |
-| 🤖 | 7つの専門エージェント | 設計、草稿、シーン生成、継続性、文体、表紙、マーケティング |
+| 🤖 | 8つの専門エージェント | 設計、草稿、シーン生成、継続性、文体、表紙、挿絵、マーケティング |
 | ✏️ | 5段階編集 | 評価 → 開発編集 → ライン編集 → 校閲 → 最終校正 |
 | 🔄 | どこからでも再開 | 完了した章をスキップ、中断地点から再開 |
 | 📦 | EPUB、PDF、MOBI、TXT、Markdown | Pandoc + Calibre で出版準備済みファイルを生成 |
@@ -172,6 +172,7 @@ aider  # CONVENTIONS.md が自動ロードされます
 | `/book-draft` | 3 | 章の草稿作成（全体/特定/再開、並列エージェント） |
 | `/book-edit` | 4 | 5段階編集パイプライン |
 | `/book-publish` | 5 | EPUB/PDF/MOBI変換、表紙、マーケティング |
+| `/book-illustrate` | 3-5 | 挿絵 — シーン抽出、スタイル統一プロンプト、配置計画 |
 | `/book-status` | — | ターミナルダッシュボード + `--ui` ブラウザダッシュボード |
 | `/book-fiction` | — | フィクションパターン（15ビート、Snowflake、キャラクターバイブル） |
 | `/book-nonfiction` | — | ノンフィクションパターン（問題解決、証拠階層） |
@@ -192,6 +193,7 @@ aider  # CONVENTIONS.md が自動ロードされます
 | `style-doctor` | 文体/トーンの一貫性、AI スロップ検出 |
 | `scene-generator` | GMC+RDD 構造でシーンを分析（フィクション専用） |
 | `cover-designer` | 表紙コンセプト + Midjourney/DALL-E 画像プロンプト |
+| `illustrator` | 挿絵 — シーン抽出、スタイルバイブル、プロンプト生成 |
 | `marketing-expert` | 読者ペルソナ、チャネル戦略、12週間ローンチカレンダー |
 
 ## ビジュアルダッシュボード
@@ -201,7 +203,7 @@ aider  # CONVENTIONS.md が自動ロードされます
 `/book-status --ui` はブラウザで Svelte ベースの進捗ダッシュボードを開きます。ダッシュボードは5秒ごとに自動更新されます:
 
 - 6フェーズパイプライントラッカー（Onboarding → Ideation → Outlining → Drafting → Editing → Publishing）
-- 7エージェントステータスカード（book-architect、chapter-writer、continuity-editor、cover-designer、marketing-expert、scene-generator、style-doctor）
+- 8エージェントステータスカード（book-architect、chapter-writer、continuity-editor、cover-designer、illustrator、marketing-expert、scene-generator、style-doctor）
 - 章のアウトライン、草稿テーブル、5段階編集カンバン
 - 出力ファイルのステータス（EPUB/PDF/MOBI/TXT/MD）と出版チェックリスト
 - プロジェクト設定とコマンドリファレンス

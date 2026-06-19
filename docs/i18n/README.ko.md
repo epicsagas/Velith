@@ -12,7 +12,7 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.3.1-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
@@ -60,7 +60,7 @@
 |--|------|-------------|
 | 📋 | 6단계 파이프라인 | 각 단계에서 검증 후 진행 — 재작업 없음 |
 | 📖 | 7가지 장르 템플릿 | 소설, 논픽션, 기술서, 대본, 시, 게임 시나리오, 학술 (+ genre-creator로 커스텀) |
-| 🤖 | 7개 전문 에이전트 | 설계, 초안, 장면 생성, 연속성, 문체, 표지, 마케팅 |
+| 🤖 | 8개 전문 에이전트 | 설계, 초안, 장면 생성, 연속성, 문체, 표지, 삽화, 마케팅 |
 | ✏️ | 5단계 편집 | 평가 → 개발 편집 → 라인 편집 → 교열 → 최종 교정 |
 | 🔄 | 어디서든 재개 | 완료된 챕터 건너뜀, 중단 지점에서 재개 |
 | 📦 | EPUB, PDF, MOBI, TXT, Markdown | Pandoc + Calibre로 출판 준비 완료 파일 생성 |
@@ -176,6 +176,7 @@ aider  # CONVENTIONS.md가 자동 로드됨
 | `/book-draft` | 3 | 챕터 초안 작성 (전체/특정/재개, 병렬 에이전트) |
 | `/book-edit` | 4 | 5단계 편집 파이프라인 |
 | `/book-publish` | 5 | EPUB/PDF/MOBI 변환, 표지, 마케팅 |
+| `/book-illustrate` | 3-5 | 내지 삽화 — 장면 추출, 스타일 일관 프롬프트, 배치 계획 |
 | `/book-status` | — | 터미널 대시보드 + `--ui` 브라우저 대시보드 |
 | `/book-fiction` | — | 소설 패턴 (15비트, Snowflake, 캐릭터 바이블) |
 | `/book-nonfiction` | — | 논픽션 패턴 (문제-해결, 근거 계층) |
@@ -196,6 +197,7 @@ aider  # CONVENTIONS.md가 자동 로드됨
 | `style-doctor` | 문체/톤 일관성, AI 슬롭 감지 |
 | `scene-generator` | GMC+RDD 구조로 장면 분석 (소설 전용) |
 | `cover-designer` | 표지 개념 + Midjourney/DALL-E 이미지 프롬프트 |
+| `illustrator` | 내지 삽화 — 장면 추출, 스타일 바이블, 프롬프트 생성 |
 | `marketing-expert` | 독자 페르소나, 채널 전략, 12주 런치 캘린더 |
 
 ## 시각적 대시보드
@@ -205,7 +207,7 @@ aider  # CONVENTIONS.md가 자동 로드됨
 `/book-status --ui`는 브라우저에서 Svelte 기반 진행 대시보드를 엽니다. 대시보드는 5초마다 자동 새로고침됩니다:
 
 - 6단계 파이프라인 추적기 (Onboarding → Ideation → Outlining → Drafting → Editing → Publishing)
-- 7개 에이전트 상태 카드 (book-architect, chapter-writer, continuity-editor, cover-designer, marketing-expert, scene-generator, style-doctor)
+- 8개 에이전트 상태 카드 (book-architect, chapter-writer, continuity-editor, cover-designer, illustrator, marketing-expert, scene-generator, style-doctor)
 - 챕터 개요, 초안 목록, 5단계 편집 칸반
 - 출력 파일 상태 (EPUB/PDF/MOBI/TXT/MD) 및 발행 체크리스트
 - 프로젝트 설정 및 명령어 레퍼런스
