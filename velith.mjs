@@ -12,6 +12,10 @@ const HOME = homedir();
 const VELITH = join(HOME, '.velith');
 const DB_PATH = join(VELITH, 'velith.db');
 const IMG_EXTS = /\.(jpg|jpeg|png|webp|gif)$/i;
+// Max accepted cover upload size (8 MB). The dashboard renders the cover at
+// ~112px; a server-side thumbnail pass (follow-up) will shrink served bytes,
+// but the upload gate still caps memory/bandwidth abuse regardless.
+const MAX_COVER_BYTES = 8 * 1024 * 1024;
 const CJK_LANGS = new Set(['ko', 'ja', 'zh', 'zh-cn', 'zh-tw', 'zh-hans', 'zh-hant']);
 
 // ─── DB Layer ────────────────────────────────────────────────────────────────────
@@ -628,7 +632,17 @@ async function cmdServe(args) {
         const cover = files.find(f => /^cover\./i.test(f)) || files[0];
         const fp = join(coverDir, cover);
         const ext = extname(fp);
-        res.writeHead(200, { 'Content-Type': MIME[ext] || 'image/jpeg', 'Cache-Control': 'public, max-age=60' });
+        // ETag by mtime+size so a replaced cover is re-fetched immediately,
+        // while an unchanged cover short-circuits to 304. no-cache forces
+        // revalidation on every request (no stale-image window after upload).
+        const st = statSync(fp);
+        const etag = `"${st.size.toString(16)}-${st.mtimeMs.toString(16)}"`;
+        if (req.headers['if-none-match'] === etag) { res.writeHead(304); res.end(); return; }
+        res.writeHead(200, {
+          'Content-Type': MIME[ext] || 'image/jpeg',
+          'Cache-Control': 'no-cache',
+          'ETag': etag,
+        });
         createReadStream(fp).pipe(res);
       } catch {
         res.writeHead(404); res.end('No cover');
@@ -644,7 +658,21 @@ async function cmdServe(args) {
       const coverDir = join(proj.path, 'publish', 'cover');
       mkdirSync(coverDir, { recursive: true });
       const chunks = [];
-      for await (const chunk of req) chunks.push(chunk);
+      let total = 0;
+      let tooLarge = false;
+      for await (const chunk of req) {
+        chunks.push(chunk);
+        total += chunk.length;
+        // Bound the in-memory buffer to MAX_COVER_BYTES to avoid unbounded
+        // uploads. The dashboard renders at ~112px; a multi-MB raw photo is
+        // neither useful nor safe to accept verbatim.
+        if (total > MAX_COVER_BYTES) { tooLarge = true; break; }
+      }
+      if (tooLarge) {
+        res.writeHead(413, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Cover too large' }));
+        return;
+      }
       const buf = Buffer.concat(chunks);
       let filename = basename(url.searchParams.get('filename') || 'cover.jpg');
       if (!IMG_EXTS.test(filename)) filename = 'cover.jpg';

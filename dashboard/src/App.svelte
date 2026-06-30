@@ -349,8 +349,12 @@
                   class="w-full flex items-center gap-4 p-4 rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container transition-colors text-left"
                   onclick={() => { bookIndex = i; setActiveView('overview'); syncUrl(); }}
                 >
-                  <div class="w-12 h-16 bg-surface-container rounded flex items-center justify-center shrink-0 border border-outline-variant">
-                    <span class="material-symbols-outlined text-2xl text-outline">menu_book</span>
+                  <div class="w-12 h-16 bg-surface-container rounded flex items-center justify-center shrink-0 border border-outline-variant overflow-hidden">
+                    {#if p.cover_path}
+                      <img src={p.cover_path} alt={p.name} class="w-full h-full object-cover" />
+                    {:else}
+                      <span class="material-symbols-outlined text-2xl text-outline">menu_book</span>
+                    {/if}
                   </div>
                   <div class="flex-1 min-w-0">
                     <p class="font-bold uppercase tracking-wide text-sm truncate">{p.name}</p>
@@ -372,7 +376,7 @@
         </div>
 
       {:else if activeView === 'overview'}
-        <OverviewView {project} projectIndex={bookIndex} {agents} i18n={currentI18n} {copyToClipboard} />
+        <OverviewView {project} projectIndex={bookIndex} {agents} i18n={currentI18n} {copyToClipboard} onRefresh={fetchData} />
       {:else if activeView === 'status'}
         <StatusView {agents} i18n={currentI18n} />
       {:else if activeView === 'outline'}
