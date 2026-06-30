@@ -29,9 +29,13 @@
 
   <!-- Project banner -->
   <div class="border border-outline-variant rounded bg-surface-container-lowest p-4 flex gap-4">
-    <label class="w-28 h-36 bg-surface-container border border-outline-variant rounded flex flex-col items-center justify-center cursor-pointer hover:bg-surface-container-high transition-colors shrink-0 group">
-      <span class="material-symbols-outlined text-4xl text-outline group-hover:text-secondary transition-colors">menu_book</span>
-      <span class="text-xs text-outline uppercase tracking-widest mt-1">Cover</span>
+    <label class="w-28 h-36 bg-surface-container border border-outline-variant rounded flex flex-col items-center justify-center cursor-pointer hover:bg-surface-container-high transition-colors shrink-0 group overflow-hidden">
+      {#if project.cover_path}
+        <img src={project.cover_path} alt={project.name} class="w-full h-full object-cover" />
+      {:else}
+        <span class="material-symbols-outlined text-4xl text-outline group-hover:text-secondary transition-colors">menu_book</span>
+        <span class="text-xs text-outline uppercase tracking-widest mt-1">Cover</span>
+      {/if}
       <input type="file" accept="image/jpeg,image/png,image/webp" class="hidden"
         onchange={async (e) => {
           const file = e.target.files?.[0];
