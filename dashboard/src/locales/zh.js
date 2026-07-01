@@ -6,6 +6,8 @@ export default {
   "agent.marketing-expert": "负责书籍简介与营销文案撰写的智能体",
   "agent.scene-generator": "负责场景生成与扩展的智能体（仅限小说类型）",
   "agent.style-doctor": "负责文风一致性检查与 AI 套话检测的智能体",
+  "cover.tooLarge": "封面图片过大（最大 8 MB）",
+  "cover.uploadFailed": "封面上传失败",
   "app.autoRefresh": "5秒自动刷新",
   "app.backToLive": "返回实时数据",
   "app.clickHint": "点击任意命令或章节即可复制到剪贴板",

@@ -6,6 +6,8 @@ export default {
   "agent.marketing-expert": "Agente per la descrizione del libro e i testi di marketing",
   "agent.scene-generator": "Agente per la generazione e l'espansione di scene (solo narrativa)",
   "agent.style-doctor": "Agente per la coerenza stilistica e il rilevamento di cliché IA",
+  "cover.tooLarge": "L'immagine di copertina è troppo grande (max 8 MB)",
+  "cover.uploadFailed": "Caricamento della copertina non riuscito",
   "app.autoRefresh": "Aggiornamento automatico 5s",
   "app.backToLive": "Torna ai dati live",
   "app.clickHint": "Clicca su un comando o un capitolo per copiare",

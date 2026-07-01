@@ -6,6 +6,8 @@ export default {
   "agent.marketing-expert": "Book description & marketing copy",
   "agent.scene-generator": "Scene generation & expansion",
   "agent.style-doctor": "Style consistency & AI-slop detection",
+  "cover.tooLarge": "Cover image too large (max 8 MB)",
+  "cover.uploadFailed": "Cover upload failed",
   "app.autoRefresh": "Auto-refresh 5s",
   "app.backToLive": "Back to live data",
   "app.clickHint": "Click any command or chapter to copy",

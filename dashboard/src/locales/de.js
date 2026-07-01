@@ -6,6 +6,8 @@ export default {
   "agent.marketing-expert": "Agent für Buchbeschreibung und Marketingtexte",
   "agent.scene-generator": "Agent für Szenenentwicklung und -erweiterung (nur Fiktion)",
   "agent.style-doctor": "Agent für Stilkonsistenz und KI-Klischeerkennung",
+  "cover.tooLarge": "Titelbild zu groß (max. 8 MB)",
+  "cover.uploadFailed": "Titelbild-Upload fehlgeschlagen",
   "app.autoRefresh": "Auto-Aktualisierung 5s",
   "app.backToLive": "Zurück zu Live-Daten",
   "app.clickHint": "Befehl oder Kapitel anklicken zum Kopieren",

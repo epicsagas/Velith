@@ -6,6 +6,8 @@ export default {
   "agent.marketing-expert": "Agent de rédaction de présentation du livre et de textes marketing",
   "agent.scene-generator": "Agent de génération et d'expansion de scènes (fiction uniquement)",
   "agent.style-doctor": "Agent de cohérence stylistique et de détection des clichés IA",
+  "cover.tooLarge": "L'image de couverture est trop grande (max 8 Mo)",
+  "cover.uploadFailed": "Échec de l'envoi de la couverture",
   "app.autoRefresh": "Actualisation automatique 5s",
   "app.backToLive": "Retour aux données en direct",
   "app.clickHint": "Cliquez sur une commande ou un chapitre pour copier",

@@ -90,6 +90,9 @@ export const SAMPLE_DATA = {
       path: '/Users/user/projects/my-book',
       genre: 'non-fiction',
       language: 'en',
+      // Inline data URI so the ?example demo renders a cover without a live
+      // backend (GET /cover/:index is not available in example mode).
+      cover_path: 'data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 112 144%22%3E%3Crect width%3D%22112%22 height%3D%22144%22 fill%3D%22%23fc8d62%22%2F%3E%3Ctext x%3D%2256%22 y%3D%2280%22 font-family%3D%22serif%22 font-size%3D%2240%22 fill%3D%22%23fff%22 text-anchor%3D%22middle%22%3EM%3C%2Ftext%3E%3C%2Fsvg%3E',
       current_phase: 3,
       total_chapters: 10,
       completed_chapters: 6,
