@@ -600,6 +600,20 @@ async function cmdServe(args) {
   let cachedStatusJson = null;
   let cachedEtag = null;
 
+  // Shared conditional-response helper: if the client's If-None-Match matches
+  // the computed `etag`, short-circuit with 304; otherwise write `headers`
+  // (augmented with ETag + Cache-Control: no-cache) and run `send`. Collapses
+  // the 304 fast-path that was previously inlined per route.
+  function serveWithEtag(req, res, etag, headers, send) {
+    if (req.headers['if-none-match'] === etag) {
+      res.writeHead(304, { 'ETag': etag });
+      res.end();
+      return;
+    }
+    res.writeHead(200, { ...headers, 'Cache-Control': 'no-cache', 'ETag': etag });
+    send();
+  }
+
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
 
@@ -607,16 +621,9 @@ async function cmdServe(args) {
       const status = await getStatus();
       const body = JSON.stringify({ ...status, generated_at: new Date().toISOString() });
       const etag = '"' + Buffer.from(body).length.toString(36) + '-' + Buffer.from(body).slice(0, 64).toString('base64').slice(0, 8) + '"';
-      // 304 Not Modified if ETag matches
-      if (req.headers['if-none-match'] === etag) {
-        res.writeHead(304, { 'ETag': etag });
-        res.end();
-        return;
-      }
       cachedStatusJson = body;
       cachedEtag = etag;
-      res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'ETag': etag });
-      res.end(body);
+      serveWithEtag(req, res, etag, { 'Content-Type': 'application/json' }, () => res.end(body));
       return;
     }
 
@@ -632,18 +639,17 @@ async function cmdServe(args) {
         const cover = files.find(f => /^cover\./i.test(f)) || files[0];
         const fp = join(coverDir, cover);
         const ext = extname(fp);
-        // ETag by mtime+size so a replaced cover is re-fetched immediately,
-        // while an unchanged cover short-circuits to 304. no-cache forces
-        // revalidation on every request (no stale-image window after upload).
+        // ETag by size + mtimeMs + inode so a replaced cover is re-fetched
+        // immediately, while an unchanged cover short-circuits to 304. The
+        // inode disambiguates a same-ms / same-size replacement (two different
+        // images written within one stat tick) that size+mtime alone would
+        // wrongly report as unchanged. no-cache forces revalidation on every
+        // request (no stale-image window after upload).
         const st = statSync(fp);
-        const etag = `"${st.size.toString(16)}-${st.mtimeMs.toString(16)}"`;
-        if (req.headers['if-none-match'] === etag) { res.writeHead(304); res.end(); return; }
-        res.writeHead(200, {
-          'Content-Type': MIME[ext] || 'image/jpeg',
-          'Cache-Control': 'no-cache',
-          'ETag': etag,
-        });
-        createReadStream(fp).pipe(res);
+        const etag = `"${st.size.toString(16)}-${st.mtimeMs.toString(16)}-${st.ino?.toString(16) ?? '0'}"`;
+        serveWithEtag(req, res, etag,
+          { 'Content-Type': MIME[ext] || 'image/jpeg' },
+          () => createReadStream(fp).pipe(res));
       } catch {
         res.writeHead(404); res.end('No cover');
       }
@@ -669,6 +675,10 @@ async function cmdServe(args) {
         if (total > MAX_COVER_BYTES) { tooLarge = true; break; }
       }
       if (tooLarge) {
+        // Reject and tear down the connection: breaking out of the for-await
+        // left the remaining request body unconsumed, so destroy the stream
+        // to release the socket instead of leaving it to time out.
+        req.destroy();
         res.writeHead(413, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Cover too large' }));
         return;

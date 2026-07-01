@@ -6,6 +6,8 @@ export default {
   "agent.marketing-expert": "Agente de descripción del libro y copy de marketing",
   "agent.scene-generator": "Agente de generación y expansión de escenas (solo ficción)",
   "agent.style-doctor": "Agente de coherencia de estilo y detección de clichés de IA",
+  "cover.tooLarge": "La imagen de portada es demasiado grande (máx. 8 MB)",
+  "cover.uploadFailed": "Error al subir la portada",
   "app.autoRefresh": "Actualización automática 5s",
   "app.backToLive": "Volver a datos en vivo",
   "app.clickHint": "Haz clic en cualquier comando o capítulo para copiar",

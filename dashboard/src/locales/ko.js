@@ -6,6 +6,8 @@ export default {
   "agent.marketing-expert": "책 소개문 및 마케팅 카피 작성 에이전트",
   "agent.scene-generator": "씬 생성 및 확장 전담 에이전트 (픽션 전용)",
   "agent.style-doctor": "문체 일관성 및 AI 상투어 감지 에이전트",
+  "cover.tooLarge": "표지 이미지가 너무 큽니다 (최대 8 MB)",
+  "cover.uploadFailed": "표지 업로드 실패",
   "app.autoRefresh": "5초 자동 새로고침",
   "app.backToLive": "실시간 데이터로 돌아가기",
   "app.clickHint": "명령어나 챕터를 클릭하면 클립보드에 복사됩니다",

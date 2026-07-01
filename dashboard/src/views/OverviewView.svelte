@@ -1,25 +1,12 @@
 <script>
-  let { project, projectIndex, agents, i18n, copyToClipboard, onRefresh } = $props();
+  import CoverImage from '../components/CoverImage.svelte';
+
+  let { project, projectIndex, agents, i18n, copyToClipboard, onRefresh, onToast } = $props();
 
   // coverBust is appended to the <img src> so a freshly uploaded cover
   // bypasses the browser cache (the URL /cover/<index> is path-stable, so
   // without a query the old image would persist until the cache expired).
   let coverBust = $state(0);
-  // coverFailed flips the cover slot back to the placeholder when the image
-  // 404s or fails to decode (e.g. cover deleted from disk between scan and
-  // render), instead of leaving a broken-image icon.
-  let coverFailed = $state(false);
-  // Reset failure state when the cover source changes.
-  // A cache-busting ?v= is appended to HTTP cover URLs so a replaced cover
-  // re-fetches immediately. It is NOT appended to data: URIs (used by the
-  // ?example demo), which RFC 2397 forbids query strings on.
-  let coverSrc = $derived(
-    project.cover_path
-      ? (project.cover_path.startsWith('data:')
-          ? project.cover_path
-          : `${project.cover_path}?v=${coverBust}`)
-      : null
-  );
 
   let wordPercent = $derived(
     project.target_words > 0
@@ -50,26 +37,36 @@
   <!-- Project banner -->
   <div class="border border-outline-variant rounded bg-surface-container-lowest p-4 flex gap-4">
     <label class="w-28 h-36 bg-surface-container border border-outline-variant rounded flex flex-col items-center justify-center cursor-pointer hover:bg-surface-container-high transition-colors shrink-0 group overflow-hidden">
-      {#if coverSrc && !coverFailed}
-        <img src={coverSrc} alt={project.name} class="w-full h-full object-cover"
-          onerror={() => { coverFailed = true; }} />
+      {#if project.cover_path}
+        {#key project.cover_path}
+          <CoverImage src={project.cover_path} alt={project.name} bust={coverBust} iconClass="text-4xl text-outline group-hover:text-secondary transition-colors" />
+        {/key}
       {:else}
         <span class="material-symbols-outlined text-4xl text-outline group-hover:text-secondary transition-colors">menu_book</span>
-        <span class="text-xs text-outline uppercase tracking-widest mt-1">Cover</span>
       {/if}
+      <span class="text-xs text-outline uppercase tracking-widest mt-1">Cover</span>
       <input type="file" accept="image/jpeg,image/png,image/webp" class="hidden"
         onchange={async (e) => {
           const file = e.target.files?.[0];
           if (!file || projectIndex == null) return;
           const ext = file.name.split('.').pop() || 'jpg';
           const res = await fetch(`/api/cover/${projectIndex}?filename=cover.${ext}`, { method: 'POST', body: file });
-          if (!res.ok) { e.target.value = ''; return; }
+          e.target.value = '';
+          if (!res.ok) {
+            // Surface the failure to the user instead of silently no-op'ing.
+            // The server returns 413 for oversize uploads and a JSON error body.
+            let key = 'cover.uploadFailed';
+            if (res.status === 413) key = 'cover.tooLarge';
+            else {
+              try { const body = await res.json(); if (body?.error) key = null; onToast?.(body.error); } catch {}
+            }
+            if (key) onToast?.(i18n.t(key));
+            return;
+          }
           // Refresh status reactively and bust the <img> cache so the new
           // cover shows immediately — no full-page reload.
-          coverFailed = false;
           coverBust++;
           await onRefresh?.();
-          e.target.value = '';
         }}
       />
     </label>

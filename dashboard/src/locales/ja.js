@@ -6,6 +6,8 @@ export default {
   "agent.marketing-expert": "本の紹介文とマーケティングコピーを作成するエージェント",
   "agent.scene-generator": "シーン生成・拡張を担当するエージェント（フィクション専用）",
   "agent.style-doctor": "文体の一貫性とAI定型表現を検出するエージェント",
+  "cover.tooLarge": "表紙画像が大きすぎます（最大 8 MB）",
+  "cover.uploadFailed": "表紙のアップロードに失敗しました",
   "app.autoRefresh": "5秒自動更新",
   "app.backToLive": "ライブデータに戻る",
   "app.clickHint": "コマンドや章をクリックするとクリップボードにコピーされます",

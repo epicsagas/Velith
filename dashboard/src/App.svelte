@@ -5,6 +5,7 @@
   import { initAccent, accentColor, initFont, fontId, setFont, syncFontToLocale } from './lib/theme.js';
   import { get } from 'svelte/store';
   import OverviewView from './views/OverviewView.svelte';
+  import CoverImage from './components/CoverImage.svelte';
   import StatusView from './views/StatusView.svelte';
   import OutlineView from './views/OutlineView.svelte';
   import DraftsView from './views/DraftsView.svelte';
@@ -18,7 +19,9 @@
   let activeView = $state('overview');
   let isDark = $state(document.documentElement.classList.contains('dark'));
   let mobileMenuOpen = $state(false);
-  let showToast = $state(false);
+  // Toast shows a transient message (copy confirmation, upload error, …).
+  // Empty string = hidden. `copyToClipboard` and the upload handler both feed it.
+  let toastMsg = $state('');
   let autoRefresh = $state(true);
   let hasRestoredState = false;
   let urlSpecifiedProject = false;
@@ -157,10 +160,18 @@
     currentAccent = initAccent(isDark);
   }
 
+  let toastTimer = null;
+  // Show a transient toast with the given (already-localized) message.
+  function notify(msg) {
+    if (!msg) return;
+    toastMsg = msg;
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toastMsg = ''; }, 2500);
+  }
+
   async function copyToClipboard(text) {
     try { await navigator.clipboard.writeText(text); } catch {}
-    showToast = true;
-    setTimeout(() => { showToast = false; }, 1500);
+    notify(currentI18n.t('app.copied'));
   }
 
   function relativeTime(iso) {
@@ -350,11 +361,7 @@
                   onclick={() => { bookIndex = i; setActiveView('overview'); syncUrl(); }}
                 >
                   <div class="w-12 h-16 bg-surface-container rounded flex items-center justify-center shrink-0 border border-outline-variant overflow-hidden">
-                    {#if p.cover_path}
-                      <img src={p.cover_path} alt={p.name} class="w-full h-full object-cover" />
-                    {:else}
-                      <span class="material-symbols-outlined text-2xl text-outline">menu_book</span>
-                    {/if}
+                    <CoverImage src={p.cover_path} alt={p.name} />
                   </div>
                   <div class="flex-1 min-w-0">
                     <p class="font-bold uppercase tracking-wide text-sm truncate">{p.name}</p>
@@ -376,7 +383,7 @@
         </div>
 
       {:else if activeView === 'overview'}
-        <OverviewView {project} projectIndex={bookIndex} {agents} i18n={currentI18n} {copyToClipboard} onRefresh={fetchData} />
+        <OverviewView {project} projectIndex={bookIndex} {agents} i18n={currentI18n} {copyToClipboard} onRefresh={fetchData} onToast={notify} />
       {:else if activeView === 'status'}
         <StatusView {agents} i18n={currentI18n} />
       {:else if activeView === 'outline'}
@@ -410,10 +417,10 @@
 </div>
 
 <!-- Toast -->
-{#if showToast}
+{#if toastMsg}
   <div class="animate-fade-in fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-inverse-surface text-inverse-on-surface px-4 py-2 rounded shadow-xl flex items-center gap-2 text-xs pointer-events-none uppercase tracking-wider font-semibold">
     <span class="material-symbols-outlined text-sm">check_circle</span>
-    {currentI18n.t('app.copied')}
+    {toastMsg}
   </div>
 {/if}
 

@@ -6,6 +6,8 @@ export default {
   "agent.marketing-expert": "Agente de descrição do livro e textos de marketing",
   "agent.scene-generator": "Agente de geração e expansão de cenas (apenas ficção)",
   "agent.style-doctor": "Agente de consistência de estilo e detecção de clichês de IA",
+  "cover.tooLarge": "A imagem da capa é muito grande (máx. 8 MB)",
+  "cover.uploadFailed": "Falha ao enviar a capa",
   "app.autoRefresh": "Atualização automática 5s",
   "app.backToLive": "Voltar para dados ao vivo",
   "app.clickHint": "Clique em qualquer comando ou capítulo para copiar",
