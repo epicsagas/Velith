@@ -327,3 +327,7 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,dotenv,visualstudiocode,intellij+all,dotenv,node
 
 stitch-designs/
+
+# Test/debug artifacts
+.playwright-mcp/
+example-card.png
