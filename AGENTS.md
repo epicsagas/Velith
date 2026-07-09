@@ -123,6 +123,8 @@ This is a multi-platform plugin. Before every push to `main`, bump the `version`
 
 Also bump the **UI version** constant in `dashboard/src/App.svelte` (`UI_VERSION`) to match.
 
+> **Do NOT bump** `dashboard/package.json`. That file holds the version of the Svelte/Vite *build toolchain* (`"private": true`, `"name": "velith-dashboard"`), not the Velith product version. It is never published and is intentionally excluded from the release set above. The product version has one source of truth: the five locations listed here.
+
 Version bump semantics:
 
 - **PATCH** (`0.1.0` → `0.1.1`): Bug fixes, typo corrections, minor dashboard styling tweaks, i18n string fixes — no new functionality.

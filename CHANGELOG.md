@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.1] - 2026-07-09
+
+### Fixed
+- Dashboard: render book cover image in Overview banner (#6) — new `CoverImage.svelte` component, `OverviewView.svelte` and `App.svelte` wired to display the cover; UI version bumped to match.
+
+### Changed
+- README: label the hf-space benchmark table as a heuristic simulation.
+- Ignore Playwright MCP debug artifacts (`.playwright-mcp/`) in `.gitignore`.
+
 ## [0.4.0] - 2026-06-19
 
 ### Added
