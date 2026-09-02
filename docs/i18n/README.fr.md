@@ -12,10 +12,11 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.5.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href="https://x.ai/cli"><img alt="Grok Build" src="https://img.shields.io/badge/Grok_Build-plugin-ffffff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://buymeacoffee.com/epicsaga"><img alt="Buy Me a Coffee" src="https://img.shields.io/badge/buy_me_a_coffee-FFDD00?style=for-the-badge&labelColor=0d1117&logo=buymeacoffee&logoColor=black" /></a>
 </p>
 
@@ -86,7 +87,7 @@ Velith est livré comme un pipeline de livres, mais les mêmes 6 phases s'appliq
 | Conscience du genre | 8 systèmes de genre + personnalisé | Dépend du prompt | Aucune | Centré sur la fiction | Aucune |
 | Format de sortie | EPUB, PDF, MOBI, TXT, Markdown | Copier-coller | Markdown / PDF | DOCX, limité | DOCX, PDF |
 | Contrôle qualité | Chaque phase | Aucun | Aucun | Aucun | Aucun |
-| Nécessite | Claude Code, Codex CLI, Agy, Cursor, Cline ou Aider | N'importe quel LLM | Abonnement Notion | Abonnement | Licence |
+| Nécessite | Claude Code, Codex CLI, Grok Build, Agy, Cursor, Cline ou Aider | N'importe quel LLM | Abonnement Notion | Abonnement | Licence |
 | Contrôle total | Au niveau du prompt | Total | Boîte noire | Boîte noire | Total |
 
 ## Installation
@@ -110,6 +111,16 @@ codex plugin marketplace add epicsagas/plugins
 ```
 
 **Prérequis :** [Codex CLI](https://github.com/openai/codex) installé et configuré avec une clé API OpenAI.
+
+### Grok Build (xAI)
+
+```bash
+grok plugin install epicsagas/Velith --trust
+```
+
+Grok lit `skills/` et `agents/` à la racine du plugin. Aucune configuration supplémentaire n'est nécessaire.
+
+**Prérequis :** [Grok Build](https://x.ai/cli) installé et authentifié.
 
 ### Agy (Antigravity)
 

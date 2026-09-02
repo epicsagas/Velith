@@ -12,10 +12,11 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.5.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href="https://x.ai/cli"><img alt="Grok Build" src="https://img.shields.io/badge/Grok_Build-plugin-ffffff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://buymeacoffee.com/epicsaga"><img alt="Buy Me a Coffee" src="https://img.shields.io/badge/buy_me_a_coffee-FFDD00?style=for-the-badge&labelColor=0d1117&logo=buymeacoffee&logoColor=black" /></a>
 </p>
 
@@ -88,7 +89,7 @@ Velith는 책 파이프라인으로 출시되지만, 동일한 6단계는 **모�
 | 장르 인식 | 8가지 장르 시스템 + 커스텀 | 프롬프트에 따라 다름 | 없음 | 소설 중심 | 없음 |
 | 출력 형식 | EPUB, PDF, MOBI, TXT, Markdown | 복사-붙여넣기 | Markdown / PDF | DOCX, 제한적 | DOCX, PDF |
 | 품질 관문 | 모든 단계 | 없음 | 없음 | 없음 | 없음 |
-| 필요 조건 | Claude Code, Codex CLI, Agy, Cursor, Cline, Aider | 모든 LLM | Notion 구독 | 구독 | 라이선스 |
+| 필요 조건 | Claude Code, Codex CLI, Grok Build, Agy, Cursor, Cline, Aider | 모든 LLM | Notion 구독 | 구독 | 라이선스 |
 | 완전한 제어 | 프롬프트 수준 | 완전 | 블랙박스 | 블랙박스 | 완전 |
 
 ## 설치
@@ -112,6 +113,16 @@ codex plugin marketplace add epicsagas/plugins
 ```
 
 **사전 요건:** [Codex CLI](https://github.com/openai/codex)가 설치되고 OpenAI API 키가 구성되어 있어야 합니다.
+
+### Grok Build (xAI)
+
+```bash
+grok plugin install epicsagas/Velith --trust
+```
+
+Grok은 플러그인 루트의 `skills/`와 `agents/`를 그대로 읽습니다. 별도 설정이 필요 없습니다.
+
+**사전 요건:** [Grok Build](https://x.ai/cli)가 설치되고 인증되어 있어야 합니다.
 
 ### Agy (Antigravity)
 

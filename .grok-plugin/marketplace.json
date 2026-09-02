@@ -1,0 +1,33 @@
+{
+  "name": "velith",
+  "description": "Standalone marketplace for the Velith plugin. Install from this repository.",
+  "owner": {
+    "name": "epicsagas"
+  },
+  "plugins": [
+    {
+      "name": "velith",
+      "description": "AI-native publishing system — autonomous multi-phase workflows from ideation to EPUB/PDF. Fiction, non-fiction, technical, screenplay, poetry, game, academic, and custom genres.",
+      "category": "productivity",
+      "source": {
+        "type": "local",
+        "path": "."
+      },
+      "homepage": "https://github.com/epicsagas/Velith",
+      "keywords": [
+        "book",
+        "writing",
+        "publishing",
+        "epub",
+        "pdf",
+        "fiction",
+        "non-fiction",
+        "technical-writing",
+        "screenplay",
+        "poetry",
+        "game-scenario",
+        "academic-writing"
+      ]
+    }
+  ]
+}

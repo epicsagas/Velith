@@ -99,12 +99,19 @@ npm run build     # rebuild dist/ (included in repo for plugin users)
 
 Velith also supports OpenAI Codex CLI discovery via `.codex-plugin/plugin.json`, which points to the same `skills/` and `agents/*.md` used by Claude Code.
 
+## Grok Build (xAI) Plugin Support
+
+Velith also supports Grok Build via `.grok-plugin/plugin.json`. Skills (`skills/`) and agents (`agents/*.md`) are discovered natively from the plugin root (no host-specific copies). The standalone catalog is `.grok-plugin/marketplace.json` (local source `.`). Install with `grok plugin install epicsagas/Velith --trust`.
+
+Grok reads the root `plugin.json` as well. Its `agents` field must be a directory path (`"./agents/"`) or omitted. A Claude-style file array at the repo root makes Grok count the agent files but skip registering them as spawnable types. Claude Code still lists agent files in `.claude-plugin/plugin.json`. Agy auto-discovers `agents/` from the repo root, so the root manifest does not list them.
+
 ### Multi-Platform Support
 
 | Platform | Files | Purpose |
 |----------|-------|---------|
 | Claude Code | `.claude-plugin/plugin.json` | Skills + agent definitions |
 | Codex CLI | `.codex-plugin/plugin.json` + `.codex-plugin/agents/*.toml` | Skill directory + agent prompts |
+| Grok Build | `.grok-plugin/plugin.json` + `.grok-plugin/marketplace.json` | Metadata + catalog; skills/agents from plugin root |
 | Agy | GitHub URL install (`agy plugin install`) | Auto-discovers skills/agents from repo root |
 | Cursor | `.cursor/rules/*.mdc` | Always-on pipeline context (3 rule files) |
 | Cline | `.clinerules` | Project-level instructions |
@@ -112,18 +119,19 @@ Velith also supports OpenAI Codex CLI discovery via `.codex-plugin/plugin.json`,
 
 ## Versioning and Release
 
-This is a multi-platform plugin. Before every push to `main`, bump the `version` field in **all four** version-bearing files to the same value:
+This is a multi-platform plugin. Before every push to `main`, bump the `version` field in **all five** version-bearing files to the same value:
 
 | File | Purpose |
 |------|---------|
 | `.claude-plugin/plugin.json` | Claude Code plugin manifest |
 | `.codex-plugin/plugin.json` | OpenAI Codex CLI plugin manifest |
+| `.grok-plugin/plugin.json` | Grok Build plugin manifest |
 | `plugin.json` (root) | Agy auto-discovery manifest |
 | `README.md` badge URL | `badge/version-{version}` |
 
 Also bump the **UI version** constant in `dashboard/src/App.svelte` (`UI_VERSION`) to match.
 
-> **Do NOT bump** `dashboard/package.json`. That file holds the version of the Svelte/Vite *build toolchain* (`"private": true`, `"name": "velith-dashboard"`), not the Velith product version. It is never published and is intentionally excluded from the release set above. The product version has one source of truth: the five locations listed here.
+> **Do NOT bump** `dashboard/package.json`. That file holds the version of the Svelte/Vite *build toolchain* (`"private": true`, `"name": "velith-dashboard"`), not the Velith product version. It is never published and is intentionally excluded from the release set above. The product version has one source of truth: the six locations listed here.
 
 Version bump semantics:
 
@@ -131,4 +139,4 @@ Version bump semantics:
 - **MINOR** (`0.1.0` → `0.2.0`): New skills, new agents, new genre support, new dashboard views, new i18n keys, feature additions to existing skills/agents.
 - **MAJOR** (`0.1.0` → `1.0.0`): Breaking changes to skill/agent interfaces, pipeline phase restructuring, removed skills or agents, incompatible plugin manifest changes.
 
-**Process**: bump all five locations → rebuild dashboard (`cd dashboard && npm run build`) → commit → tag `v{version}` → push with `--tags`. Do not push without bumping.
+**Process**: bump all six locations → rebuild dashboard (`cd dashboard && npm run build`) → commit → tag `v{version}` → push with `--tags`. Do not push without bumping.

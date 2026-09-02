@@ -9,5 +9,20 @@
   "homepage": "https://github.com/epicsagas/Velith",
   "repository": "https://github.com/epicsagas/Velith",
   "license": "Apache-2.0",
-  "skills": "./skills/"
+  "skills": "./skills/",
+  "agents": "./agents/",
+  "keywords": [
+    "book",
+    "writing",
+    "publishing",
+    "epub",
+    "pdf",
+    "fiction",
+    "non-fiction",
+    "technical-writing",
+    "screenplay",
+    "poetry",
+    "game-scenario",
+    "academic-writing"
+  ]
 }

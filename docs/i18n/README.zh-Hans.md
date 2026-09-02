@@ -12,10 +12,11 @@
   <a href="https://github.com/epicsagas/Velith/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epicsagas/Velith?style=for-the-badge&labelColor=0d1117&color=58a6ff&logo=git&logoColor=white" /></a>
 </p>
 <p>
-  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href=".claude-plugin/plugin.json"><img alt="Version" src="https://img.shields.io/badge/version-0.5.0-fc8d62?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
+  <a href="https://x.ai/cli"><img alt="Grok Build" src="https://img.shields.io/badge/Grok_Build-plugin-ffffff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://buymeacoffee.com/epicsaga"><img alt="Buy Me a Coffee" src="https://img.shields.io/badge/buy_me_a_coffee-FFDD00?style=for-the-badge&labelColor=0d1117&logo=buymeacoffee&logoColor=black" /></a>
 </p>
 
@@ -86,7 +87,7 @@ Velith 以图书流水线的形式发布，但同样的 6 个阶段适用于**�
 | 体裁感知 | 8种体裁系统 + 自定义 | 取决于提示 | 无 | 以小说为主 | 无 |
 | 输出格式 | EPUB、PDF、MOBI、TXT、Markdown | 复制粘贴 | Markdown / PDF | DOCX，有限 | DOCX、PDF |
 | 质量关卡 | 每个阶段 | 无 | 无 | 无 | 无 |
-| 所需条件 | Claude Code、Codex CLI、Agy、Cursor、Cline 或 Aider | 任意 LLM | Notion 订阅 | 订阅 | 许可证 |
+| 所需条件 | Claude Code、Codex CLI、Grok Build、Agy、Cursor、Cline 或 Aider | 任意 LLM | Notion 订阅 | 订阅 | 许可证 |
 | 完全控制 | 提示级别 | 完全 | 黑盒 | 黑盒 | 完全 |
 
 ## 安装
@@ -110,6 +111,16 @@ codex plugin marketplace add epicsagas/plugins
 ```
 
 **前提条件:** 已安装 [Codex CLI](https://github.com/openai/codex) 并配置 OpenAI API 密钥。
+
+### Grok Build (xAI)
+
+```bash
+grok plugin install epicsagas/Velith --trust
+```
+
+Grok 会从插件根目录直接读取 `skills/` 和 `agents/`。无需额外配置。
+
+**前提条件:** 已安装并完成认证的 [Grok Build](https://x.ai/cli)。
 
 ### Agy (Antigravity)
 

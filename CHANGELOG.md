@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0] - 2026-09-02
+
+### Added
+- Grok Build (xAI) plugin host: `.grok-plugin/plugin.json` metadata manifest and `.grok-plugin/marketplace.json` (local source `.`). Skills and agents are discovered from the plugin root.
+
+### Changed
+- Root `plugin.json` no longer lists agent files as an array. Grok treats that field as a path override and skips spawn registration if it is a file list. Agy still auto-discovers `agents/` from the repo root.
+
 ## [0.4.1] - 2026-07-09
 
 ### Fixed
