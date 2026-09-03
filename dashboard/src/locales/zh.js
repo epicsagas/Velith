@@ -17,6 +17,7 @@ export default {
   "app.exampleMode": "示例模式",
   "app.generated": "已生成",
   "app.hoursAgo": "{n}小时前",
+  "app.daysAgo": "{n}天前",
   "app.justNow": "刚刚",
   "app.loading": "加载中...",
   "app.minutesAgo": "{n}分钟前",

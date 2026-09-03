@@ -17,6 +17,7 @@ export default {
   "app.exampleMode": "Режим примера",
   "app.generated": "Сгенерировано",
   "app.hoursAgo": "{n} ч назад",
+  "app.daysAgo": "{n} д назад",
   "app.justNow": "только что",
   "app.loading": "Загрузка...",
   "app.minutesAgo": "{n} мин назад",

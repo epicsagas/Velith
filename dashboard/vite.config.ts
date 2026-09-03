@@ -57,15 +57,24 @@ function velithApiPlugin() {
         const coverUploadMatch = url.pathname.match(/^\/api\/cover\/(\d+)$/);
         if (req.method === 'POST' && coverUploadMatch) {
           const index = parseInt(coverUploadMatch[1], 10);
-          const filename = path.basename(url.searchParams.get('filename') || 'cover.jpg');
+          let filename = path.basename(url.searchParams.get('filename') || 'cover.jpg');
+          if (!IMG_EXTS.test(filename)) filename = 'cover.jpg';
           const status = await getStatus();
           const project = status.projects?.[index];
           if (project?.path) {
             const coverDir = path.join(project.path, 'publish', 'cover');
             fs.mkdirSync(coverDir, { recursive: true });
+            // Same 8 MB gate as velith.mjs serve — dev parity.
             const chunks: Buffer[] = [];
-            req.on('data', (c: Buffer) => chunks.push(c));
+            let total = 0;
+            let tooLarge = false;
+            req.on('data', (c: Buffer) => { chunks.push(c); total += c.length; if (total > 8 * 1024 * 1024) tooLarge = true; });
             req.on('end', () => {
+              if (tooLarge) {
+                res.writeHead(413, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Cover too large' }));
+                return;
+              }
               fs.writeFileSync(path.join(coverDir, filename), Buffer.concat(chunks));
               res.writeHead(200, { 'Content-Type': 'application/json' });
               res.end(JSON.stringify({ ok: true }));

@@ -17,6 +17,7 @@ export default {
   "app.exampleMode": "Example Mode",
   "app.generated": "Generated",
   "app.hoursAgo": "{n}h ago",
+  "app.daysAgo": "{n}d ago",
   "app.justNow": "just now",
   "app.loading": "Loading...",
   "app.minutesAgo": "{n}m ago",

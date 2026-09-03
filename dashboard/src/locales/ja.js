@@ -17,6 +17,7 @@ export default {
   "app.exampleMode": "サンプルモード",
   "app.generated": "生成済み",
   "app.hoursAgo": "{n}時間前",
+  "app.daysAgo": "{n}日前",
   "app.justNow": "たった今",
   "app.loading": "読み込み中...",
   "app.minutesAgo": "{n}分前",

@@ -33,7 +33,7 @@
   });
 
   const isExample = new URLSearchParams(window.location.search).has('example');
-  const UI_VERSION = '0.5.0';
+  const UI_VERSION = '0.6.0';
 
   // ── ETag-based caching ──
   let lastEtag = $state(null);
@@ -181,7 +181,7 @@
     if (mins < 60) return { label: currentI18n.t('app.minutesAgo', { n: mins }), warn: mins >= 10 };
     const hrs = Math.floor(mins / 60);
     if (hrs < 24) return { label: currentI18n.t('app.hoursAgo', { n: hrs }), warn: true };
-    return { label: currentI18n.t('app.hoursAgo', { n: Math.floor(hrs / 24) * 24 }), warn: true };
+    return { label: currentI18n.t('app.daysAgo', { n: Math.floor(hrs / 24) }), warn: true };
   }
 </script>
 

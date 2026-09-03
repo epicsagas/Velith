@@ -20,7 +20,7 @@
   }
 
   let checks = $derived([
-    { key: 'publish.check.wordTarget',    ok: project.total_words >= project.target_words },
+    { key: 'publish.check.wordTarget',    ok: project.target_words > 0 && project.total_words >= project.target_words },
     { key: 'publish.check.allDrafts',     ok: (project.chapter_details ?? []).every(c => c.status !== 'wait') },
     { key: 'publish.check.editingDone',   ok: (project.chapter_details ?? []).every(c => c.edit_stage === 'proofread') },
     { key: 'publish.check.outlineDone',   ok: project.phase_status?.[2]?.status === 'complete' },

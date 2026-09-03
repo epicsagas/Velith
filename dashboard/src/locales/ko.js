@@ -17,6 +17,7 @@ export default {
   "app.exampleMode": "예제 모드",
   "app.generated": "생성됨",
   "app.hoursAgo": "{n}시간 전",
+  "app.daysAgo": "{n}일 전",
   "app.justNow": "방금",
   "app.loading": "로딩 중...",
   "app.minutesAgo": "{n}분 전",
