@@ -21,13 +21,31 @@ const CJK_LANGS = new Set(['ko', 'ja', 'zh', 'zh-cn', 'zh-tw', 'zh-hans', 'zh-ha
 // ─── DB Layer ────────────────────────────────────────────────────────────────────
 
 let _db = null;
+let _SQL = null;
+let _dbMtimeMs = 0;
 
 export async function getDb() {
-  if (_db) return _db;
-  const SQL = await initSqlJs();
+  if (_db) {
+    // Other processes (scan/agents run from other Claude sessions) rewrite the
+    // DB file. sql.js is in-memory, so a long-lived serve process must detect
+    // the file change and reload, or the dashboard serves a startup snapshot
+    // forever no matter how often the browser polls. _SQL is guaranteed
+    // initialized here — _db is only set after the factory loads below.
+    try {
+      const m = statSync(DB_PATH).mtimeMs;
+      if (m !== _dbMtimeMs) {
+        _db = new _SQL.Database(readFileSync(DB_PATH));
+        _dbMtimeMs = m;
+      }
+    } catch {}
+    return _db;
+  }
+  _SQL = await initSqlJs();
+  const SQL = _SQL;
   mkdirSync(VELITH, { recursive: true });
   if (existsSync(DB_PATH)) {
     _db = new SQL.Database(readFileSync(DB_PATH));
+    _dbMtimeMs = statSync(DB_PATH).mtimeMs;
   } else {
     _db = new SQL.Database();
     _db.run(`CREATE TABLE IF NOT EXISTS projects (
@@ -60,7 +78,17 @@ export async function getDb() {
 
 export function save() {
   if (!_db) return;
-  try { writeFileSync(DB_PATH, Buffer.from(_db.export())); } catch {}
+  // Atomic write (temp + rename): concurrent readers must never see a
+  // half-written DB file — SQL.Database would throw on reload.
+  // ponytail: no cross-process write lock; last writer wins. Agent status
+  // self-heals from ~/.velith/agents/*.json on next scan, so acceptable
+  // until two concurrent scans become routine.
+  const tmp = DB_PATH + '.tmp';
+  try {
+    writeFileSync(tmp, Buffer.from(_db.export()));
+    renameSync(tmp, DB_PATH);
+    _dbMtimeMs = statSync(DB_PATH).mtimeMs;
+  } catch {}
 }
 
 export async function getStatus() {
@@ -79,27 +107,27 @@ export async function getStatus() {
       p.chapter_details = cRows.length ? cRows[0].values.map(r => ({ filename: r[0], title: r[1], lines: r[2], words: r[3], status: r[4], edit_stage: r[5] })) : [];
       // cover
       if (p.path) {
-        const idx = projects.length; // will fix after loop
         const coverDir = join(p.path, 'publish', 'cover');
         try {
           const files = readdirSync(coverDir).filter(f => IMG_EXTS.test(f));
           if (files.length > 0) {
-            p.cover_path = `/cover/${idx}`;
             p.cover_file = files.find(f => /^cover\./i.test(f)) || files[0];
           }
         } catch {}
       }
       projects.push(p);
     }
-    // Fix cover indices now that we know total count
-    projects.forEach((p, i) => { if (p.cover_path) p.cover_path = `/cover/${i}`; });
+    // Cover URLs are index-based; assign once the final order is known
+    projects.forEach((p, i) => { if (p.cover_file) p.cover_path = `/cover/${i}`; });
   }
   // agents — merge across projects
   const aRows = db.exec('SELECT id, name, icon, role, status, last_run, task FROM agents ORDER BY project_path');
   const agents = [];
   if (aRows.length) {
     const seen = new Map();
-    const rank = { complete: 3, running: 2, disabled: 1, idle: 0 };
+    // error and running rank above complete: a stale "complete" from a finished
+    // book must not mask an active run or a failure on another project.
+    const rank = { error: 4, running: 3, complete: 2, disabled: 1, idle: 0 };
     for (const r of aRows[0].values) {
       const a = { id: r[0], name: r[1], icon: r[2], role: r[3], status: r[4], last_run: r[5], task: r[6] };
       const prev = seen.get(a.id);
@@ -122,9 +150,10 @@ function readJson(p, fb) {
 // ─── Helpers ─────────────────────────────────────────────────────────────────────
 
 const has = (dir, f) => existsSync(join(dir, f));
-const countLines = (p) => { try { return parseInt(execSync(`wc -l < "${p}"`, { encoding: 'utf8' }).trim()); } catch { return 0; } };
-const countWords = (p) => { try { return parseInt(execSync(`wc -w < "${p}"`, { encoding: 'utf8' }).trim()); } catch { return 0; } };
-const countChars = (p) => { try { return parseInt(execSync(`tr -d '[:space:]' < "${p}" | wc -m`, { encoding: 'utf8' }).trim()); } catch { return 0; } };
+// In-process counters (was execSync wc/tr per file — spawned ~3 processes per chapter).
+const countLines = (p) => { try { return (readFileSync(p, 'utf8').match(/\n/g) || []).length; } catch { return 0; } };
+const countWords = (p) => { try { return readFileSync(p, 'utf8').split(/\s+/).filter(Boolean).length; } catch { return 0; } };
+const countChars = (p) => { try { return readFileSync(p, 'utf8').replace(/\s/g, '').length; } catch { return 0; } };
 
 // ─── auto-migration ─────────────────────────────────────────────────────────────
 
@@ -229,7 +258,10 @@ async function cmdScan(args) {
     }
   }
   chapter_details.sort((a, b) => a.filename.localeCompare(b.filename, undefined, { numeric: true }));
-  const effectivePlanned = planned || plannedChapters.length || 0;
+  // Planned count can under-report: the PRD regex grabs the first "N chapters/장"
+  // match anywhere in the text (e.g. "각 2장씩"), and Korean outlines may not use
+  // the `### Chapter N:` heading form. Never let planned fall below actual drafts.
+  const effectivePlanned = Math.max(planned || 0, plannedChapters.length, drafts.length);
   const total_words = chapter_details.reduce((s, c) => s + c.words, 0);
 
   // Cover
@@ -300,6 +332,21 @@ async function cmdScan(args) {
 
   // ─── Write SQLite ───
   const db = await getDb();
+  // Prune zombie rows: paths that no longer exist (project moved/deleted) or
+  // that are not book projects (no PRD.md — e.g. /tmp scanned by accident).
+  // Without this, moved projects leave stale rows forever and the dashboard
+  // keeps serving dead paths.
+  const allRows = db.exec('SELECT path FROM projects');
+  if (allRows.length) {
+    for (const [pp] of allRows[0].values) {
+      if (pp && (!existsSync(pp) || !existsSync(join(pp, 'PRD.md')))) {
+        db.run('DELETE FROM projects WHERE path = ?', [pp]);
+        db.run('DELETE FROM chapters WHERE project_path = ?', [pp]);
+        db.run('DELETE FROM agents WHERE project_path = ?', [pp]);
+        db.run('DELETE FROM scan_log WHERE project_path = ?', [pp]);
+      }
+    }
+  }
   db.run('DELETE FROM chapters WHERE project_path = ?', [dir]);
   db.run('DELETE FROM agents WHERE project_path = ?', [dir]);
   db.run(`INSERT OR REPLACE INTO projects (path, name, genre, language, current_phase, total_chapters, completed_chapters, total_words, target_words, count_unit, phase_status, output_files, cover_path, last_updated)
@@ -330,6 +377,7 @@ async function cmdScan(args) {
   // ─── Update registry ───
   const regPath = join(VELITH, 'projects.json');
   const reg = readJson(regPath, { projects: [] });
+  reg.projects = reg.projects.filter(p => p.path === dir || (existsSync(p.path) && existsSync(join(p.path, 'PRD.md'))));
   const idx = reg.projects.findIndex(p => p.path === dir);
   const entry = { path: dir, name: meta.title, updated: now };
   if (idx >= 0) reg.projects[idx] = entry; else reg.projects.push(entry);
@@ -363,7 +411,11 @@ async function cmdScan(args) {
       const clientPath = pluginRoot ? join(pluginRoot, 'velith.mjs') : import.meta.url.replace(/^file:\/\//, '');
       execSync(`nohup node "${clientPath}" serve > /dev/null 2>&1 &`, { stdio: 'ignore' });
     }
-    const pidx = Math.max(0, reg.projects.findIndex(p => p.path === dir));
+    // Dashboard indexes projects by last_updated DESC; the just-scanned
+    // project (last_updated = now) sits at that position. The registry's
+    // insertion order is a different sequence and opened the wrong project.
+    const posRows = db.exec('SELECT COUNT(*) FROM projects WHERE last_updated > ?', [now]);
+    const pidx = posRows.length ? posRows[0].values[0][0] : 0;
     execSync(`open http://127.0.0.1:${port}/${pidx}/overview`, { stdio: 'ignore' });
   }
 }
@@ -584,6 +636,9 @@ async function cmdServe(args) {
 
   function serveStatic(res, urlPath) {
     let fp = join(DIST_DIR, urlPath === '/' ? 'index.html' : urlPath);
+    // Explicit containment guard: URL normalization blocks most traversal, but
+    // don't rely on it — anything resolving outside DIST_DIR is SPA-routed.
+    if (!fp.startsWith(DIST_DIR + '/')) fp = join(DIST_DIR, 'index.html');
     if (!existsSync(fp) || statSync(fp).isDirectory()) fp = join(DIST_DIR, 'index.html');
     const ext = basename(fp).includes('.') ? '.' + basename(fp).split('.').pop() : '';
     try {
