@@ -331,3 +331,6 @@ stitch-designs/
 # Test/debug artifacts
 .playwright-mcp/
 example-card.png
+
+# Velith runtime status (example projects)
+.velith/
