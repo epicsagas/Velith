@@ -217,5 +217,14 @@ export default {
   "genre.academic.h1": "Citation management",
   "genre.academic.h2": "Methodology validation",
   "genre.academic.h3": "Peer review prep",
-  "genre.academic.tip": "Place research papers in sources/ for citation during drafting."
+  "genre.academic.tip": "Place research papers in sources/ for citation during drafting.",
+  "agent.illustrator": "Interior illustration plan & prompts",
+  "agent.fact-checker": "Claim ledger & source verification",
+  "agent.beta-reader": "Cold read & readiness verdict",
+  "overview.readiness": "Readiness",
+  "readiness.PASS": "Pass",
+  "readiness.REVISE": "Revise",
+  "edit.stage.readiness": "Readiness",
+  "agent.art-director": "Art bible, look lock & visual QA",
+  "agent.figure-engineer": "Code-rendered diagrams, charts & drawings"
 };

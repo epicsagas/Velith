@@ -1,7 +1,7 @@
 // Velith CLI — unified client for book project management
 // Usage: node velith.mjs <command> [args]
-// Commands: scan, agents, stats, words, list, serve
-import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, renameSync, createReadStream } from 'node:fs';
+// Commands: scan, agents, stats, words, list, migrate, metrics, snapshot, images, serve
+import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, renameSync, createReadStream, cpSync } from 'node:fs';
 import http from 'node:http';
 import { homedir } from 'node:os';
 import { join, basename, resolve, extname } from 'node:path';
@@ -46,6 +46,7 @@ export async function getDb() {
   if (existsSync(DB_PATH)) {
     _db = new SQL.Database(readFileSync(DB_PATH));
     _dbMtimeMs = statSync(DB_PATH).mtimeMs;
+    try { _db.run('ALTER TABLE projects ADD COLUMN readiness TEXT'); save(); } catch {}
   } else {
     _db = new SQL.Database();
     _db.run(`CREATE TABLE IF NOT EXISTS projects (
@@ -54,7 +55,7 @@ export async function getDb() {
       completed_chapters INTEGER DEFAULT 0, total_words INTEGER DEFAULT 0,
       target_words INTEGER DEFAULT 0, count_unit TEXT DEFAULT 'words',
       phase_status TEXT DEFAULT '[]', output_files TEXT DEFAULT '[]',
-      cover_path TEXT, last_updated TEXT
+      cover_path TEXT, readiness TEXT, last_updated TEXT
     )`);
     _db.run(`CREATE TABLE IF NOT EXISTS chapters (
       id INTEGER PRIMARY KEY AUTOINCREMENT, project_path TEXT NOT NULL,
@@ -102,6 +103,7 @@ export async function getStatus() {
       cols.forEach((c, i) => p[c] = row[i]);
       p.phase_status = JSON.parse(p.phase_status || '[]');
       p.output_files = JSON.parse(p.output_files || '[]');
+      p.readiness = p.readiness ? JSON.parse(p.readiness) : null;
       // chapters
       const cRows = db.exec('SELECT filename, title, lines, words, status, edit_stage FROM chapters WHERE project_path = ? ORDER BY filename', [p.path]);
       p.chapter_details = cRows.length ? cRows[0].values.map(r => ({ filename: r[0], title: r[1], lines: r[2], words: r[3], status: r[4], edit_stage: r[5] })) : [];
@@ -154,6 +156,19 @@ const has = (dir, f) => existsSync(join(dir, f));
 const countLines = (p) => { try { return (readFileSync(p, 'utf8').match(/\n/g) || []).length; } catch { return 0; } };
 const countWords = (p) => { try { return readFileSync(p, 'utf8').split(/\s+/).filter(Boolean).length; } catch { return 0; } };
 const countChars = (p) => { try { return readFileSync(p, 'utf8').replace(/\s/g, '').length; } catch { return 0; } };
+// Parse the YAML frontmatter of edits/readiness-report.md written by beta-reader.
+function parseReadiness(fp) {
+  if (!existsSync(fp)) return null;
+  const fm = (readFileSync(fp, 'utf8').match(/^---\n([\s\S]*?)\n---/) || [])[1];
+  if (!fm) return null;
+  const get = (k) => (fm.match(new RegExp('^' + k + ':\\s*(.+)$', 'm')) || [])[1]?.trim();
+  const verdict = (get('verdict') || '').toUpperCase() || null;
+  const score = parseFloat(get('score')) || null;
+  const axesRaw = get('axes') || '';
+  const axes = {};
+  for (const m of axesRaw.matchAll(/(\w+):\s*([\d.]+)/g)) axes[m[1]] = parseFloat(m[2]);
+  return { verdict, score, axes, read_at: get('read_at') || null };
+}
 
 // ─── auto-migration ─────────────────────────────────────────────────────────────
 
@@ -192,9 +207,9 @@ async function cmdScan(args) {
   const yamlGenre = (prd.match(/^---\n[\s\S]*?^genre:\s*(.+)$/m) || [])[1]?.trim().replace(/^\*+\s*/, '');
   const yamlLang = (prd.match(/^---\n[\s\S]*?^language:\s*(.+)$/m) || [])[1]?.trim().replace(/^\*+\s*/, '');
   const meta = {
-    title: yamlTitle || (prd.match(/\*\*Title\*?\*?:\s*(.+)/i) || prd.match(/\*\*제목:\*\*\s*(.+)/) || prd.match(/^#\s*PRD[—:\-\s]+(.+)/im) || [, 'Untitled'])[1]?.trim(),
-    genre: (yamlGenre || (prd.match(/\*\*Genre\*?\*?:\s*(.+)/i) || prd.match(/\*\*장르:\*\*\s*(.+)/) || [, 'unknown'])[1])?.trim().toLowerCase(),
-    language: (yamlLang || (prd.match(/\*\*Language\*?\*?:\s*(.+)/i) || prd.match(/\*\*언어:\*\*\s*(.+)/) || [, 'ko'])[1])?.trim(),
+    title: yamlTitle || (prd.match(/\*\*Title(?: \(working\))?:?\*\*:?\s*(.+)/i) || prd.match(/\*\*제목:\*\*\s*(.+)/) || prd.match(/^#\s*PRD[—:\-\s]+(.+)/im) || [, 'Untitled'])[1]?.trim(),
+    genre: (yamlGenre || (prd.match(/\*\*Genre:?\*\*:?\s*(.+)/i) || prd.match(/\*\*장르:\*\*\s*(.+)/) || [, 'unknown'])[1])?.trim().toLowerCase(),
+    language: (yamlLang || (prd.match(/\*\*Language:?\*\*:?\s*(.+)/i) || prd.match(/\*\*언어:\*\*\s*(.+)/) || [, 'ko'])[1])?.trim(),
     target_words: (() => {
       const manMatch = prd.match(/(?:분량|target|목표)[^\n]*?(\d+)\s*~?\s*(\d+)\s*만\s*(?:자|글자)/i);
       if (manMatch) return parseInt(manMatch[2]) * 10000;
@@ -210,7 +225,7 @@ async function cmdScan(args) {
 
   // Drafts
   const draftsDir = (prd.match(/drafts_dir:\s*(\S+)/i) || prd.match(/\*\*초안\s*경로:\*\*\s*(\S+)/) || [, 'drafts'])[1];
-  const planned = parseInt((prd.match(/(\d+)\s*(?:chapters|장|챕터)/i) || [, '0'])[1]);
+  const planned = parseInt((prd.match(/(\d+)\s*(?:chapters|장|챕터)/i) || prd.match(/(?:chapters|챕터)[:*\s]*(\d+)/i) || prd.match(/^chapters:\s*(\d+)/im) || [, '0'])[1]);
   let draftsPath = join(dir, draftsDir);
   if (!existsSync(draftsPath) && draftsDir !== 'drafts') draftsPath = join(dir, 'drafts');
   const drafts = existsSync(draftsPath) ? readdirSync(draftsPath).filter(f => f.endsWith('.md')).sort() : [];
@@ -223,9 +238,11 @@ async function cmdScan(args) {
     { stage: 'line-edit', file: '03-line-edit.md' },
     { stage: 'copy-edit', file: '04-copy-edit.md' },
     { stage: 'proofread', file: '05-proofread.md' },
+    { stage: 'readiness', file: '06-readiness-report.md' },
   ];
   const edits = existsSync(editsPath) ? readdirSync(editsPath).filter(f => f.endsWith('.md')) : [];
   const hasEdits = edits.length > 0;
+  const readiness = parseReadiness(join(editsPath, 'readiness-report.md'));
   const editStage = (() => {
     if (!hasEdits) return null;
     let last = null;
@@ -235,7 +252,7 @@ async function cmdScan(args) {
   const editStartTime = hasEdits
     ? (() => { const r = editReports.find(r => edits.includes(r.file)); return r ? statSync(join(editsPath, r.file)).mtimeMs : null; })()
     : null;
-  const editingComplete = hasEdits && edits.includes('editorial-report.md');
+  const editingComplete = hasEdits && (edits.includes('editorial-report.md') || readiness?.verdict === 'PASS');
 
   function chapterStatus(fp) {
     if (editingComplete) return 'edit';
@@ -282,7 +299,8 @@ async function cmdScan(args) {
   // Agents
   const _fgPath = pluginRoot ? join(pluginRoot, 'dashboard', 'shared', 'fiction-genres.json') : join(import.meta.dirname, 'dashboard', 'shared', 'fiction-genres.json');
   const FICTION_GENRES = new Set(JSON.parse(readFileSync(_fgPath, 'utf8')));
-  const EDIT_STAGE_ORDER = ['assessment', 'developmental', 'line-edit', 'copy-edit', 'proofread'];
+  const EDIT_STAGE_ORDER = ['assessment', 'developmental', 'line-edit', 'copy-edit', 'proofread', 'readiness'];
+  const NO_FACTCHECK_GENRES = new Set(['poetry', 'game']);
   const editStageIdx = editStage ? EDIT_STAGE_ORDER.indexOf(editStage) : -1;
   const editStageGte = (stage) => editStageIdx >= EDIT_STAGE_ORDER.indexOf(stage);
 
@@ -293,7 +311,12 @@ async function cmdScan(args) {
     { id: 'cover-designer', name: 'Cover Designer', icon: 'palette', role: 'Cover design & brand identity', artifacts: ['publish/cover'] },
     { id: 'marketing-expert', name: 'Marketing Expert', icon: 'campaign', role: 'Marketing copy & launch', artifacts: ['publish/marketing-plan.md'] },
     { id: 'scene-generator', name: 'Scene Generator', icon: 'theaters', role: 'Scene creation & expansion', artifacts: [] },
-    { id: 'style-doctor', name: 'Style Doctor', icon: 'medical_services', role: 'Style consistency & AI-slop detection', artifacts: [] },
+    { id: 'style-doctor', name: 'Style Doctor', icon: 'medical_services', role: 'Style consistency & AI-slop detection', artifacts: ['edits/style-report.md'] },
+    { id: 'art-director', name: 'Art Director', icon: 'auto_awesome', role: 'Art bible, look lock & visual QA', artifacts: ['art-bible.md'] },
+    { id: 'figure-engineer', name: 'Figure Engineer', icon: 'schema', role: 'Code-rendered diagrams, charts & drawings', artifacts: ['visuals/figures'] },
+    { id: 'illustrator', name: 'Illustrator', icon: 'brush', role: 'Illustrations from the art bible', artifacts: ['visuals/illustrations'] },
+    { id: 'fact-checker', name: 'Fact Checker', icon: 'fact_check', role: 'Claim ledger & source verification', artifacts: ['edits/00-fact-check.md'] },
+    { id: 'beta-reader', name: 'Beta Reader', icon: 'groups', role: 'Cold read & readiness verdict', artifacts: ['edits/readiness-report.md'] },
   ];
   const projectAgentsDir = join(dir, '.velith', 'agents');
   const globalAgentsDir = join(VELITH, 'agents');
@@ -305,6 +328,7 @@ async function cmdScan(args) {
     let status = s.status || null;
     if (!status) {
       if (a.id === 'scene-generator' && meta.genre && !FICTION_GENRES.has(meta.genre)) status = 'disabled';
+      else if (a.id === 'fact-checker' && meta.genre && NO_FACTCHECK_GENRES.has(meta.genre)) status = 'disabled';
       else if (a.artifacts.length > 0 && a.artifacts.every(f => existsSync(join(dir, f)))) status = 'complete';
       else if (a.id === 'chapter-writer' && drafts.length > 0) status = drafts.length < (effectivePlanned || Infinity) ? 'running' : 'complete';
       else if (a.id === 'style-doctor' && editStageGte('line-edit')) status = 'complete';
@@ -321,7 +345,7 @@ async function cmdScan(args) {
     phase(1, 'Ideation', has(dir, 'ideation.md') || has(dir, 'outline.md') ? 100 : 0, has(dir, 'ideation.md') || has(dir, 'outline.md') ? 'complete' : 'pending'),
     phase(2, 'Outlining', has(dir, 'outline.md') ? 100 : 0, has(dir, 'outline.md') ? 'complete' : 'pending'),
     phase(3, 'Drafting', effectivePlanned > 0 ? Math.min(Math.round(drafts.length / effectivePlanned * 100), 100) : drafts.length > 0 ? 100 : 0, effectivePlanned > 0 ? (drafts.length > 0 && drafts.length < effectivePlanned ? 'in_progress' : drafts.length >= effectivePlanned ? 'complete' : 'pending') : (drafts.length > 0 ? 'complete' : 'pending')),
-    phase(4, 'Editing', has(dir, 'edits/editorial-report.md') ? 100 : edits.length > 0 ? 50 : 0, has(dir, 'edits/editorial-report.md') ? 'complete' : edits.length > 0 ? 'in_progress' : 'pending'),
+    phase(4, 'Editing', editingComplete ? 100 : Math.round(editReports.filter(r => edits.includes(r.file)).length / editReports.length * 100), editingComplete ? 'complete' : edits.length > 0 ? 'in_progress' : 'pending'),
     phase(5, 'Publishing', (() => { const c = [output_files.find(f => f.name === 'book.epub')?.exists, output_files.find(f => f.name === 'book.pdf')?.exists, has(dir, 'publish/metadata.yaml'), has(dir, 'publish/title-candidates.md'), has(dir, 'publish/marketing-plan.md'), cover_path != null]; return Math.round(c.filter(Boolean).length / c.length * 100); })(), (() => { const ep = output_files.find(f => f.name === 'book.epub')?.exists, pd = output_files.find(f => f.name === 'book.pdf')?.exists; return (ep && pd && has(dir, 'publish/metadata.yaml')) ? 'complete' : (ep || pd) ? 'in_progress' : 'pending'; })()),
   ];
   const current_phase = (() => { const ip = phases.find(p => p.status === 'in_progress'); if (ip) return ip.phase; const last = [...phases].reverse().find(p => p.status === 'complete'); return last ? Math.min(last.phase + 1, phases[phases.length - 1].phase) : 0; })();
@@ -349,9 +373,9 @@ async function cmdScan(args) {
   }
   db.run('DELETE FROM chapters WHERE project_path = ?', [dir]);
   db.run('DELETE FROM agents WHERE project_path = ?', [dir]);
-  db.run(`INSERT OR REPLACE INTO projects (path, name, genre, language, current_phase, total_chapters, completed_chapters, total_words, target_words, count_unit, phase_status, output_files, cover_path, last_updated)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [dir, meta.title, meta.genre, meta.language, current_phase, totalChapters, completedChapters, total_words, meta.target_words || 0, countUnit, JSON.stringify(phases), JSON.stringify(output_files), cover_path, now]);
+  db.run(`INSERT OR REPLACE INTO projects (path, name, genre, language, current_phase, total_chapters, completed_chapters, total_words, target_words, count_unit, phase_status, output_files, cover_path, readiness, last_updated)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [dir, meta.title, meta.genre, meta.language, current_phase, totalChapters, completedChapters, total_words, meta.target_words || 0, countUnit, JSON.stringify(phases), JSON.stringify(output_files), cover_path, readiness ? JSON.stringify(readiness) : null, now]);
   for (const c of chapter_details) {
     db.run('INSERT INTO chapters (project_path, filename, title, lines, words, status, edit_stage) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [dir, c.filename, c.title, c.lines, c.words, c.status, c.edit_stage]);
@@ -369,7 +393,7 @@ async function cmdScan(args) {
     current_phase, phase_status: phases,
     total_chapters: totalChapters, completed_chapters: completedChapters,
     total_words, target_words: meta.target_words || 0, count_unit: countUnit,
-    chapter_details, output_files, cover_path, last_updated: now,
+    chapter_details, output_files, cover_path, readiness, last_updated: now,
   };
   mkdirSync(join(dir, '.velith'), { recursive: true });
   writeFileSync(join(dir, '.velith', 'status.json'), JSON.stringify({ generated_at: now, agents, projects: [project] }, null, 2));
@@ -387,13 +411,14 @@ async function cmdScan(args) {
   const bar = (pct) => { const f = Math.round(pct / 100 * 12); return '█'.repeat(f) + '░'.repeat(12 - f); };
   const statusLabel = (s) => s === 'complete' ? 'COMPLETE' : s === 'in_progress' ? 'IN PROGRESS' : 'PENDING';
   const w = 59;
-  const line = (s) => `║  ${s.padEnd(w - 4)}║`;
-  const sep = () => `╠${'═'.repeat(w - 2)}╣`;
+  const line = (s) => `║  ${s.padEnd(w - 4)}║\n`;
+  const sep = () => `╠${'═'.repeat(w - 2)}╣\n`;
   let out = `╔${'═'.repeat(w - 2)}╗\n`;
   out += line(`${meta.title}`);
   out += line(`${meta.genre} · ${meta.language} · ${planned || '?'} chapters`);
   out += sep();
   phases.forEach(p => out += line(`${p.phase}. ${p.name.padEnd(13)} ${bar(p.percent)} ${String(p.percent).padStart(3)}%  ${statusLabel(p.status)}`));
+  if (readiness) out += line(`Readiness: ${readiness.verdict || '?'} ${readiness.score != null ? readiness.score.toFixed(1) + '/10' : ''} ${Object.entries(readiness.axes).map(([k, v]) => k[0] + v).join(' ')}`);
   out += sep();
   chapter_details.forEach(c => out += line(`${c.filename.padEnd(20)} ${String(c.lines).padStart(5)} lines  ${String(c.words).padStart(5)} ${countUnit}  [${c.status}]`));
   if (chapter_details.length) out += line(`Total: ${total_words} ${countUnit} · Target: ${meta.target_words || '?'}`);
@@ -611,6 +636,332 @@ async function cmdMigrate() {
   }
 }
 
+// ─── metrics ──────────────────────────────────────────────────────────────────────
+// Deterministic prose metrics. Numbers point the style-doctor at problems; they do
+// not judge prose. Language is detected per file (CJK share of letters > 30%).
+
+const EN_TELLS = [
+  /\bdelv(e|es|ed|ing)\b/gi, /\btapestr(y|ies)\b/gi, /\btestament to\b/gi, /\bnavigat(e|es|ing) the\b/gi,
+  /\blandscape of\b/gi, /\bnuanced\b/gi, /\bmultifaceted\b/gi, /\bplethora\b/gi, /\bmyriad\b/gi,
+  /\brobust\b/gi, /\bseamless(ly)?\b/gi, /\bleverag(e|es|ed|ing)\b/gi, /\bunpack(s|ed|ing)?\b/gi,
+  /\bat its core\b/gi, /\bfast-paced world\b/gi, /\bit'?s worth noting\b/gi, /\bit'?s important to (note|remember)\b/gi,
+  /\bserves as a reminder\b/gi, /\ba beacon of\b/gi, /\bresonat(e|es|ed|ing)\b/gi, /\bembark(s|ed|ing)?\b/gi,
+  /\bfoster(s|ed|ing)?\b/gi, /\bunderscor(e|es|ed|ing)\b/gi, /\bpivotal\b/gi, /\bgame-?changer/gi,
+  /\bgroundbreaking\b/gi, /\btransformative\b/gi, /\bholistic\b/gi, /\bsynerg/gi, /\bparadigm\b/gi,
+  /\belevat(e|es|ed|ing)\b/gi, /\bvibrant\b/gi, /\bbustling\b/gi, /\bsomething (in \w+ )?shifted\b/gi,
+  /\ba beat\.\s/g, /\bthe air (changed|shifted)\b/gi, /\bin conclusion\b/gi, /\bat the end of the day\b/gi,
+  /\bsilence (stretched|settled|hung)\b/gi, /\blet out a breath\b/gi, /\bdidn'?t know (she|he|they) (was|were) holding\b/gi,
+];
+const KO_TELLS = [
+  /것이다[.!]/g, /것입니다[.!]/g, /되어졌/g, /여겨진다/g, /보여진다/g, /에 대해서?\s/g, /[을를] 통해\s/g,
+  /느꼈다\./g, /느낄 수 있었다/g, /밀려왔다/g, /수행하였다/g, /존재하였다/g, /인식하였다/g,
+  /무언가가? (달라|바뀌|변)/g, /알 수 없는 (감정|기분)/g, /그녀는 .{0,12}(슬픔|불안|두려움|기쁨)을 느/g,
+  /하나의\s/g, /~?들의\s/g,
+];
+const EN_CONNECT = /(^|[.!?]\s+)(However|Moreover|Furthermore|Additionally|Ultimately|Notably|Interestingly),?\s/gm;
+const KO_CONNECT = /(^|[.!?。]\s*)(그러나|하지만|또한|따라서|그리고|그런데|그래서)\s/gm;
+const EN_NOTX = /\b(wasn't|isn't|not)\s+(just\s+|only\s+|about\s+)?[^.]{1,60}\.\s+(It|This|That|She|He|They)\s+(was|is|were|are)\b/g;
+const KO_NOTX = /아니(었|였)?다\.\s*[^.]{1,60}(이었|였)다\./g;
+
+const isCJK = (t) => {
+  const cjk = (t.match(/[ᄀ-ᇿ㄰-㆏가-힯぀-ヿ一-鿿]/g) || []).length;
+  const lat = (t.match(/[A-Za-z]/g) || []).length;
+  return cjk > 0 && cjk / (cjk + lat) > 0.3;
+};
+const splitSentences = (t) => t.split(/(?<=[.!?。！？…])["'”’」』)]*\s+/).map(x => x.trim()).filter(x => x.length > 1);
+const avg = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
+const std = (a, m) => a.length ? Math.sqrt(avg(a.map(x => (x - m) ** 2))) : 0;
+const r2 = (x) => +x.toFixed(2);
+
+function analyzeText(raw) {
+  const text = raw.replace(/^---[\s\S]*?\n---\n/, '').replace(/```[\s\S]*?```/g, '').replace(/^#{1,6} .*$/gm, '').replace(/!\[[^\]]*\]\([^)]*\)/g, '');
+  const cjk = isCJK(text);
+  const paras = text.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+  const sentences = paras.flatMap(splitSentences);
+  const lenOf = (s) => cjk ? s.replace(/\s/g, '').length : s.split(/\s+/).filter(Boolean).length;
+  const lens = sentences.map(lenOf);
+  const mean = avg(lens), sd = std(lens, mean);
+  const shortThresh = cjk ? 15 : 8;
+  const paraSent = paras.map(p => splitSentences(p));
+  const punch = paraSent.filter(ss => ss.length >= 2 && lenOf(ss[ss.length - 1]) < shortThresh).length;
+  const tokens = text.split(/\s+/).map(t => t.replace(/[^\p{L}\p{N}']/gu, '').toLowerCase()).filter(Boolean);
+  const words = cjk ? text.replace(/\s/g, '').length : tokens.length;
+  const per1k = (n) => words ? r2(n / words * 1000) : 0;
+  const tellHits = {};
+  let tells = 0;
+  for (const re of (cjk ? KO_TELLS : EN_TELLS)) { const m = text.match(re); if (m) { tells += m.length; tellHits[re.source] = m.length; } }
+  return {
+    lang: cjk ? 'cjk' : 'latin', unit: cjk ? 'chars' : 'words', words, sentences: sentences.length, paragraphs: paras.length,
+    sentence_len_mean: r2(mean), sentence_len_sd: r2(sd), sentence_cv: mean ? r2(sd / mean) : 0,
+    mid_band_share: lens.length ? r2(lens.filter(l => l >= mean * 0.7 && l <= mean * 1.3).length / lens.length) : 0,
+    para_sentences_mean: r2(avg(paraSent.map(s => s.length))), para_sentences_sd: r2(std(paraSent.map(s => s.length), avg(paraSent.map(s => s.length)))),
+    punch_ending_share: paras.length ? r2(punch / paras.length) : 0,
+    ttr: tokens.length ? +(new Set(tokens).size / tokens.length).toFixed(3) : 0,
+    em_dash_per_1k: per1k((text.match(/[—–]/g) || []).length),
+    tells_per_1k: per1k(tells), tell_hits: tellHits,
+    not_x_but_y: (text.match(cjk ? KO_NOTX : EN_NOTX) || []).length,
+    rhetorical_q_per_1k: per1k(sentences.filter(s => /[?？]["'”’」』]*$/.test(s)).length),
+    connectives_per_1k: per1k((text.match(cjk ? KO_CONNECT : EN_CONNECT) || []).length),
+    dialogue_para_share: paras.length ? r2(paras.filter(p => /^["“「『']/.test(p)).length / paras.length) : 0,
+    _tokens: tokens,
+  };
+}
+
+function flagsFor(name, m) {
+  const f = [];
+  if (m.sentences >= 20 && m.sentence_cv < 0.4) f.push(`${name}: sentence length too uniform (cv ${m.sentence_cv})`);
+  if (m.sentences >= 20 && m.mid_band_share > 0.6) f.push(`${name}: ${Math.round(m.mid_band_share * 100)}% of sentences within ±30% of mean`);
+  if (m.paragraphs >= 10 && m.punch_ending_share > 0.35) f.push(`${name}: ${Math.round(m.punch_ending_share * 100)}% of paragraphs end on a short punch`);
+  if (m.tells_per_1k > 2) f.push(`${name}: AI-tell hits ${m.tells_per_1k}/1k`);
+  if (m.em_dash_per_1k > 3) f.push(`${name}: em-dashes ${m.em_dash_per_1k}/1k`);
+  if (m.not_x_but_y >= 2) f.push(`${name}: "not X but Y" ×${m.not_x_but_y}`);
+  if (m.rhetorical_q_per_1k > 3) f.push(`${name}: rhetorical questions ${m.rhetorical_q_per_1k}/1k`);
+  return f;
+}
+
+function cmdMetrics(args) {
+  const target = resolve(args.find(a => !a.startsWith('--')) || 'drafts');
+  if (!existsSync(target)) { console.error('Not found:', target); process.exit(1); }
+  let files;
+  let projectDir = null;
+  if (statSync(target).isDirectory()) {
+    const d = existsSync(join(target, 'drafts')) ? join(target, 'drafts') : target;
+    projectDir = basename(d) === 'drafts' ? resolve(d, '..') : null;
+    files = readdirSync(d).filter(f => /^(ch|p)\d+.*\.md$/i.test(f) && !/-scenes\.md$/.test(f)).sort().map(f => join(d, f));
+  } else files = [target];
+  const perFile = {};
+  const grams = new Map(); // gram -> { count, files:Set }
+  for (const fp of files) {
+    const m = analyzeText(readFileSync(fp, 'utf8'));
+    const toks = m._tokens; delete m._tokens;
+    perFile[basename(fp)] = m;
+    for (const n of [3, 4]) {
+      const seen = new Set();
+      for (let i = 0; i + n <= toks.length; i++) {
+        const g = toks.slice(i, i + n);
+        if (g.every(t => t.length <= 2)) continue;
+        const key = g.join(' ');
+        const e = grams.get(key) || { count: 0, files: new Set() };
+        e.count++; e.files.add(basename(fp)); grams.set(key, e);
+        seen.add(key);
+      }
+    }
+  }
+  const repeated = [...grams.entries()]
+    .filter(([, e]) => e.count >= 3 && (e.files.size >= 2 || e.count >= 4))
+    .map(([ngram, e]) => ({ ngram, count: e.count, files: [...e.files] }))
+    .sort((a, b) => b.count - a.count || b.files.length - a.files.length)
+    .slice(0, 40);
+  const flags = Object.entries(perFile).flatMap(([n, m]) => flagsFor(n, m));
+  for (const r of repeated) if (r.ngram.split(' ').length === 4 && r.count >= 3) flags.push(`repeated 4-gram "${r.ngram}" ×${r.count} in ${r.files.join(', ')}`);
+  const ttrs = Object.values(perFile).map(m => m.ttr).filter(Boolean).sort((a, b) => a - b);
+  const medTtr = ttrs.length ? ttrs[Math.floor(ttrs.length / 2)] : 0;
+  for (const [n, m] of Object.entries(perFile)) if (medTtr && m.ttr < medTtr * 0.85) flags.push(`${n}: vocabulary diversity ${m.ttr} is >15% below manuscript median ${medTtr}`);
+  const out = { generated_at: new Date().toISOString(), files: perFile, repeated_ngrams: repeated, flags };
+  if (projectDir) { mkdirSync(join(projectDir, '.velith'), { recursive: true }); writeFileSync(join(projectDir, '.velith', 'metrics.json'), JSON.stringify(out, null, 2)); }
+  console.log(JSON.stringify(out, null, 2));
+}
+
+// ─── snapshot ─────────────────────────────────────────────────────────────────────
+
+function cmdSnapshot(args) {
+  const pos = args.filter(a => !a.startsWith('--'));
+  const dir = resolve(pos[0] || process.cwd());
+  const label = (pos[1] || 'snapshot').replace(/[^\w.-]/g, '_');
+  const src = join(dir, 'drafts');
+  if (!existsSync(src)) { console.error('No drafts/ directory in', dir); process.exit(1); }
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  const dest = join(dir, '.velith', 'snapshots', `${stamp}-${label}`);
+  cpSync(src, dest, { recursive: true });
+  for (const f of ['bible.md', 'STYLE.md', 'outline.md']) if (existsSync(join(dir, f))) cpSync(join(dir, f), join(dest, f));
+  console.log(JSON.stringify({ snapshot: dest, files: readdirSync(dest).length }));
+}
+
+
+// ─── images ───────────────────────────────────────────────────────────────────────
+// Model-agnostic image tooling. `compile` merges the art bible with an image spec into
+// per-backend prompts; `check` validates assets and references; `render` runs whatever
+// figure renderers are installed. No image decoding beyond header parsing.
+
+const PLACEMENT_MIN = { 'full-page': [1600, 2400], 'chapter-header': [2400, 800], inline: [1200, 1200], spot: [800, 800], 'cover-front': [1600, 2560], spread: [2400, 1800], audiobook: [3200, 3200], social: [1200, 628] };
+const DEFAULT_ASPECT = { 'full-page': '2:3', 'chapter-header': '3:1', inline: '1:1', spot: '1:1', 'cover-front': '2:3', spread: '4:3', audiobook: '1:1', social: '1.91:1' };
+const BASE_NEGATIVE = ['text', 'letters', 'words', 'watermark', 'signature', 'logo', 'border', 'frame'];
+const SD_NEGATIVE_EXTRA = ['lowres', 'jpeg artifacts', 'bad anatomy', 'extra limbs', 'extra fingers', 'deformed hands', 'blurry'];
+
+function imageDims(fp) {
+  try {
+    const ext = extname(fp).toLowerCase();
+    if (ext === '.svg') {
+      const s = readFileSync(fp, 'utf8').slice(0, 4000);
+      const vb = s.match(/viewBox="[\d.\s-]*?\s([\d.]+)\s([\d.]+)"/);
+      const w = s.match(/\swidth="([\d.]+)/), h = s.match(/\sheight="([\d.]+)/);
+      if (w && h) return { width: Math.round(+w[1]), height: Math.round(+h[1]), vector: true };
+      if (vb) return { width: Math.round(+vb[1]), height: Math.round(+vb[2]), vector: true };
+      return { width: null, height: null, vector: true };
+    }
+    const buf = readFileSync(fp);
+    if (buf[0] === 0x89 && buf[1] === 0x50) return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+    if (buf[0] === 0xff && buf[1] === 0xd8) {
+      let i = 2;
+      while (i < buf.length - 9) {
+        if (buf[i] !== 0xff) { i++; continue; }
+        const m = buf[i + 1];
+        if (m >= 0xc0 && m <= 0xcf && m !== 0xc4 && m !== 0xc8 && m !== 0xcc) return { height: buf.readUInt16BE(i + 5), width: buf.readUInt16BE(i + 7) };
+        i += 2 + buf.readUInt16BE(i + 2);
+      }
+    }
+  } catch {}
+  return { width: null, height: null };
+}
+
+function loadVisuals(dir) {
+  const bible = readJson(join(dir, '.velith', 'art-bible.json'), null);
+  const manifest = readJson(join(dir, 'visuals', 'manifest.json'), null);
+  return { bible, manifest };
+}
+
+function compileOne(bible, entry) {
+  const b = bible || {};
+  const chars = (entry.characters || []).map(id => { const c = (b.characters || {})[id]; return c ? (c.tokens || c.constants || '') : ''; }).filter(Boolean);
+  const settings = (entry.settings || []).map(id => { const s = (b.settings || {})[id]; return s ? (s.tokens || s.constants || '') : ''; }).filter(Boolean);
+  const subject = [entry.subject, entry.action, entry.setting, ...chars, ...settings].filter(Boolean).join(', ');
+  const style = (b.backend && b.backend.style_clause) || [b.medium, b.line, b.texture, b.detail && `${b.detail} detail`].filter(Boolean).join(', ');
+  const palette = (b.palette || []).map(p => `${p.role} ${p.hex}`).join(', ');
+  const forbidden = (b.forbidden_colors || []).join(', ');
+  const comp = [entry.composition, entry.focal_point && `focal point: ${entry.focal_point}`, entry.camera, b.composition].filter(Boolean).join(', ');
+  const light = [entry.lighting || b.lighting, entry.time].filter(Boolean).join(', ');
+  const mood = [].concat(entry.mood || [], b.mood || []).join(', ');
+  const aspect = (b.aspect || {})[entry.placement] || DEFAULT_ASPECT[entry.placement] || '2:3';
+  const neg = [...new Set([...(b.negative || []), ...(entry.text_in_image ? [] : BASE_NEGATIVE)])];
+  const be = b.backend || {};
+  const refs = [be.sref && `style reference: ${be.sref}`, be.cref && `character reference: ${be.cref}`].filter(Boolean);
+  const textLine = entry.text_in_image && entry.text ? ` Include the text exactly: "${entry.text}".` : ' Do not include any text, letters, words, watermarks, or signatures.';
+  const mj = `${subject}. ${style}. palette: ${palette}${forbidden ? `, avoid ${forbidden}` : ''}. ${comp}. ${light}. ${mood} --ar ${aspect} --style raw --v 7${be.sref ? ` --sref ${be.sref}` : ''}${be.cref ? ` --cref ${be.cref} --cw 100` : ''}${be.seed ? ` --seed ${be.seed}` : ''} --no ${neg.join(', ')}`;
+  const natural = `${subject}. Rendered as ${style}. Color palette: ${palette}${forbidden ? `; never use ${forbidden}` : ''}. Composition: ${comp}. Lighting: ${light}. Mood: ${mood}.${textLine} Aspect ratio ${aspect}.${refs.length ? ` Match the ${refs.join(' and ')}.` : ''}`;
+  const sd = { positive: [subject, style, palette && `palette ${palette}`, comp, light, mood].filter(Boolean).join(', '), negative: [...neg, ...SD_NEGATIVE_EXTRA].join(', '), aspect, seed: be.seed || null, references: refs };
+  const ideogram = entry.text_in_image ? `${natural} Typography must be legible and exactly as specified.` : null;
+  return { id: entry.id, placement: entry.placement, aspect, midjourney: mj, gpt_image: natural, stable_diffusion_flux: sd, imagen: natural, ideogram, references: refs, negative: neg };
+}
+
+function cmdImages(args) {
+  const [sub, ...rest] = args;
+  const pos = rest.filter(a => !a.startsWith('--'));
+  const dir = resolve(pos[0] || process.cwd());
+  if (sub === 'compile') {
+    const { bible, manifest } = loadVisuals(dir);
+    if (!manifest) { console.error('No visuals/manifest.json in', dir); process.exit(1); }
+    if (!bible) console.error('Warning: no .velith/art-bible.json; prompts will lack the book look.');
+    const want = pos[1];
+    const entries = (manifest.images || manifest).filter(e => e && (!want || e.id === want) && (want || ['illustrator', 'cover-designer'].includes(e.maker)));
+    if (!entries.length) { console.error('No matching manifest entries'); process.exit(1); }
+    mkdirSync(join(dir, 'visuals', 'prompts'), { recursive: true });
+    const out = [];
+    for (const e of entries) {
+      const c = compileOne(bible, e);
+      const md = `# ${c.id} (${c.placement}, ${c.aspect})\n\n## Midjourney\n\n\`\`\`\n${c.midjourney}\n\`\`\`\n\n## gpt-image / DALL-E\n\n\`\`\`\n${c.gpt_image}\n\`\`\`\n\n## Stable Diffusion / FLUX\n\n**Positive**\n\`\`\`\n${c.stable_diffusion_flux.positive}\n\`\`\`\n**Negative**\n\`\`\`\n${c.stable_diffusion_flux.negative}\n\`\`\`\n${c.stable_diffusion_flux.seed ? `Seed: ${c.stable_diffusion_flux.seed}\n` : ''}\n## Imagen\n\n\`\`\`\n${c.imagen}\n\`\`\`\n${c.ideogram ? `\n## Ideogram (text-in-image)\n\n\`\`\`\n${c.ideogram}\n\`\`\`\n` : ''}\n## References\n\n${c.references.length ? c.references.map(r => `- ${r}`).join('\n') : '- none recorded in art bible backend profile'}\n`;
+      writeFileSync(join(dir, 'visuals', 'prompts', `${c.id}.md`), md);
+      out.push(c);
+    }
+    console.log(JSON.stringify(out, null, 2));
+    return;
+  }
+  if (sub === 'check') {
+    const { bible, manifest } = loadVisuals(dir);
+    const errors = [], warnings = [], images = [];
+    const entries = manifest ? (manifest.images || manifest) : [];
+    const managed = new Set();
+    for (const e of entries) {
+      const rec = { id: e.id, status: e.status, ok: true, issues: [] };
+      if (e.status !== 'done') { images.push(rec); continue; }
+      const out = e.output || e.path;
+      if (!out) { rec.issues.push('no output path'); rec.ok = false; images.push(rec); continue; }
+      const fp = resolve(dir, out);
+      managed.add(fp);
+      if (!existsSync(fp)) { rec.issues.push(`missing file ${out}`); rec.ok = false; images.push(rec); continue; }
+      const d = imageDims(fp);
+      rec.dims = d;
+      const min = PLACEMENT_MIN[e.placement];
+      if (min && d.width && !d.vector && (d.width < min[0] || d.height < min[1])) rec.issues.push(`below placement minimum ${min[0]}x${min[1]} (got ${d.width}x${d.height})`);
+      const aspect = ((bible && bible.aspect) || {})[e.placement] || DEFAULT_ASPECT[e.placement];
+      if (aspect && d.width && d.height) {
+        const [aw, ah] = aspect.split(':').map(Number);
+        const want = aw / ah, got = d.width / d.height;
+        if (Math.abs(got - want) / want > 0.05) rec.issues.push(`aspect ${got.toFixed(2)} vs expected ${aspect}`);
+      }
+      const size = statSync(fp).size;
+      if (!d.vector && size > 500 * 1024 && e.type !== 'cover') warnings.push(`${e.id}: ${(size / 1024).toFixed(0)}KB exceeds 500KB EPUB budget`);
+      if (!e.alt) rec.issues.push('no alt text');
+      if (e.maker === 'figure-engineer' && !e.caption) rec.issues.push('figure without caption');
+      if (rec.issues.length) rec.ok = false;
+      images.push(rec);
+    }
+    // references in drafts
+    const draftsDir = join(dir, 'drafts');
+    const references = [];
+    if (existsSync(draftsDir)) {
+      for (const f of readdirSync(draftsDir).filter(f => f.endsWith('.md'))) {
+        const txt = readFileSync(join(draftsDir, f), 'utf8');
+        for (const m of txt.matchAll(/!\[([^\]]*)\]\(([^)\s]+)[^)]*\)/g)) {
+          const [, alt, p] = m;
+          if (/^https?:/.test(p)) continue;
+          const fp = resolve(draftsDir, p);
+          const r = { draft: f, path: p, ok: true, issues: [] };
+          if (!existsSync(fp)) { r.issues.push('unresolved'); r.ok = false; }
+          if (!alt.trim()) { r.issues.push('empty alt'); r.ok = false; }
+          if (existsSync(fp) && managed.size && !managed.has(fp)) r.issues.push('not in manifest');
+          references.push(r);
+        }
+      }
+    }
+    const unmanaged = [];
+    for (const sub of ['illustrations', 'figures', 'photos']) {
+      const d = join(dir, 'visuals', sub);
+      if (!existsSync(d)) continue;
+      for (const f of readdirSync(d)) { const fp = join(d, f); if (statSync(fp).isFile() && /\.(png|jpe?g|webp|svg)$/i.test(f) && !managed.has(fp)) unmanaged.push(join('visuals', sub, f)); }
+    }
+    const legacy = join(dir, 'publish', 'illustrations');
+    if (existsSync(legacy)) for (const f of readdirSync(legacy)) if (/\.(png|jpe?g|webp)$/i.test(f)) unmanaged.push(join('publish', 'illustrations', f));
+    if (!manifest) warnings.push('no visuals/manifest.json');
+    if (!bible) warnings.push('no .velith/art-bible.json (run /book-visuals plan)');
+    const pass = images.every(i => i.ok) && references.every(r => r.ok) && errors.length === 0;
+    console.log(JSON.stringify({ pass, images, references, unmanaged, warnings, errors }, null, 2));
+    process.exitCode = pass ? 0 : 2;
+    return;
+  }
+  if (sub === 'render') {
+    const srcDir = join(dir, 'visuals', 'figures', 'src');
+    const outDir = join(dir, 'visuals', 'figures');
+    if (!existsSync(srcDir)) { console.error('No visuals/figures/src in', dir); process.exit(1); }
+    mkdirSync(outDir, { recursive: true });
+    const have = (t) => { try { execSync(`command -v ${t}`, { stdio: 'pipe' }); return true; } catch { return false; } };
+    const tools = { mmdc: have('mmdc'), d2: have('d2'), dot: have('dot'), 'rsvg-convert': have('rsvg-convert'), python3: have('python3') };
+    const themeMmd = existsSync(join(srcDir, 'theme.json')) ? ` -c "${join(srcDir, 'theme.json')}"` : '';
+    const results = [];
+    for (const f of readdirSync(srcDir).sort()) {
+      const src = join(srcDir, f), id = f.replace(/\.[^.]+$/, ''), ext = extname(f).toLowerCase();
+      if (f.startsWith('theme')) continue;
+      const svg = join(outDir, `${id}.svg`);
+      let cmd = null, tool = null;
+      if (ext === '.mmd') { tool = 'mmdc'; cmd = `mmdc -i "${src}" -o "${svg}"${themeMmd} -b transparent`; }
+      else if (ext === '.d2') { tool = 'd2'; cmd = `d2 "${src}" "${svg}"`; }
+      else if (ext === '.dot') { tool = 'dot'; cmd = `dot -Tsvg "${src}" -o "${svg}"`; }
+      else if (ext === '.py') { tool = 'python3'; cmd = `cd "${outDir}" && python3 "${src}"`; }
+      else if (ext === '.svg') { tool = null; cmd = `cp "${src}" "${svg}"`; }
+      else { results.push({ file: f, skipped: 'unknown source type' }); continue; }
+      if (tool && !tools[tool]) { results.push({ file: f, skipped: `${tool} not installed` }); continue; }
+      try { execSync(cmd, { stdio: 'pipe' }); const r = { file: f, svg: existsSync(svg) ? svg : null };
+        if (r.svg && tools['rsvg-convert']) { const png = join(outDir, `${id}.png`); execSync(`rsvg-convert -w 2400 "${svg}" -o "${png}"`, { stdio: 'pipe' }); r.png = png; }
+        results.push(r);
+      } catch (err) { results.push({ file: f, error: String(err.message || err).split('\n')[0] }); }
+    }
+    console.log(JSON.stringify({ tools, results }, null, 2));
+    return;
+  }
+  console.error('Usage: velith.mjs images <compile [dir] [id] | check [dir] | render [dir]>');
+  process.exit(1);
+}
+
+
 // ─── serve ────────────────────────────────────────────────────────────────────────
 
 async function cmdServe(args) {
@@ -780,7 +1131,7 @@ async function cmdServe(args) {
 const isMain = process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.url.replace(/^file:\/\//, ''));
 if (isMain) {
   const [,, cmd, ...rest] = process.argv;
-  const commands = { scan: cmdScan, agents: cmdAgents, stats: cmdStats, words: cmdWords, list: cmdList, migrate: cmdMigrate, serve: cmdServe };
+  const commands = { scan: cmdScan, agents: cmdAgents, stats: cmdStats, words: cmdWords, list: cmdList, migrate: cmdMigrate, metrics: cmdMetrics, snapshot: cmdSnapshot, images: cmdImages, serve: cmdServe };
   const fn = commands[cmd];
   if (!fn) {
     console.log('Velith CLI — unified client for book project management');
@@ -793,6 +1144,9 @@ if (isMain) {
     console.log('  words <file>            Count lines/words/chars in file');
     console.log('  list                    List all projects in DB');
     console.log('  migrate                 Import existing JSON data into SQLite');
+    console.log('  metrics <file|dir>      Prose metrics: rhythm, repetition, AI-tell counts (JSON)');
+    console.log('  snapshot <dir> <label>  Copy drafts/ to .velith/snapshots/ before a rewrite');
+    console.log('  images compile|check|render [dir] [id]  Model-agnostic prompts, asset validation, figure rendering');
     console.log('  serve                   Start dashboard server');
     console.log('');
     console.log('Flags:');

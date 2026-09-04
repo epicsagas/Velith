@@ -56,8 +56,8 @@ It treats book creation like software: structured phases, quality gates, special
 
 **6-phase pipeline:** Onboarding → Ideation → Outlining → Drafting → Editing → Publishing
 
-**7 specialized agents:** book-architect · chapter-writer · continuity-editor ·
-style-doctor · scene-generator · cover-designer · marketing-expert
+**12 specialized agents:** book-architect · scene-generator · chapter-writer · continuity-editor · fact-checker ·
+style-doctor · beta-reader · art-director · figure-engineer · illustrator · cover-designer · marketing-expert
 
 **8 genre systems:** fiction · non-fiction · technical · screenplay · poetry · game · academic · custom
 

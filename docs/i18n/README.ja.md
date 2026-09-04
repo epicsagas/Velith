@@ -1,4 +1,4 @@
-<!-- Translated from README.md @ commit 3d6a2f0 (2026-05-16) -->
+<!-- Translated from README.md @ v0.5.0 (2026-09-04) -->
 <!-- The English version is the authoritative source and may be more up-to-date. -->
 
 <div align="center">
@@ -16,10 +16,8 @@
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
-  <a href="https://x.ai/cli"><img alt="Grok Build" src="https://img.shields.io/badge/Grok_Build-plugin-ffffff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://buymeacoffee.com/epicsaga"><img alt="Buy Me a Coffee" src="https://img.shields.io/badge/buy_me_a_coffee-FFDD00?style=for-the-badge&labelColor=0d1117&logo=buymeacoffee&logoColor=black" /></a>
 </p>
-
 <p>
   <a href="../../README.md">English</a> ·
   <a href="README.ko.md">한국어</a> ·
@@ -31,7 +29,7 @@
   <a href="README.pt-BR.md">Português</a>
 </p>
 
-**本をソフトウェアのように作る。** 書籍、RFC、ホワイトペーパー、デザインドキュメント、技術ガイドなどの長文ナレッジを、孤立したプロンプトではなく構造化された成果物に変えるマルチフェーズパイプライン。白紙から出版可能な EPUB/PDF まで。
+**人間が書いたとしか読めない本を。** 白紙から出版可能なEPUBとPDFまで、6フェーズのパイプラインがすべての章・すべての編集・すべての画像を一つの基準で検証する。このジャンルの本を買って読む初見の読者には、原稿が機械の初稿だと分からない。
 
 `Phase 0: Onboarding → Phase 1: Ideation → Phase 2: Outlining → Phase 3: Drafting → Phase 4: Editing → Phase 5: Publishing`
 
@@ -39,70 +37,62 @@
 
 <img src="../../docs/assets/features.png" width="100%" alt="Features of Velith" />
 
-## なぜ Velith なのか？
+## なぜ Velith なのか
 
-生の LLM プロンプトで本を書くと、章がバラバラになり、文体が一貫せず、構造がありません。Velith は**計画してから実行するパイプライン**を提供します — 書く前に検証し、各フェーズで品質を管理し、原稿全体の継続性を維持します。
+フロンティアモデルは文章を上手に書く。しかし放置すれば、読者に途中で投げられる本ができる。8章あたりで声が変わり、キャラクターは自分の感情を説明するだけになり、存在しない統計が出てきて、あらゆる段落が短い決め台詞で終わり、挿絵は章ごとに画風が変わる。どれもモデルの問題ではない。パイプラインの問題だ。
 
-## ベンチマーク
+Velithはそのパイプラインである。次の章を書く前に原稿全体を読み、分量を書く前にサンプル章で声を固定し、保存前にすべての章を批評・改稿し、すべての主張をファクトチェックし、編集中はレポートではなく原稿そのものを直し、完成原稿をターゲット読者の視点でコールドリードし、読者が読み続けると確信できるまで出版を拒否する。画像も同じだ。本につきアートバイブル1冊、どの画像モデルを使ってもそこからコンパイルされたプロンプト、コードでレンダリングされる図表、出荷前の全画像の目視検収。
 
-パイプラインが非構造化入力に何をするか — [自分で試してみる →](https://huggingface.co/spaces/epicsaga/Velith)
+## 0.5 の変更点
 
-| 指標 | 元の入力 | Velithパイプライン適用後 |
-|------|----------|--------------------------|
-| 構造スコア | 2–4 / 10 | 6–9 / 10 |
-| 重複率 | 20–45% n-gram重複 | 統合後 < 10% |
-| AI スロップマーカー | 1,000単語あたり6–20個 | style-doctorが検出・除去 |
-| 章の階層 | なし | 相互参照付きで検出・マッピング |
-| 一貫性スコア | 0.3–1.5 / 10 | セクション再構成で改善 |
+| 以前 (0.4) | 現在 (0.5) |
+|--------------|-----------|
+| エージェントは章の要約を受け取る | エージェントは原稿全体を読む (フロンティアモデルは1Mトークン、小説は200K以下) |
+| 4章を並列で初稿執筆 | 物語ジャンルは順番に。第N章は第N-1章を読んでから書く |
+| 章につき1パス | 保存前にドラフト → 引用付きコールド批評 → 改稿 |
+| 編集はレポートだけ作っていた | 編集はスナップショットを残して原稿をその場で直す、7ステージ |
+| "delve" 系ワードリスト検出 | 2026 AI-tell分類: リズム・構造・感情・対話 + en/ko/ja 語彙テル、`velith.mjs metrics` で測定 |
+| ファクトチェックなし | `fact-checker` がクレーム台帳を作り、検証不能な項目は削除 |
+| ゲート = ファイルの存在 | ゲート = `beta-reader` の準備判定: 5軸 ≥ 7、1-3章に離脱点なし |
+| カバープロンプトのみ | アートバイブル、ルックロック、コードレンダ図表、全バックエンド向けコンパイル済みプロンプト、ビジョンQA、アセット検証 |
 
-| | 機能 | 重要な理由 |
-|--|------|------------|
-| 📋 | 6フェーズ パイプライン | 各フェーズで検証してから次へ — 手戻りなし |
-| 📖 | 7ジャンル テンプレート | フィクション、ノンフィクション、技術書、脚本、詩、ゲームシナリオ、学術（+ genre-creatorでカスタム） |
-| 🤖 | 8つの専門エージェント | 設計、草稿、シーン生成、継続性、文体、表紙、挿絵、マーケティング |
-| ✏️ | 5段階編集 | 評価 → 開発編集 → ライン編集 → 校閲 → 最終校正 |
-| 🔄 | どこからでも再開 | 完了した章をスキップ、中断地点から再開 |
-| 📦 | EPUB、PDF、MOBI、TXT、Markdown | Pandoc + Calibre で出版準備済みファイルを生成 |
-
-## 1つのパイプライン、多様な成果物
-
-Velith は書籍パイプラインとして提供されますが、同じ6フェーズは**あらゆる長文の構造化ナレッジ**に適用できます。成果物が300ページの小説でも12ページのRFCでも同じこと — plan-then-execute フロー、品質ゲート、エージェントはすべて同一です。
-
-| 成果物 | ジャンルスキル | 典型的な出力 |
-|----------|-------------|----------------|
-| 小説 / ストーリー | `book-fiction` | EPUB / PDF / MOBI |
-| ノンフィクション | `book-nonfiction` | EPUB / PDF |
-| RFC / デザインドキュメント | `book-technical` | Markdown / PDF |
-| ホワイトペーパー / 研究報告 | `book-academic` | PDF（引用） |
-| コース資料 / チュートリアル | `book-technical` | EPUB / PDF |
-| ゲームシナリオ / ロアバイブル | `book-game` | Markdown / EPUB |
+| | 機能 | なぜ重要か |
+|--|---------|----------------|
+| 📏 | 一つの品質基準 | `skills/loom/quality-bar.md`: 5軸ルーブリック、AI-tell分類、コールドリードプロトコル。全エージェントが読む |
+| 📋 | 著者チェックポイント付き6フェーズ | コンセプト、目次、ボイスロック、ルックロック、改稿、準備判定。他は無人実行 |
+| 📖 | 7ジャンルのクラフトリファレンス + カスタム | フィクション、ノンフィクション、技術、脚本、詩、ゲーム、学術: 構造の選択肢、クラフト、ジャンル別テル、言語ノート |
+| 🤖 | 12の専門エージェント | アーキテクト、シーンプランナー、ライター、連続性、ファクトチェッカー、スタイルドクター、ベータリーダー、アートディレクター、フィギュアエンジニア、イラストレーター、カバー、マーケティング |
+| ✏️ | 7ステージ編集 | ファクトチェック → 診断 → 再構成 → ライン → 校正 → 校閲 → 準備判定 |
+| 🎨 | ビジュアルシステム | アートバイブル、ルックロック、Mermaid/D2/SVG図表、モデル非依存プロンプト、ビジョンQA、印刷/EPUB検査 |
+| 📊 | 決定論的メトリクス | 文のリズム、段落の形、章間の反復、テル密度 (en/ko) |
+| 📦 | EPUB, PDF, MOBI, TXT, Markdown | Pandoc + 任意の Calibre、epubcheck、KDP・国内プラットフォームチェックリスト |
 
 ## 比較
 
-| | Velith | 単純なプロンプト | Notion AI | Jasper / Sudowrite | Scrivener |
+| | Velith | 素のプロンプト | Notion AI | Jasper / Sudowrite | Scrivener |
 |--|-----------|-------------|-----------|-------------------|-----------|
-| 構造検証 | フェーズゲート パイプライン | なし | なし | 基本テンプレート | 手動 |
-| 章間継続性 | 専任エージェント | 手動 | なし | 限定的 | 手動 |
-| AI スロップ検出 | 内蔵（style-doctor） | なし | なし | なし | なし |
-| ジャンル認識 | 8ジャンルシステム + カスタム | プロンプト次第 | なし | フィクション中心 | なし |
-| 出力形式 | EPUB、PDF、MOBI、TXT、Markdown | コピー＆ペースト | Markdown / PDF | DOCX、限定的 | DOCX、PDF |
-| 品質ゲート | 全フェーズ | なし | なし | なし | なし |
-| 必要条件 | Claude Code、Codex CLI、Grok Build、Agy、Cursor、Cline、Aider | 任意の LLM | Notionサブスク | サブスクリプション | ライセンス |
-| 完全なコントロール | プロンプトレベル | 完全 | ブラックボックス | ブラックボックス | 完全 |
+| 全巻コンテキスト | 全エージェント・全タスク | 手動 | なし | 限定的 | 該当なし |
+| ボイスロック + 批評・改稿ループ | 内蔵 | なし | なし | なし | 手動 |
+| クレーム台帳ファクトチェック | 専任エージェント | なし | なし | なし | 手動 |
+| シミュレーション読者の準備ゲート | 出版をブロック | なし | なし | なし | なし |
+| 本全体の画像一貫性 | アートバイブル + コンパイル済みプロンプト + ビジョンQA | 画像ごとのプロンプト | なし | なし | なし |
+| ジャンル対応 | 7クラフトリファレンス + カスタム | プロンプト依存 | なし | フィクション偏重 | なし |
+| 出力フォーマット | EPUB, PDF, MOBI, TXT, Markdown | コピペ | Markdown / PDF | DOCX, 限定的 | DOCX, PDF |
+| 必要なもの | Claude Code, Codex CLI, Agy, Cursor, Cline, Aider | 任意のLLM | Notionサブスク | サブスク | ライセンス |
+| 完全な制御 | プロンプトレベル、Apache-2.0 | 完全 | ブラックボックス | ブラックボックス | 完全 |
 
 ## インストール
 
 ### Claude Code
 
-```bash
-# epicsagas マーケットプレイスを追加（初回のみ）
-claude plugin marketplace add epicsagas
-
-# velith をインストール
-claude plugin install velith@epicsagas
+```
+/plugin marketplace add epicsagas/plugins
+/plugin install velith@epicsagas
 ```
 
-**前提条件:** [Claude Code](https://claude.ai/code) CLI がインストール済みで認証されていること。
+18スキルと12エージェントが即時利用可能。更新は `/plugin update velith@epicsagas`。
+
+**必要要件:** [Claude Code](https://claude.ai/code) CLIのインストールと認証。VelithはClaude 5ファミリー(1Mコンテキスト)向けにチューニング。エージェントはセッションモデルを継承し、各自のeffortレベルを設定する。
 
 ### Codex CLI (OpenAI)
 
@@ -110,17 +100,9 @@ claude plugin install velith@epicsagas
 codex plugin marketplace add epicsagas/plugins
 ```
 
-**前提条件:** [Codex CLI](https://github.com/openai/codex) がインストールされ、OpenAI API キーが設定されていること。
+18スキルと12のカスタムサブエージェント(`.codex-plugin/agents/*.toml`、`agents/*.md`から生成)。Codexが自動検出。更新は `codex plugin update velith@epicsagas`。
 
-### Grok Build (xAI)
-
-```bash
-grok plugin install epicsagas/Velith --trust
-```
-
-Grok はプラグインルートの `skills/` と `agents/` をそのまま読み込みます。追加設定は不要です。
-
-**前提条件:** [Grok Build](https://x.ai/cli) がインストールされ、認証されていること。
+**必要要件:** [Codex CLI](https://github.com/openai/codex)のインストールと設定。
 
 ### Agy (Antigravity)
 
@@ -128,235 +110,160 @@ Grok はプラグインルートの `skills/` と `agents/` をそのまま読�
 agy plugin install https://github.com/epicsagas/Velith
 ```
 
-Agy はリポジトリルートからスキルとエージェントを自動検出します。追加設定は不要です。
-
-**前提条件:** [Agy](https://antigravity.google/docs/cli-install) がインストールされ、設定されていること。
-
 ### Cursor
 
-Velith は `.cursor/rules/` にコンテキストルールを提供し、Cursor のエージェントが出版パイプライン、ジャンルパターン、編集基準を完全に把握できるようにします。プロジェクトを Cursor で開くと、ルールが自動的に読み込まれます。
+`.cursor/rules/` のコンテキストルール:
 
-**前提条件:** [Cursor](https://cursor.sh) がインストールされていること。
+| ルールファイル | ロードタイミング |
+|-----------|-------------|
+| `velith-pipeline.mdc` | 常時 (フェーズ、ルーター、エージェント、品質基準、チェックポイント) |
+| `velith-genres.mdc` | 原稿・目次・PRD編集時 |
+| `velith-editing.mdc` | edits・STYLE.md・bible.md の作業時 |
 
 ### Cline
 
-Velith はリポジトリルートに `.clinerules` を提供します。プロジェクトディレクトリで作業すると、Cline が自動的に読み込みます。
-
-**前提条件:** VS Code または JetBrains に [Cline](https://github.com/cline/cline) 拡張機能がインストールされていること。
+リポジトリルートの `.clinerules` プロジェクトレベル指示。
 
 ### Aider
 
-Velith は `CONVENTIONS.md` に執筆規約を提供し、`.aider.conf.yml` で自動ロードされます。
-
-```bash
-aider  # CONVENTIONS.md が自動ロードされます
-```
-
-**前提条件:** [Aider](https://aider.chat) がインストールされ、API キーが設定されていること。
+`CONVENTIONS.md` の執筆規約、`.aider.conf.yml` で自動ロード。
 
 ## クイックスタート
 
 ```bash
-# 新しい書籍プロジェクトを開始
-> /book-init
-
-# 現在のフェーズを自動検出して続行
-> /loom
+> /book-init          # ジャンル、読者、言語、ボイスサンプル → PRD.md + STYLE.md
+> /loom               # 状態を検出して次フェーズを実行、著者チェックポイントで停止
 ```
 
-プラグインが以下のプロセスを案内します:
-1. **Onboarding** — ジャンル、読者、言語、ソース資料、スタイルガイド
-2. **Ideation** — 市場調査、コンセプト精製、競合タイトル
-3. **Outlining** — スペック、依存関係、相互参照を含む全章アウトライン
-4. **Drafting** — 並列サブエージェントによる章ごとの生成
-5. **Editing** — 5段階パイプライン: 評価 → 開発編集 → ライン編集 → 校閲 → 最終校正
-6. **Publishing** — EPUB/PDF/MOBI 変換、メタデータ、マーケティングプラン
+進行の流れ:
+
+1. **オンボーディング** — 読者、約束、分量、そして著者自身の文章サンプルから抽出したボイスフィンガープリント
+2. **アイデア創出** — 前提のストレステスト、実際の類書、ランク付けしたコンセプト。著者が選ぶ
+3. **アウトライン** — 根拠とともに選ばれた構造、章スペック、図表プラン、バイブル。アーキテクトが採点、著者が承認
+4. **ドラフト** — サンプル章のボイスロック。以降は順次・全コンテキスト執筆、章ごとに批評・改稿、バイブル台帳更新、整合性チェック
+5. **編集** — ファクトチェック、診断、再構成の書き直し、ライン編集、校正、校閲、続いてシミュレーション読者のコールドリード。PASS または REVISE
+6. **出版** — 前後付、EPUB/PDF/MOBI、epubcheck、アートバイブルに基づくカバー、マーケティングプラン、プラットフォームチェックリスト
+
+画像はPhase 2以降いつでも: `/book-visuals plan` (アートバイブル)、`/book-visuals lock` (ルックロック)、以降は章が必要とするときに図表と挿絵。
 
 ## スキル
 
 | スキル | フェーズ | 説明 |
-|--------|----------|------|
-| `/loom` | ルーター | フェーズを自動検出してルーティング |
-| `/book-init` | 0 | 新しい書籍プロジェクトを開始 — ジャンル、読者、スタイルガイド |
-| `/book-ideation` | 1 | コンセプトの生成と検証、競合分析 |
-| `/book-outline` | 2 | 章アウトラインの作成（依存関係含む） |
-| `/book-draft` | 3 | 章の草稿作成（全体/特定/再開、並列エージェント） |
-| `/book-edit` | 4 | 5段階編集パイプライン |
-| `/book-publish` | 5 | EPUB/PDF/MOBI変換、表紙、マーケティング |
-| `/book-illustrate` | 3-5 | 挿絵 — シーン抽出、スタイル統一プロンプト、配置計画 |
-| `/book-status` | — | ターミナルダッシュボード + `--ui` ブラウザダッシュボード |
-| `/book-fiction` | — | フィクションパターン（15ビート、Snowflake、キャラクターバイブル） |
-| `/book-nonfiction` | — | ノンフィクションパターン（問題解決、証拠階層） |
-| `/book-technical` | — | 技術書パターン（概念勾配、コード、ラボ） |
-| `/book-screenplay` | — | 脚本パターン（3幕構成、対話、A/Bストーリー） |
-| `/book-poetry` | — | 詩パターン（形式、意象、連構造） |
-| `/book-game` | — | ゲームシナリオパターン（クエストツリー、分岐、ロアバイブル） |
-| `/book-academic` | — | 学術パターン（IMRAD、文献レビュー、論証チェーン） |
-| `/book-genre-creator` | — | ジャンル選択ガイド＆カスタムジャンル作成ウィザード |
+|-------|-------|-------------|
+| `/loom` | ルーター | 状態検出、次フェーズ実行、ゲート強制 |
+| `/book-init` | 0 | 読者、約束、分量、ボイスフィンガープリント、ソース索引 → `PRD.md`, `STYLE.md` |
+| `/book-ideation` | 1 | 前提ストレステスト、類書、コンセプト順位、ボイスサンプル |
+| `/book-outline` | 2 | 構造、章スペック、図表プラン、バイブル、採点済み検証、承認 |
+| `/book-draft` | 3 | ボイスロック、順次ドラフト・批評・改稿、台帳、整合性 |
+| `/book-edit` | 4 | 7ステージ: ファクトチェック … 準備判定 |
+| `/book-publish` | 5 | 準備ゲート、前後付、フォーマット、epubcheck、カバー、マーケティング、チェックリスト |
+| `/book-visuals` | 2-5 | アートバイブル、ルックロック、図表、挿絵、写真、プロンプトコンパイル、ビジョンQA、アセット検査 |
+| `/book-illustrate` | 3-5 | `/book-visuals` の挿絵サブセットのエイリアス |
+| `/book-status` | — | ターミナルダッシュボード、`--ui` ブラウザダッシュボード、`--metrics` |
+| `/book-fiction` … `/book-academic` | — | ジャンルクラフトリファレンス (7) |
+| `/book-genre-creator` | — | ジャンル選択とカスタムジャンルスペック |
 
 ## エージェント
 
-| エージェント | 役割 |
-|-------------|------|
-| `book-architect` | 構造検証、アウトラインのスコアリング、ペーシング確認 |
-| `chapter-writer` | ジャンルテンプレートで章の草稿を生成 |
-| `continuity-editor` | 章間の一貫性（用語、参照、タイムライン） |
-| `style-doctor` | 文体/トーンの一貫性、AI スロップ検出 |
-| `scene-generator` | GMC+RDD 構造でシーンを分析（フィクション専用） |
-| `cover-designer` | 表紙コンセプト + Midjourney/DALL-E 画像プロンプト |
-| `illustrator` | 挿絵 — シーン抽出、スタイルバイブル、プロンプト生成 |
-| `marketing-expert` | 読者ペルソナ、チャネル戦略、12週間ローンチカレンダー |
+| エージェント | フェーズ | 役割 |
+|-------|-------|-----|
+| `book-architect` | 2 | 目次とバイブル。根拠とともに構造を選定、採点済み検証、再構成提案 |
+| `scene-generator` | 3 | フィクション章のシーンプラン (目的、転換、サブテキスト、出口)。計画であり散文ではない |
+| `chapter-writer` | 3-4 | 全コンテキストで一章。ドラフト、引用付き批評、改稿、台帳更新 |
+| `continuity-editor` | 3-4 | 原稿全体の矛盾と反復をバイブルと突き合わせて検査 |
+| `fact-checker` | 4 | クレーム台帳。ソースとウェブで検証、検証不能項目の削除、コード実行 |
+| `style-doctor` | 4 | 測定してからテル・リズム均一性・ドリフトをその場で書き直す |
+| `beta-reader` | 4 | ターゲット読者3人 + 専門家1人のコールドリード。準備判定 |
+| `art-director` | 2-5 | アートバイブル、ルックロック、全画像のビジョンQA、コンタクトシートレビュー |
+| `figure-engineer` | 3-5 | 図解・チャート・技術図面・地図ベースをコードでレンダ。ラベルは本文と照合検証 |
+| `illustrator` | 3-5 | アートバイブルに基づく挿絵。コンパイル済みプロンプト、ツールがあれば生成、ビジョンQA |
+| `cover-designer` | 5 | アートバイブルに基づくカバーコンセプト、フォーマット、マーケ変種 |
+| `marketing-expert` | 5 | ポジショニング、ペルソナ、チャネル、カレンダー、ローンチチェックリスト |
+
+## 品質基準
+
+すべての執筆・編集・レビューエージェントが `skills/loom/quality-bar.md` を読む。定義されるもの:
+
+- **アンカー付き5軸、1-10点**: 声と文章、構造とペーシング、深さ、具体性と裏付け、読者体験。ボイスロックは第1軸 ≥ 7。準備判定は全軸 ≥ 7、平均 ≥ 7.5、最初の3章に離脱点なし。
+- **2026 AI-tell分類**: 今の読者が実際に気づくもの(均一な段落リズム、決め台詞の段落終わり、"not X but Y"、内省の後書き、正確すぎる自己認識、質問に答える対話、出典なき権威、捏造された具体性)とその直し方、英語・韓国語・日本語の語彙リスト。
+- **コールドリードプロトコル**: 読書速度で一読、マーク、引用付きで診断、正直に採点、優先順位付け、その後に改稿。
+- **ビジュアルルール**: 本につき一つのルック、装飾ではなく目的、テキスト・データはコードで、ルックロック、ビジョンQA、出荷制約。
+
+## CLI
+
+```bash
+node velith.mjs scan <dir> [--ui]           # プロジェクト状態、ダッシュボードデータ、準備判定
+node velith.mjs metrics <dir|file>          # 文章メトリクス + 章間反復 (JSON)
+node velith.mjs snapshot <dir> <label>      # 書き直しステージ前に drafts/ をコピー
+node velith.mjs images compile <dir> [id]   # アートバイブル + スペック → Midjourney / gpt-image / SD-FLUX / Imagen / Ideogram プロンプト
+node velith.mjs images check <dir>          # 寸法、比率、容量、altテキスト、参照、マニフェストカバレッジ
+node velith.mjs images render <dir>         # Mermaid / D2 / Graphviz / SVG / matplotlib → SVG + PNG
+```
 
 ## ビジュアルダッシュボード
 
-<img src="../assets/dashboard.png" width="100%" alt="Dashboard" />
+<img src="../../docs/assets/dashboard.png" width="100%" alt="Dashboard" />
 
-`/book-status --ui` はブラウザで Svelte ベースの進捗ダッシュボードを開きます。ダッシュボードは5秒ごとに自動更新されます:
-
-- 6フェーズパイプライントラッカー（Onboarding → Ideation → Outlining → Drafting → Editing → Publishing）
-- 8エージェントステータスカード（book-architect、chapter-writer、continuity-editor、cover-designer、illustrator、marketing-expert、scene-generator、style-doctor）
-- 章のアウトライン、草稿テーブル、5段階編集カンバン
-- 出力ファイルのステータス（EPUB/PDF/MOBI/TXT/MD）と出版チェックリスト
-- プロジェクト設定とコマンドリファレンス
-
-ダッシュボードはプロジェクトごとの `status.json` ファイルから動的に読み込みます。事前ビルド済みの `dist/` が含まれているため、プラグインユーザーにビルド手順は不要です。
-
-ローカル開発環境での実行:
+`/book-status --ui` でSvelteダッシュボードを開く: パイプライントラッカー、12エージェントカード、章テーブル、6ステージ編集カンバン、軸別スコア付き準備判定、出力ファイル、設定。事前ビルドの `dist/` を同梱。
 
 ```bash
-cd dashboard
-npm install
-npm run dev     # http://localhost:5173
-npm run build   # dist/ を再ビルド
+cd dashboard && npm install && npm run dev   # http://localhost:5173
+npm run build                                 # dist/ を再ビルド
 ```
 
-## 設計原則
-
-- **計画してから実行** — まずアウトライン、検証してから執筆
-- **冪等性** — 完了した章をスキップ、中断地点から再開
-- **トークン効率** — 全文ではなく要約ベースのコンテキスト
-- **ジャンル認識** — ジャンルごとに異なる構造、テンプレート、検証
-- **品質ゲート** — 各フェーズは基準を通過してから次へ進む
-
-## 外部依存関係
-
-EPUB/PDF 出力（Phase 5）:
+## 外部依存
 
 ```bash
-brew install pandoc        # EPUB/PDF 変換
-brew install texlive       # CJK/日本語対応 PDF
-brew install --cask calibre  # MOBI（Kindle）変換 — オプション
+brew install pandoc                 # EPUB/PDF (Phase 5に必須)
+brew install texlive                # CJK対応PDF
+brew install --cask calibre         # MOBI (任意)
+brew install epubcheck              # EPUB検証 (任意・推奨)
+npm i -g @mermaid-js/mermaid-cli    # Mermaid図表 → SVG (任意)
+brew install d2 graphviz librsvg    # D2 / Graphviz図表、SVG → PNG (任意)
 ```
 
-### トラブルシューティング
+画像生成はバンドルしない。`illustrator` と `cover-designer` は、セッションに画像ツールがあれば(MCP画像サーバー、Replicate、ローカルStable Diffusion)直接生成し、なければ `visuals/prompts/` にバックエンド別コンパイル済みプロンプトパックを渡す。
 
 <details>
-<summary>pandoc が見つからない</summary>
+<summary>トラブルシューティング</summary>
 
-Homebrew でインストール:
-```bash
-brew install pandoc
-```
-</details>
-
-<details>
-<summary>CJK/PDF 文字が欠けているか文字化けする</summary>
-
-CJK 対応の LaTeX ディストリビューションをインストール:
-```bash
-brew install texlive
-# または最小インストール:
-brew install basictex && sudo tlmgr install collection-langkorean
-```
-</details>
-
-<details>
-<summary>インストール後にプラグインコマンドが見つからない</summary>
-
-プラグインをリロードするために Claude Code を再起動:
-```bash
-claude restart
-```
+- **pandoc not found** — `brew install pandoc`
+- **PDFで日本語が文字化け** — `brew install texlive`
+- **プラグインコマンドが出ない** — Claude Codeを再起動
+- **Phase 4が終わらない** — ゲートは `verdict: PASS` の `edits/readiness-report.md`。`/book-edit 6` を実行
+- **章ごとに画像の雰囲気が違う** — ルックロックなし。`/book-visuals plan` の後に `/book-visuals lock`
 </details>
 
 ## プロジェクト構造
 
-書籍プロジェクトを作成すると、Velith が以下をセットアップします:
-
 ```
 {project-dir}/
-├── PRD.md          # 書籍要件
-├── STYLE.md        # 文体、トーン、規約
-├── ideation.md     # アイデア、市場調査
-├── outline.md      # 全章アウトライン
-├── drafts/         # 章の草稿
-│   ├── ch00-foreword.md
-│   ├── ch01-xxx.md
-│   └── ...
-├── edits/          # 編集レポート
-│   └── editorial-report.md
-├── publish/        # 最終出力物
-│   ├── book.epub
-│   ├── book.pdf
-│   ├── book.mobi
-│   └── metadata.yaml
-└── sources/        # ソース資料の参照
+├── PRD.md              # 要件 + 読者への約束
+├── STYLE.md            # ボイスフィンガープリント、ボイスサンプル、ルール、ボイスロック
+├── ideation.md         # コンセプト、類書、選択されたコンセプト
+├── outline.md          # 章スペック、図表プラン、検証、承認
+├── bible.md            # キャラクター/概念、用語規則、タイムライン、章ごとの台帳
+├── art-bible.md        # ビジュアルアイデンティティ、フィギュアシステム、ルックロック
+├── sources/            # 参考資料 + INDEX.md
+├── drafts/             # ch{NN}-{slug}.md, ch{NN}-scenes.md (編集中はその場で改稿)
+├── visuals/            # plan, manifest, figures/, illustrations/, photos/, ref/, prompts/
+├── edits/              # 00-fact-check … 06-readiness-report, readiness-report.md, editorial-report.md
+├── publish/            # book.epub/pdf/…, metadata, 前後付, cover/, marketing, checklists
+└── .velith/            # status.json, art-bible.json, critiques/, snapshots/, metrics.json
 ```
 
 ## 統合
 
-### 内蔵エージェントワークフロー
+- **alcove** — `/book-init` とドラフト中にドキュメントボルトをソース資料として検索。
+- **obsidian-forge** — `of book init / sync / export` でObsidianボルトから執筆。
+- **humanize-korean** — インストール済みなら `style-doctor` が最終韓国語推敲として実行可能。
+- **画像生成MCP** — あれば `illustrator` と `cover-designer` が使用。
 
-追加設定不要 — パイプライン中に自動実行されます:
+すべて任意。Velithは単独で動作する。
 
-- **discover** — `/book-outline`中に`book-architect`が構造確定前に書籍コンセプトの盲点や矛盾を探査
-- **council** — `/book-outline`および`/book-edit`中に、開発編集・構造・行編集など複数の編集視点をアウトライン・改訂決定に反映
+## コントリビュート
 
-### alcove — リサーチボールトをソース素材に
-
-[alcove](https://github.com/epicsagas/alcove) はプライベートドキュメントサーバーで、Velith エージェントが執筆中に既存のノート、リサーチ、プロジェクトドキュメントをソース素材として参照できるようにします。
-
-**こんな時に役立ちます:**
-- 何年もかけて蓄積したリサーチノート、インタビュー録、参考文献をエージェントに引用させたい時
-- ノンフィクションを執筆中で、構造化されたプロジェクト文書から事実を引き出す必要がある時
-- 用語集、タイムライン、世界観設定など、エージェントが尊重すべきナレッジベースを維持している時
-
-**使い方:**
-1. Claude Code 設定で alcove を MCP サーバーとしてインストール・設定
-2. `/book-init` で alcove プロジェクトをソースとして指定
-3. 執筆時にエージェントが自動的に alcove をクエリしてリサーチを反映
-
-### obsidian-forge — 考える場所で執筆へ
-
-[obsidian-forge](https://github.com/epicsagas/obsidian-forge) は Obsidian ボールトと Velith を連携させ、Obsidian でリサーチして Velith で執筆する際にファイルを手動コピーする必要がなくなります。
-
-**こんな時に役立ちます:**
-- リサーチ、キャラクタープロフィール、参考ノートがすでに Obsidian ボールトにある時
-- Velith に渡す前に、Obsidian のリンクノート環境でアウトラインを反復改良したい時
-- ブレインストーミングに Obsidian を好む共著者とコラボレーションする時
-
-**使い方:**
-
-```bash
-# Obsidian ボールト内に書籍プロジェクトを作成（01-Projects/）
-of book init my-book --genre non-fiction --lang ko
-
-# Obsidian で作業: リサーチノート、キャラクタープロフィール、参考文献
-# book/my-book タグでソース資料としてリンク
-of book sync my-book
-
-# 執筆準備ができたら独立ディレクトリにエクスポート
-of book export my-book --output ~/projects/my-book
-
-# エクスポートされたプロジェクトで velith を実行
-> /loom
-```
-
-alcove、obsidian-forge ともに**オプション**です — Velith は単独で動作します。
-
-## コントリビューション
-
-[CONTRIBUTING.md](../../CONTRIBUTING.md) を参照してください。PR 歓迎です — `good first issue` ラベルの付いたイシューを確認してください。
+[CONTRIBUTING.md](../../CONTRIBUTING.md) を参照。プロンプトこそがプロダクトだ。`quality-bar.md` やエージェントファイルの変更はすべての本を変える。`examples/` と `node velith.mjs metrics` でテスト。
 
 ## ライセンス
 

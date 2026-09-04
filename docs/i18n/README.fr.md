@@ -1,4 +1,4 @@
-<!-- Translated from README.md @ commit 3d6a2f0 (2026-05-16) -->
+<!-- Translated from README.md @ v0.5.0 (2026-09-04) -->
 <!-- The English version is the authoritative source and may be more up-to-date. -->
 
 <div align="center">
@@ -16,10 +16,8 @@
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
-  <a href="https://x.ai/cli"><img alt="Grok Build" src="https://img.shields.io/badge/Grok_Build-plugin-ffffff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://buymeacoffee.com/epicsaga"><img alt="Buy Me a Coffee" src="https://img.shields.io/badge/buy_me_a_coffee-FFDD00?style=for-the-badge&labelColor=0d1117&logo=buymeacoffee&logoColor=black" /></a>
 </p>
-
 <p>
   <a href="../../README.md">English</a> ·
   <a href="README.ko.md">한국어</a> ·
@@ -31,7 +29,7 @@
   <a href="README.pt-BR.md">Português</a>
 </p>
 
-**Construisez des livres comme du logiciel.** Un pipeline multi-phases qui transforme la connaissance longue-forme —livres, RFC, livres blancs, docs de design, guides techniques— en artefacts structurés, pas en prompts isolés. De la page blanche à l'EPUB/PDF publiable.
+**Des livres au niveau humain.** De la page blanche à un EPUB et un PDF publiables, un pipeline en six phases soumet chaque chapitre, chaque édition et chaque image à un seul standard : un lecteur à froid qui achète des livres du genre ne peut pas deviner que le manuscrit vient d'un premier jet machine.
 
 `Phase 0: Onboarding → Phase 1: Ideation → Phase 2: Outlining → Phase 3: Drafting → Phase 4: Editing → Phase 5: Publishing`
 
@@ -41,68 +39,60 @@
 
 ## Pourquoi Velith ?
 
-Écrire un livre avec des prompts LLM bruts produit des chapitres déconnectés, une voix incohérente et aucune structure. Velith fournit un **pipeline planifier-puis-exécuter** — valider avant d'écrire, contrôler la qualité à chaque phase et maintenir la continuité tout au long du manuscrit.
+Les modèles de pointe écrivent de bonnes phrases. Livrés à eux-mêmes, ils produisent des livres que les lecteurs abandonnent : une voix qui dérive dès le chapitre huit, des personnages qui expliquent leurs sentiments, des statistiques qui n'existent pas, des paragraphes qui se terminent tous sur une punchline, des illustrations qui changent de style à chaque chapitre. Rien de tout cela n'est un problème de modèle. C'est un problème de pipeline.
 
-## Benchmark
+Velith, c'est le pipeline. Il lit tout le manuscrit avant d'écrire le chapitre suivant, verrouille la voix sur un chapitre d'échantillon avant de passer au volume, critique et révise chaque chapitre avant de l'enregistrer, vérifie chaque affirmation, réécrit pendant l'édition au lieu de se contenter de rapports, lit le livre achevé à froid comme le liraient ses lecteurs cibles, et refuse de publier tant que ceux-ci ne dévoreraient pas la suite. Les images reçoivent le même traitement : une bible artistique par livre, des prompts compilés depuis elle quel que soit le modèle d'image, des diagrammes rendus par le code, et chaque image inspectée visuellement avant expédition.
 
-Ce que le pipeline fait aux entrées non structurées — [essayez par vous-même →](https://huggingface.co/spaces/epicsaga/Velith)
+## Ce qui change en 0.5
 
-| Métrique | Entrée brute | Après le pipeline Velith |
-|---------|-------------|--------------------------|
-| Score de structure | 2–4 / 10 | 6–9 / 10 |
-| Redondance | 20–45% de chevauchement n-gram | < 10% après consolidation |
-| Marqueurs AI-slop | 6–20 pour 1 000 mots | Détectés et supprimés par style-doctor |
-| Hiérarchie des chapitres | Aucune | Détectée + cartographiée avec références croisées |
-| Score de cohérence | 0,3–1,5 / 10 | Amélioré par restructuration de sections |
+| Avant (0.4) | Maintenant (0.5) |
+|--------------|-----------|
+| Les agents recevaient des résumés de chapitres | Les agents lisent tout le manuscrit (les modèles de pointe portent 1M de tokens ; un roman tient sous 200K) |
+| Quatre chapitres rédigés en parallèle | Les genres narratifs s'écrivent dans l'ordre ; le chapitre N lit le N-1 |
+| Une seule passe par chapitre | Brouillon → critique à froid avec citations → révision, avant l'enregistrement |
+| L'édition produisait des rapports | L'édition réécrit le manuscrit en place, avec instantanés, en 7 étapes |
+| Détection des tics par liste de mots (« delve ») | Taxonomie des marqueurs d'IA 2026 : rythme, structure, émotion, dialogue, plus les marqueurs lexicaux en/ko/ja, mesurés par `velith.mjs metrics` |
+| Pas de vérification des faits | `fact-checker` construit un registre d'affirmations et supprime ce qui n'est pas vérifiable |
+| Le seuil = fichiers présents | Le seuil = verdict de `beta-reader` : cinq axes ≥ 7, aucun point d'abandon dans les chapitres 1-3 |
+| Prompts de couverture seulement | Bible artistique, look lock, figures rendues par code, prompts compilés pour tout backend, vision QA, validation des actifs |
 
 | | Fonctionnalité | Pourquoi c'est important |
-|--|---------------|--------------------------|
-| 📋 | Pipeline en 6 phases | Chaque phase valide avant de continuer — pas de retravail |
-| 📖 | 7 modèles de genre | Fiction, non-fiction, technique, scénario, poésie, jeu, académique (+ personnalisé via genre-creator) |
-| 🤖 | 8 agents spécialisés | Architecture, rédaction, génération de scènes, continuité, style, couverture, illustrations, marketing |
-| ✏️ | Édition en 5 étapes | Évaluation → Développement → Ligne → Correction → Relecture finale |
-| 🔄 | Reprendre n'importe où | Ignorer les chapitres terminés, reprendre là où vous vous êtes arrêté |
-| 📦 | EPUB, PDF, MOBI, TXT, Markdown | Fichiers prêts à publier via Pandoc + Calibre |
-
-## Un pipeline, plusieurs artefacts
-
-Velith est livré comme un pipeline de livres, mais les mêmes 6 phases s'appliquent à **toute connaissance longue-forme structurée**. Que l'artefact soit un roman de 300 pages ou un RFC de 12 pages importe peu — le flux plan-then-execute, les portes de qualité et les agents sont identiques.
-
-| Artefact | Skill de genre | Sortie typique |
-|----------|-------------|----------------|
-| Roman / Histoire | `book-fiction` | EPUB / PDF / MOBI |
-| Livre non-fiction | `book-nonfiction` | EPUB / PDF |
-| RFC / Doc de design | `book-technical` | Markdown / PDF |
-| Livre blanc / Rapport de recherche | `book-academic` | PDF (citations) |
-| Support de cours / Tutoriel | `book-technical` | EPUB / PDF |
-| Scénario de jeu / Lore bible | `book-game` | Markdown / EPUB |
+|--|---------|----------------|
+| 📏 | Un seul standard de qualité | `skills/loom/quality-bar.md` : rubrique à cinq axes, taxonomie des marqueurs d'IA, protocole de lecture à froid. Tous les agents le lisent |
+| 📋 | Pipeline en 6 phases avec points de contrôle auteur | Concept, plan, voice lock, look lock, restructurations, verdict. Tout le reste tourne sans supervision |
+| 📖 | 7 références de métier par genre + personnalisé | Fiction, non-fiction, technique, scénario, poésie, jeu vidéo, académique : options de structure, métier, marqueurs par genre, notes de langue |
+| 🤖 | 12 agents spécialisés | Architecte, planificateur de scènes, rédacteur, continuité, vérificateur de faits, docteur du style, lecteur bêta, directeur artistique, ingénieur figures, illustrateur, couverture, marketing |
+| ✏️ | Édition en 7 étapes | Vérification des faits → diagnostic → restructuration → ligne → copie → correction → verdict |
+| 🎨 | Système visuel | Bible artistique, look lock, figures Mermaid/D2/SVG, prompts agnostiques du modèle, vision QA, contrôles impression/EPUB |
+| 📊 | Métriques déterministes | Rythme des phrases, forme des paragraphes, répétitions entre chapitres, densité de marqueurs (en/ko) |
+| 📦 | EPUB, PDF, MOBI, TXT, Markdown | Pandoc + Calibre en option, epubcheck, listes KDP et plateformes coréennes |
 
 ## Comparaison
 
 | | Velith | Prompts bruts | Notion AI | Jasper / Sudowrite | Scrivener |
 |--|-----------|-------------|-----------|-------------------|-----------|
-| Validation de structure | Pipeline par phases | Aucune | Aucune | Modèles basiques | Manuelle |
-| Continuité entre chapitres | Agent dédié | Manuelle | Aucune | Limitée | Manuelle |
-| Détection AI-slop | Intégrée (style-doctor) | Aucune | Aucune | Aucune | Aucune |
-| Conscience du genre | 8 systèmes de genre + personnalisé | Dépend du prompt | Aucune | Centré sur la fiction | Aucune |
+| Contexte du manuscrit entier | Chaque agent, chaque tâche | Manuel | Aucun | Limité | n/a |
+| Voice lock + boucle critique-révision | Intégré | Aucun | Aucun | Aucun | Manuel |
+| Vérification des faits par registre d'affirmations | Agent dédié | Aucun | Aucun | Aucun | Manuel |
+| Seuil de maturité par lecteurs simulés | Bloque la publication | Aucun | Aucun | Aucun | Aucun |
+| Cohérence visuelle sur tout le livre | Bible artistique + prompts compilés + vision QA | Prompt par image | Aucun | Aucun | Aucun |
+| Conscience du genre | 7 références de métier + personnalisé | Dépend du prompt | Aucun | Orienté fiction | Aucun |
 | Format de sortie | EPUB, PDF, MOBI, TXT, Markdown | Copier-coller | Markdown / PDF | DOCX, limité | DOCX, PDF |
-| Contrôle qualité | Chaque phase | Aucun | Aucun | Aucun | Aucun |
-| Nécessite | Claude Code, Codex CLI, Grok Build, Agy, Cursor, Cline ou Aider | N'importe quel LLM | Abonnement Notion | Abonnement | Licence |
-| Contrôle total | Au niveau du prompt | Total | Boîte noire | Boîte noire | Total |
+| Requiert | Claude Code, Codex CLI, Agy, Cursor, Cline ou Aider | N'importe quel LLM | Abonnement Notion | Abonnement | Licence |
+| Contrôle total | Au niveau du prompt, Apache-2.0 | Total | Boîte noire | Boîte noire | Total |
 
 ## Installation
 
 ### Claude Code
 
-```bash
-# Ajouter le marketplace epicsagas (première fois)
-claude plugin marketplace add epicsagas
-
-# Installer velith
-claude plugin install velith@epicsagas
+```
+/plugin marketplace add epicsagas/plugins
+/plugin install velith@epicsagas
 ```
 
-**Prérequis :** CLI [Claude Code](https://claude.ai/code) installé et authentifié.
+18 skills et 12 agents disponibles immédiatement. Mises à jour avec `/plugin update velith@epicsagas`.
+
+**Prérequis :** CLI [Claude Code](https://claude.ai/code) installée et authentifiée. Velith est accordé pour la famille Claude 5 (contexte 1M) ; les agents héritent du modèle de votre session et fixent leur propre niveau d'effort.
 
 ### Codex CLI (OpenAI)
 
@@ -110,17 +100,9 @@ claude plugin install velith@epicsagas
 codex plugin marketplace add epicsagas/plugins
 ```
 
-**Prérequis :** [Codex CLI](https://github.com/openai/codex) installé et configuré avec une clé API OpenAI.
+18 skills et 12 sous-agents personnalisés (`.codex-plugin/agents/*.toml`, générés depuis `agents/*.md`). Codex les découvre automatiquement. Mises à jour avec `codex plugin update velith@epicsagas`.
 
-### Grok Build (xAI)
-
-```bash
-grok plugin install epicsagas/Velith --trust
-```
-
-Grok lit `skills/` et `agents/` à la racine du plugin. Aucune configuration supplémentaire n'est nécessaire.
-
-**Prérequis :** [Grok Build](https://x.ai/cli) installé et authentifié.
+**Prérequis :** [Codex CLI](https://github.com/openai/codex) installée et configurée.
 
 ### Agy (Antigravity)
 
@@ -128,235 +110,160 @@ Grok lit `skills/` et `agents/` à la racine du plugin. Aucune configuration sup
 agy plugin install https://github.com/epicsagas/Velith
 ```
 
-Agy découvre automatiquement les skills et agents depuis la racine du dépôt. Aucune configuration supplémentaire nécessaire.
-
-**Prérequis :** [Agy](https://antigravity.google/docs/cli-install) installé et configuré.
-
 ### Cursor
 
-Velith fournit des règles de contexte dans `.cursor/rules/` qui donnent à l'agent de Cursor une connaissance complète du pipeline de publication, des modèles de genre et des standards d'édition. Les règles se chargent automatiquement à l'ouverture d'un projet de livre dans Cursor.
+Règles de contexte dans `.cursor/rules/` :
 
-**Prérequis :** [Cursor](https://cursor.sh) installé.
+| Fichier de règles | Chargement |
+|-----------|-------------|
+| `velith-pipeline.mdc` | Toujours (phases, routeur, agents, standard de qualité, points de contrôle) |
+| `velith-genres.mdc` | Édition des brouillons, plans ou PRD |
+| `velith-editing.mdc` | Travail sur edits, STYLE.md, bible.md |
 
 ### Cline
 
-Velith fournit des instructions au niveau du projet dans `.clinerules` à la racine du dépôt. Cline les lit automatiquement lors du travail dans le répertoire du projet.
-
-**Prérequis :** Extension [Cline](https://github.com/cline/cline) installée dans VS Code ou JetBrains.
+Instructions au niveau du projet dans `.clinerules`, à la racine du dépôt.
 
 ### Aider
 
-Velith fournit des conventions d'écriture dans `CONVENTIONS.md`, auto-chargées via `.aider.conf.yml`.
+Conventions d'écriture dans `CONVENTIONS.md`, chargées automatiquement via `.aider.conf.yml`.
+
+## Démarrage rapide
 
 ```bash
-aider  # CONVENTIONS.md est auto-chargé
+> /book-init          # genre, lecteur, langue, échantillon de voix → PRD.md + STYLE.md
+> /loom               # détecte l'état et lance la phase suivante, en s'arrêtant aux points de contrôle
 ```
 
-**Prérequis :** [Aider](https://aider.chat) installé et configuré avec une clé API.
+Ce qui se passe :
 
-## Démarrage Rapide
+1. **Onboarding** — lecteur, promesse, ampleur, et une empreinte de voix extraite d'un échantillon de votre propre écriture
+2. **Idéation** — test de résistance de la prémisse, titres comparables réels, concepts classés ; vous choisissez
+3. **Plan** — structure choisie et justifiée, spécifications par chapitre, plan de figures, bible ; l'architecte note, vous approuvez
+4. **Rédaction** — voice lock sur un chapitre d'échantillon ; puis chapitres séquentiels en contexte complet, chacun critiqué et révisé, registre de la bible tenu à jour, contrôles de continuité
+5. **Édition** — vérification des faits, diagnostic, réécritures structurelles, édition de ligne, copie, correction, puis lecture à froid par des lecteurs simulés. PASS ou REVISE
+6. **Publication** — pages liminaires, EPUB/PDF/MOBI, epubcheck, couverture depuis la bible artistique, plan marketing, listes de plateformes
 
-```bash
-# Démarrer un nouveau projet de livre
-> /book-init
-
-# Détecter automatiquement la phase actuelle et continuer
-> /loom
-```
-
-Le plugin vous guide à travers :
-1. **Onboarding** — Genre, audience, langue, matériel source, guide de style
-2. **Ideation** — Étude de marché, distillation de concepts, titres concurrents
-3. **Outlining** — Plan complet des chapitres avec spécifications, dépendances, références croisées
-4. **Drafting** — Génération chapitre par chapitre avec des sous-agents en parallèle
-5. **Editing** — Pipeline en 5 étapes : Évaluation → Développement → Ligne → Correction → Relecture finale
-6. **Publishing** — Conversion EPUB/PDF/MOBI, métadonnées, plan marketing
+Images à tout moment à partir de la phase 2 : `/book-visuals plan` (bible artistique), `/book-visuals lock` (look lock), puis figures et illustrations au fil des besoins des chapitres.
 
 ## Skills
 
 | Skill | Phase | Description |
 |-------|-------|-------------|
-| `/loom` | Routeur | Détecter la phase automatiquement et router |
-| `/book-init` | 0 | Démarrer un nouveau projet — genre, audience, guide de style |
-| `/book-ideation` | 1 | Générer et valider des concepts, analyse concurrentielle |
-| `/book-outline` | 2 | Créer le plan des chapitres (avec dépendances) |
-| `/book-draft` | 3 | Rédiger les chapitres (tous/spécifiques/reprendre, agents parallèles) |
-| `/book-edit` | 4 | Pipeline d'édition en 5 étapes |
-| `/book-publish` | 5 | Conversion EPUB/PDF/MOBI, couverture, marketing |
-| `/book-illustrate` | 3-5 | Illustrations intérieures — extraction de scènes, prompts à style cohérent, plan de placement |
-| `/book-status` | — | Tableau de bord terminal + `--ui` tableau de bord navigateur |
-| `/book-fiction` | — | Patterns fiction (15 beats, Snowflake, bible de personnages) |
-| `/book-nonfiction` | — | Patterns non-fiction (problème-solution, hiérarchie de preuves) |
-| `/book-technical` | — | Patterns technique (gradient de concepts, code, labs) |
-| `/book-screenplay` | — | Patterns scénario (3 actes, dialogue, histoires A/B) |
-| `/book-poetry` | — | Patterns poésie (formes, imagerie, structure de strophes) |
-| `/book-game` | — | Patterns jeu (arbres de quêtes, embranchements, bible de lore) |
-| `/book-academic` | — | Patterns académique (IMRAD, revue de littérature, chaînes d'argumentation) |
-| `/book-genre-creator` | — | Guide de sélection de genre et assistant de création de genre personnalisé |
+| `/loom` | Routeur | Détecte l'état, lance la phase suivante, applique les seuils |
+| `/book-init` | 0 | Lecteur, promesse, ampleur, empreinte de voix, index des sources → `PRD.md`, `STYLE.md` |
+| `/book-ideation` | 1 | Test de la prémisse, comparables, concepts classés, échantillons de voix |
+| `/book-outline` | 2 | Structure, spécifications, plan de figures, bible, validation notée, approbation |
+| `/book-draft` | 3 | Voice lock, rédaction séquentielle brouillon-critique-révision, registre, continuité |
+| `/book-edit` | 4 | 7 étapes : vérification des faits … verdict de maturité |
+| `/book-publish` | 5 | Seuil, pages liminaires, formats, epubcheck, couverture, marketing, listes |
+| `/book-visuals` | 2-5 | Bible artistique, look lock, figures, illustrations, photos, compilation de prompts, vision QA, contrôle des actifs |
+| `/book-illustrate` | 3-5 | Alias du sous-ensemble illustration de `/book-visuals` |
+| `/book-status` | — | Tableau de bord terminal, `--ui` navigateur, `--metrics` |
+| `/book-fiction` … `/book-academic` | — | Références de métier par genre (7) |
+| `/book-genre-creator` | — | Sélection de genre et spécifications de genre personnalisé |
 
 ## Agents
 
-| Agent | Rôle |
-|-------|------|
-| `book-architect` | Valide la structure, note les plans, vérifie le rythme |
-| `chapter-writer` | Génère des brouillons de chapitres avec des modèles de genre |
-| `continuity-editor` | Cohérence entre chapitres (terminologie, références, chronologie) |
-| `style-doctor` | Cohérence voix/ton, détection d'AI-slop |
-| `scene-generator` | Décomposition au niveau de la scène avec structure GMC+RDD (fiction uniquement) |
-| `cover-designer` | Concepts de couverture + prompts d'images Midjourney/DALL-E |
-| `illustrator` | Illustrations intérieures — extraction de scènes, bible de style, génération de prompts |
-| `marketing-expert` | Personas de lecteurs, stratégie de canaux, calendrier de lancement de 12 semaines |
+| Agent | Phase | Rôle |
+|-------|-------|-----|
+| `book-architect` | 2 | Plan et bible ; structure choisie et justifiée ; validation notée ; propositions de restructuration |
+| `scene-generator` | 3 | Plans de scènes par chapitre de fiction (but, retournement, sous-texte, sortie). Des plans, pas de la prose |
+| `chapter-writer` | 3-4 | Un chapitre en contexte complet ; rédige, critique avec citations, révise, tient le registre |
+| `continuity-editor` | 3-4 | Contradictions et répétitions sur tout le manuscrit, confrontées à la bible |
+| `fact-checker` | 4 | Registre d'affirmations ; vérification contre les sources et le web ; supprime l'invérifiable ; exécute le code |
+| `style-doctor` | 4 | Mesure puis réécrit en place les marqueurs, l'uniformité du rythme et la dérive |
+| `beta-reader` | 4 | Lecture à froid comme trois lecteurs cibles et un professionnel ; verdict de maturité |
+| `art-director` | 2-5 | Bible artistique, look lock, vision QA de chaque image, revue de la planche contact |
+| `figure-engineer` | 3-5 | Diagrammes, graphiques, dessins techniques et fonds de cartes rendus par code ; libellés vérifiés contre le texte |
+| `illustrator` | 3-5 | Illustrations depuis la bible artistique, prompts compilés, génération si un outil existe, vision QA |
+| `cover-designer` | 5 | Concepts de couverture depuis la bible artistique, formats, variantes marketing |
+| `marketing-expert` | 5 | Positionnement, personas, canaux, calendrier, liste de lancement |
 
-## Tableau de Bord Visuel
+## Le standard de qualité
 
-<img src="../assets/dashboard.png" width="100%" alt="Dashboard" />
+`skills/loom/quality-bar.md` est lu par tous les agents de rédaction, d'édition et de révision. Il définit :
 
-`/book-status --ui` ouvre un tableau de bord de progression basé sur Svelte dans votre navigateur. Le tableau de bord se rafraîchit automatiquement toutes les 5 secondes :
+- **Cinq axes notés de 1 à 10 avec ancres** : voix et prose, structure et rythme, profondeur, spécificité et ancrage, expérience du lecteur. Le voice lock exige l'axe 1 ≥ 7. La maturité exige chaque axe ≥ 7, moyenne ≥ 7.5 et aucun point d'abandon dans les trois premiers chapitres.
+- **La taxonomie 2026 des marqueurs d'IA** : ce que les lecteurs remarquent vraiment aujourd'hui (rythme de paragraphe uniforme, fins en punchline, « not X but Y », codas réflexives, connaissance de soi trop précise, dialogue qui répond, autorité sans source, spécificité inventée) et comment corriger, plus des listes lexicales pour l'anglais, le coréen et le japonais.
+- **Le protocole de lecture à froid** : lire une fois à vitesse de lecture, marquer, diagnostiquer avec citations, noter honnêtement, prioriser, et seulement ensuite réviser.
+- **Les règles visuelles** : un look par livre, le but avant la décoration, le code pour tout ce qui porte du texte ou des données, look lock, vision QA, contraintes d'expédition.
 
-- Suivi du pipeline en 6 phases (Onboarding → Ideation → Outlining → Drafting → Editing → Publishing)
-- 8 cartes de statut d'agents (book-architect, chapter-writer, continuity-editor, cover-designer, illustrator, marketing-expert, scene-generator, style-doctor)
-- Plan des chapitres, tableau des brouillons et kanban d'édition en 5 étapes
-- Statut des fichiers de sortie (EPUB/PDF/MOBI/TXT/MD) avec liste de contrôle de publication
-- Paramètres du projet et référence des commandes
-
-Le tableau de bord lit dynamiquement depuis les fichiers `status.json` par projet. Le `dist/` pré-compilé est inclus — aucune étape de construction requise pour les utilisateurs du plugin.
-
-Pour exécuter localement en développement :
-
-```bash
-cd dashboard
-npm install
-npm run dev     # http://localhost:5173
-npm run build   # reconstruire dist/
-```
-
-## Principes de Conception
-
-- **Planifier Avant d'Exécuter** — D'abord le plan, valider, puis écrire
-- **Idempotent** — Ignorer les chapitres terminés, reprendre là où vous vous êtes arrêté
-- **Efficace en Tokens** — Contexte basé sur des résumés, pas le texte complet
-- **Conscience du Genre** — Structures, modèles et validation différents par genre
-- **Contrôle Qualité** — Chaque phase doit passer les critères avant de continuer
-
-## Dépendances Externes
-
-Pour la sortie EPUB/PDF (Phase 5) :
+## CLI
 
 ```bash
-brew install pandoc        # Conversion EPUB/PDF
-brew install texlive       # PDF avec support CJK/coréen
-brew install --cask calibre  # Conversion MOBI (Kindle) — optionnel
+node velith.mjs scan <dir> [--ui]           # état du projet, données du tableau de bord, verdict
+node velith.mjs metrics <dir|file>          # métriques de prose + répétitions entre chapitres (JSON)
+node velith.mjs snapshot <dir> <label>      # copie drafts/ avant une étape de réécriture
+node velith.mjs images compile <dir> [id]   # bible artistique + spéc → prompts Midjourney / gpt-image / SD-FLUX / Imagen / Ideogram
+node velith.mjs images check <dir>          # dimensions, ratio, poids, texte alt, références, couverture du manifeste
+node velith.mjs images render <dir>         # Mermaid / D2 / Graphviz / SVG / matplotlib → SVG + PNG
 ```
 
-### Dépannage
+## Tableau de bord visuel
+
+<img src="../../docs/assets/dashboard.png" width="100%" alt="Dashboard" />
+
+`/book-status --ui` ouvre un tableau de bord Svelte : suivi du pipeline, 12 cartes d'agents, table des chapitres, kanban d'édition en 6 étapes, verdict de maturité avec scores par axe, fichiers de sortie, réglages. Le `dist/` préconstruit est inclus.
+
+```bash
+cd dashboard && npm install && npm run dev   # http://localhost:5173
+npm run build                                 # reconstruire dist/
+```
+
+## Dépendances externes
+
+```bash
+brew install pandoc                 # EPUB/PDF (requis pour la phase 5)
+brew install texlive                # PDF avec support CJK
+brew install --cask calibre         # MOBI (optionnel)
+brew install epubcheck              # validation EPUB (optionnel, recommandé)
+npm i -g @mermaid-js/mermaid-cli    # figures Mermaid → SVG (optionnel)
+brew install d2 graphviz librsvg    # figures D2 / Graphviz, SVG → PNG (optionnel)
+```
+
+La génération d'images n'est pas fournie. `illustrator` et `cover-designer` génèrent lorsqu'un outil d'image est disponible dans votre session (serveurs MCP d'images, Replicate, Stable Diffusion local) ; sinon ils livrent des packs de prompts compilés par backend dans `visuals/prompts/`.
 
 <details>
-<summary>pandoc introuvable</summary>
+<summary>Dépannage</summary>
 
-Installer via Homebrew :
-```bash
-brew install pandoc
-```
+- **pandoc not found** — `brew install pandoc`
+- **Caractères CJK manquants en PDF** — `brew install texlive`
+- **Commandes du plugin introuvables** — redémarrez Claude Code
+- **La phase 4 ne se termine jamais** — le seuil est `edits/readiness-report.md` avec `verdict: PASS` ; lancez `/book-edit 6`
+- **Les images changent de style à chaque chapitre** — pas de look lock ; lancez `/book-visuals plan` puis `/book-visuals lock`
 </details>
 
-<details>
-<summary>Caractères CJK/PDF manquants ou corrompus</summary>
-
-Installer une distribution LaTeX compatible CJK :
-```bash
-brew install texlive
-# Ou pour une installation minimale :
-brew install basictex && sudo tlmgr install collection-langkorean
-```
-</details>
-
-<details>
-<summary>Commandes du plugin introuvables après installation</summary>
-
-Redémarrer Claude Code pour recharger les plugins :
-```bash
-claude restart
-```
-</details>
-
-## Structure du Projet
-
-Lors de la création d'un projet de livre, Velith configure :
+## Structure du projet
 
 ```
 {project-dir}/
-├── PRD.md          # Exigences du livre
-├── STYLE.md        # Voix, ton, conventions
-├── ideation.md     # Idées, étude de marché
-├── outline.md      # Plan complet des chapitres
-├── drafts/         # Brouillons des chapitres
-│   ├── ch00-foreword.md
-│   ├── ch01-xxx.md
-│   └── ...
-├── edits/          # Rapports d'édition
-│   └── editorial-report.md
-├── publish/        # Fichiers finaux
-│   ├── book.epub
-│   ├── book.pdf
-│   ├── book.mobi
-│   └── metadata.yaml
-└── sources/        # Références du matériel source
+├── PRD.md              # Exigences + promesse au lecteur
+├── STYLE.md            # Empreinte de voix, échantillon, règles, voice lock
+├── ideation.md         # Concepts, comparables, concept retenu
+├── outline.md          # Spécifications, plan de figures, validation, approbation
+├── bible.md            # Personnages/concepts, règles de termes, chronologie, registre par chapitre
+├── art-bible.md        # Identité visuelle, système de figures, look lock
+├── sources/            # Documentation de référence + INDEX.md
+├── drafts/             # ch{NN}-{slug}.md, ch{NN}-scenes.md (révisés en place pendant l'édition)
+├── visuals/            # plan, manifest, figures/, illustrations/, photos/, ref/, prompts/
+├── edits/              # 00-fact-check … 06-readiness-report, readiness-report.md, editorial-report.md
+├── publish/            # book.epub/pdf/…, metadata, pages liminaires, cover/, marketing, checklists
+└── .velith/            # status.json, art-bible.json, critiques/, snapshots/, metrics.json
 ```
 
-## Intégration
+## Intégrations
 
-### Flux de travail d'agents intégrés
+- **alcove** — interroge votre coffre de documents comme matériel source pendant `/book-init` et la rédaction.
+- **obsidian-forge** — `of book init / sync / export` pour écrire depuis un vault Obsidian.
+- **humanize-korean** — s'il est installé, `style-doctor` peut l'utiliser comme polissage final du coréen.
+- **MCP de génération d'images** — utilisés par `illustrator` et `cover-designer` lorsqu'ils sont présents.
 
-Aucune configuration supplémentaire — s'exécutent automatiquement dans le pipeline :
+Tout est optionnel. Velith fonctionne seul.
 
-- **discover** — Pendant `/book-outline`, `book-architect` explore les angles morts et les contradictions du concept du livre avant la fixation de la structure
-- **council** — Pendant `/book-outline` et `/book-edit`, intègre plusieurs perspectives éditoriales (développement, structure, révision de ligne) dans les décisions de plan et de révision
+## Contribuer
 
-### alcove — Votre vault de recherche comme matériel source
-
-[alcove](https://github.com/epicsagas/alcove) est un serveur de documents privé qui permet aux agents Velith de consulter vos notes existantes, recherches et documents de projet comme matériel source pendant la rédaction.
-
-**Quand c'est utile :**
-- Vous avez des années de notes de recherche, transcriptions d'entretiens ou documents de référence que vous souhaitez que l'agent cite
-- Vous écrivez de la non-fiction et avez besoin que les agents extraient des faits depuis une documentation de projet structurée
-- Vous maintenez une base de connaissances avec glossaires, chronologies ou détails de construction du monde que l'agent doit respecter
-
-**Comment l'utiliser :**
-1. Installez et configurez alcove comme serveur MCP dans vos paramètres Claude Code
-2. Lors de `/book-init`, indiquez votre projet alcove comme source
-3. Les agents interrogeront automatiquement alcove lors de la rédaction des chapitres faisant référence à vos recherches
-
-### obsidian-forge — De la réflexion à l'écriture
-
-[obsidian-forge](https://github.com/epicsagas/obsidian-forge) relie votre vault Obsidian à Velith, pour que vous puissiez faire des recherches dans Obsidian et écrire avec Velith sans copier manuellement les fichiers.
-
-**Quand c'est utile :**
-- Vos recherches, profils de personnages et notes de référence existent déjà dans un vault Obsidian
-- Vous souhaitez itérer sur les plans dans l'environnement de notes liées d'Obsidian avant de passer à Velith
-- Vous collaborez avec des co-auteurs qui préfèrent Obsidian pour le brainstorming
-
-**Comment l'utiliser :**
-
-```bash
-# Créer un projet de livre dans votre vault Obsidian (01-Projects/)
-of book init my-book --genre non-fiction --lang ko
-
-# Travailler dans Obsidian : notes de recherche, profils de personnages, références
-# Taguer les notes avec book/my-book pour les lier comme matériel source
-of book sync my-book
-
-# Exporter vers un répertoire autonome quand vous êtes prêt à écrire
-of book export my-book --output ~/projects/my-book
-
-# Maintenant exécuter velith sur le projet exporté
-> /loom
-```
-
-alcove et obsidian-forge sont tous les deux **optionnels** — Velith fonctionne de manière autonome.
-
-## Contribution
-
-Voir [CONTRIBUTING.md](../../CONTRIBUTING.md). Les PRs sont les bienvenus — consultez les issues étiquetées `good first issue`.
+Voir [CONTRIBUTING.md](../../CONTRIBUTING.md). Les prompts sont le produit : une modification de `quality-bar.md` ou d'un fichier d'agent change tous les livres. Testez avec `examples/` et `node velith.mjs metrics`.
 
 ## Licence
 

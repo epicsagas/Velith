@@ -217,5 +217,14 @@ export default {
   "genre.academic.h1": "Zitierverwaltung",
   "genre.academic.h2": "Methodikvalidierung",
   "genre.academic.h3": "Peer-Review-Vorbereitung",
-  "genre.academic.tip": "Lege Forschungsarbeiten in sources/ für Zitate beim Schreiben."
+  "genre.academic.tip": "Lege Forschungsarbeiten in sources/ für Zitate beim Schreiben.",
+  "agent.illustrator": "Innenillustrationsplan und Prompts",
+  "agent.fact-checker": "Faktenprüfung und Quellenverifizierung",
+  "agent.beta-reader": "Testlesen und Reifeurteil",
+  "overview.readiness": "Reifegrad",
+  "readiness.PASS": "Bestanden",
+  "readiness.REVISE": "Überarbeiten",
+  "edit.stage.readiness": "Reifeprüfung",
+  "agent.art-director": "Art-Bibel, Look-Freigabe und Bildprüfung",
+  "agent.figure-engineer": "Codegerenderte Diagramme, Charts und Zeichnungen"
 };

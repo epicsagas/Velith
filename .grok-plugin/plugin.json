@@ -1,7 +1,7 @@
 {
   "name": "velith",
-  "version": "0.6.0",
-  "description": "AI-native publishing system — autonomous multi-phase workflows from ideation to EPUB/PDF. Fiction, non-fiction, technical, screenplay, poetry, game, academic, and custom genres.",
+  "version": "0.7.0",
+  "description": "AI-native publishing system \u2014 autonomous multi-phase workflows from ideation to EPUB/PDF. Fiction, non-fiction, technical, screenplay, poetry, game, academic, and custom genres.",
   "author": {
     "name": "epicsagas",
     "url": "https://github.com/epicsagas"

@@ -29,10 +29,15 @@ export const FICTION_GENRES = new Set(FICTION_GENRES_ARRAY);
 
 export const AGENT_DEFS = [
   { id: 'book-architect', icon: 'architecture', genre: 'all' },
-  { id: 'chapter-writer', icon: 'edit_note', genre: 'all' },
   { id: 'scene-generator', icon: 'theaters', genre: 'fiction' },
+  { id: 'chapter-writer', icon: 'edit_note', genre: 'all' },
   { id: 'continuity-editor', icon: 'compare_arrows', genre: 'all' },
+  { id: 'fact-checker', icon: 'fact_check', genre: 'nonfiction' },
   { id: 'style-doctor', icon: 'medical_services', genre: 'all' },
+  { id: 'beta-reader', icon: 'groups', genre: 'all' },
+  { id: 'art-director', icon: 'auto_awesome', genre: 'all' },
+  { id: 'figure-engineer', icon: 'schema', genre: 'nonfiction' },
+  { id: 'illustrator', icon: 'brush', genre: 'all' },
   { id: 'cover-designer', icon: 'palette', genre: 'all' },
   { id: 'marketing-expert', icon: 'campaign', genre: 'all' },
 ];
@@ -43,6 +48,7 @@ export const EDIT_STAGES = [
   { id: 'line-edit', label: 'Line Edit', icon: 'format_paint' },
   { id: 'copy-edit', label: 'Copy Edit', icon: 'spellcheck' },
   { id: 'proofread', label: 'Proofread', icon: 'verified' },
+  { id: 'readiness', label: 'Readiness', icon: 'groups' },
 ];
 
 export const PUBLISH_FORMATS = {
@@ -79,10 +85,15 @@ export const SAMPLE_DATA = {
     { id: 'book-architect', name: 'Book Architect', icon: 'architecture', role: 'Structural design & outline planning', status: 'complete', last_run: '2026-05-16T10:00:00Z', task: null },
     { id: 'chapter-writer', name: 'Chapter Writer', icon: 'edit_note', role: 'Draft generation for chapters', status: 'running', last_run: '2026-05-16T11:30:00Z', task: 'ch07-core-concepts.md draft in progress' },
     { id: 'continuity-editor', name: 'Continuity Editor', icon: 'compare_arrows', role: 'Cross-chapter consistency checks', status: 'idle', last_run: '2026-05-15T22:00:00Z', task: null },
+    { id: 'fact-checker', name: 'Fact Checker', icon: 'fact_check', role: 'Claim ledger & source verification', status: 'idle', last_run: null, task: null },
+    { id: 'style-doctor', name: 'Style Doctor', icon: 'medical_services', role: 'Style consistency & AI-slop detection', status: 'complete', last_run: '2026-05-16T08:30:00Z', task: null },
+    { id: 'beta-reader', name: 'Beta Reader', icon: 'groups', role: 'Cold read & readiness verdict', status: 'idle', last_run: null, task: null },
+    { id: 'art-director', name: 'Art Director', icon: 'auto_awesome', role: 'Art bible, look lock & visual QA', status: 'idle', last_run: null, task: null },
+    { id: 'figure-engineer', name: 'Figure Engineer', icon: 'schema', role: 'Code-rendered diagrams, charts & drawings', status: 'idle', last_run: null, task: null },
+    { id: 'illustrator', name: 'Illustrator', icon: 'brush', role: 'Illustrations from the art bible', status: 'idle', last_run: null, task: null },
     { id: 'cover-designer', name: 'Cover Designer', icon: 'palette', role: 'Visual cover design & brand identity', status: 'idle', last_run: null, task: null },
     { id: 'marketing-expert', name: 'Marketing Expert', icon: 'campaign', role: 'Book description & marketing copy', status: 'idle', last_run: null, task: null },
-    { id: 'scene-generator', name: 'Scene Generator', icon: 'theaters', role: 'Scene creation & expansion (fiction only)', status: 'complete', last_run: '2026-05-16T09:00:00Z', task: null },
-    { id: 'style-doctor', name: 'Style Doctor', icon: 'medical_services', role: 'Style consistency & AI-slop detection', status: 'complete', last_run: '2026-05-16T08:30:00Z', task: null },
+    { id: 'scene-generator', name: 'Scene Generator', icon: 'theaters', role: 'Scene planning (fiction only)', status: 'disabled', last_run: null, task: null },
   ],
   projects: [
     {
@@ -98,6 +109,7 @@ export const SAMPLE_DATA = {
       completed_chapters: 6,
       total_words: 42000,
       target_words: 80000,
+      readiness: null,
       last_updated: '2026-05-16T11:30:00Z',
       phase_status: [
         { phase: 0, name: 'Onboarding', percent: 100, status: 'complete' },

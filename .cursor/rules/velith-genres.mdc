@@ -62,3 +62,7 @@ alwaysApply: false
 - Compose patterns from any supported genre via genre-creator
 - Define custom quality gates and chapter templates
 - Can inherit from multiple parent genres
+
+## Visuals by genre
+
+Every genre skill carries a Visuals section. Fiction: optional, character sheets locked before scene art, headers as motifs. Non-fiction: figures are part of the argument, charts from data files, photos licensed. Technical: diagrams as code with one theme, real screenshots, ≤3 figures per chapter. Screenplay: pitch packages only. Poetry: restraint, one medium, spot art at section openings. Game: maps, branching flowcharts from quest data, locked character and location sheets. Academic: data figures from `sources/`, discipline conventions. All through `/book-visuals`; the art bible is the single source of look.

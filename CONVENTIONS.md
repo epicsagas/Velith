@@ -1,61 +1,52 @@
 # Velith — Writing Conventions
 
+The bar: a cold reader who buys books in this genre cannot tell the manuscript was machine-drafted. Full reference: `skills/loom/quality-bar.md`.
+
 ## Pipeline
 
-6-phase book creation pipeline. Each phase validates before proceeding:
+0. **Onboarding** — genre, reader, language, scope, voice fingerprint from the author's sample → `PRD.md` (reader promise) + `STYLE.md`
+1. **Ideation** — premise stress test, real comps, ranked concepts, author picks → `ideation.md`
+2. **Outlining** — structure chosen and justified, chapter specs (purpose, entry/exit state, pull, content, sets up/pays off, must not), figure plan, bible, scored validation, author approval → `outline.md`, `bible.md`
+3. **Drafting** — voice lock, then sequential full-context chapters with draft → critique → revise, bible ledger per chapter, continuity checks → `drafts/`
+4. **Editing** — fact check, assessment, developmental rewrites, line edit, copy edit, proofread, beta-reader readiness verdict → revised `drafts/`, `edits/`
+5. **Publishing** — readiness gate, front/back matter, EPUB/PDF/MOBI/TXT/MD, epubcheck, cover, marketing, platform checklists → `publish/`
 
-0. **Onboarding** — Genre, audience, language, style guide → `PRD.md` + `STYLE.md`
-1. **Ideation** — Market research, concept distillation → `ideation.md`
-2. **Outlining** — Chapter outline with specs and cross-references → `outline.md`
-3. **Drafting** — Chapter-by-chapter generation, idempotent (skip completed) → `drafts/`
-4. **Editing** — 5-stage: Assessment → Developmental → Line → Copy → Proofread → `edits/`
-5. **Publishing** — EPUB/PDF/MOBI/TXT/Markdown, cover, marketing → `publish/`
+Visuals (any phase from 2): art bible and look lock, code-rendered figures, compiled prompts for illustrations, vision QA, asset check → `art-bible.md`, `visuals/`
 
-## Genre Patterns
+## Writing rules
 
-- **Fiction:** Save the Cat! 15-beat, character bible (GMC), scene beats (RDD), POV consistency, dialogue subtext
-- **Non-Fiction:** Problem-solution, learner personas, evidence hierarchy (research > interviews > case studies > anecdotes)
-- **Technical:** Concept progression (novice→expert), compilable code examples, diagrams, chapter labs
-- **Screenplay:** 3-act + 8-sequence, dialogue subtext, A/B story interweaving, present-tense action
-- **Poetry:** Form types (sonnet/haiku/free verse), meter, imagery systems, collection arc
-- **Game:** Quest trees, branching dialogue, lore bible, flag system, multiple endings
-- **Academic:** IMRAD, thematic lit review, argument chains, consistent citation style
-- **Custom:** Compose patterns from any genre
+- Read everything before writing: the whole manuscript, the bible, the voice lock passages.
+- Narrative genres draft in order. Chapter N needs chapter N-1.
+- No chapter is saved after one pass. Critique with quoted lines and five-axis scores, then revise.
+- Nonfiction: every number, quote, study, and named person traces to `sources/INDEX.md` or a verified URL. Otherwise cut.
+- Editing rewrites in place; reports document what changed.
+- Images: one art bible per book; prompts compiled from it; diagrams and drawings from code; every image opened and scored.
 
-## Writing Rules
+## Five-axis rubric (1-10)
 
-- **Plan-Then-Execute:** Outline first, validate, then write
-- **Idempotent:** Skip completed chapters, resume from where you left off
-- **Summary-based context:** Use chapter summaries, not full text, for cross-references
-- **Style reference:** All tone and voice checks use `STYLE.md`
+Voice and prose · Structure and pacing · Depth · Specificity and grounding · Reader experience. Voice lock: axis 1 ≥ 7. Readiness: every axis ≥ 7, mean ≥ 7.5, no put-down point in chapters 1-3.
 
-## AI-Slop Detection
+## AI tells that matter (2026)
 
-Avoid these patterns in all drafts:
+Structural: uniform paragraph length, punch-line endings, tricolons, symmetrical scenes, "not X but Y", balanced antithesis, reflective codas, em-dash cascades, rhetorical question chains, summary-then-scene, naming the theme.
 
-- Excessive modifiers: revolutionary, game-changer, groundbreaking, seamless, robust, transformative
-- Repetitive transitions: "however", "moreover", "furthermore" overuse
-- Generic conclusions: "in conclusion", "ultimately", "at the end of the day"
-- Weak hedging: "can be", "seems like", "it could be argued"
-- AI markers: "delve", "tapestry", "nuanced", "multifaceted", "plethora", "myriad"
-- List overuse: 5+ consecutive bullets without prose context
+Emotional: precise self-knowledge, physical-reaction inventories, universal kindness, dialogue that answers, "something shifted", tidy resolution, interchangeable voices, sensory garnish.
 
-## Style Drift Checks
+Nonfiction/technical: hedged authority, invented specificity, framework inflation, listicle drift, preview-and-recap, uniform confidence, analogy padding, code that never fails.
 
-Per-chapter quantitative metrics:
+Korean: 번역투 무생물 주어, ~것이다 남발, 피동 과잉, 감정 명명, 접속부사 연쇄, ~에 대해/~을 통해, 대명사·~들 과잉, 존댓말·시제 흔들림, 균일한 문장 길이, 한자어 과밀, 설명형 대화.
 
-- Sentence length variance (compare against book mean)
-- Paragraph length distribution
-- Type-token ratio (vocabulary diversity)
-- POV consistency (no 1st/3rd mixing within chapters)
+## Metrics
 
-## Quality Gates
+`node velith.mjs metrics drafts/` — sentence-length cv, mid-band share, punch-ending share, TTR, em-dash and tell density, repeated n-grams across chapters. Numbers locate problems; they do not judge prose.
 
-| Phase | Must Pass |
+## Quality gates
+
+| Phase | Must pass |
 |-------|-----------|
-| Onboarding | PRD.md + STYLE.md exist |
-| Ideation | Elevator pitch + 3 competing titles analyzed |
-| Outlining | All chapters specified + cross-reference map |
-| Drafting | All chapters meet word target + frontmatter |
-| Editing | 5-stage pipeline passed + <5 issues remaining |
-| Publishing | EPUB/PDF generated + metadata complete |
+| 0 | PRD with reader promise; STYLE with voice fingerprint |
+| 1 | Author-chosen concept; ≥5 comps with verification status |
+| 2 | Outline approved; architect score ≥ 8, no Critical; bible exists |
+| 3 | All chapters drafted; critiques all axes ≥ 6; ledger per chapter; voice lock |
+| 4 | Readiness PASS; chapters `status: final` |
+| 5 | EPUB + PDF built, epubcheck clean, metadata, cover concepts, marketing, checklist |

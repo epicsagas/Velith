@@ -1,103 +1,51 @@
-# Velith — AI-Native Book Publishing System
+# Velith — Books to the Human-Quality Bar
 
 ## Overview
 
-Build books like software. 6-phase pipeline from blank page to published book, with quality gates at every stage. 16 skills, 7 agents, 8 genre systems.
+Velith produces books a cold reader cannot distinguish from a competent human author's work. 6-phase pipeline, 18 skills, 12 agents, 7 genre systems + custom, a model-agnostic visual pipeline. The standard every agent holds is `skills/loom/quality-bar.md`: a five-axis rubric (voice, structure, depth, specificity, reader experience), the 2026 AI-tell taxonomy (structural and emotional tells, en/ko/ja lexical tells), the cold-read critique protocol, and the visual rules.
 
 ```
 Phase 0: Onboarding → Phase 1: Ideation → Phase 2: Outlining → Phase 3: Drafting → Phase 4: Editing → Phase 5: Publishing
 ```
 
-## Pipeline Phases
+## Operating principles
 
-### Phase 0: Onboarding
-- Genre selection (fiction/non-fiction/technical/screenplay/poetry/game/academic/custom)
-- Target audience definition, language selection
-- Generate `STYLE.md` (voice, tone, conventions) and `PRD.md` (book requirements)
-- Source material scan
+1. Full-manuscript context: agents read the whole manuscript, never summaries. `bible.md` is an index and per-chapter ledger.
+2. Sequential drafting for narrative genres; parallel (≤3) only for technical/reference chapters proven independent.
+3. Voice lock on a sample chapter before drafting volume (`STYLE.md` `## Voice Lock`).
+4. Draft → critique (quoted lines, five-axis scores) → revise, inside `chapter-writer`.
+5. Fact-check before line edit for nonfiction/technical/academic; unverifiable claims are removed.
+6. Readiness gate: `beta-reader` cold read → `edits/readiness-report.md` `verdict: PASS|REVISE`. Publishing requires PASS or an override.
+7. One look per book: `art-bible.md`; prompts compiled by `velith.mjs images compile`; diagrams/charts/drawings code-rendered; vision QA on every image; look lock before volume.
+8. Author checkpoints: concept, outline approval, voice lock, look lock, developmental restructures, readiness verdict.
 
-### Phase 1: Ideation
-- Market research, competing titles, concept distillation (elevator pitch)
-- Unique value proposition, scope definition
-- Save to `ideation.md`
+## Phases and agents
 
-### Phase 2: Outlining
-- Full chapter outline with dependencies and cross-references
-- Per-chapter specs: title, hook, key concepts, word target, difficulty
-- Save to `outline.md`; `book-architect` validates structure
+| Phase | Skill | Agents | Exit artifact |
+|-------|-------|--------|---------------|
+| 0 | `/book-init` | — | `PRD.md` (reader promise), `STYLE.md` (voice fingerprint), `sources/INDEX.md` |
+| 1 | `/book-ideation` | — | `ideation.md` with chosen concept and verified comps |
+| 2 | `/book-outline` | `book-architect` | `outline.md` (approved, scored ≥8), `bible.md` |
+| 3 | `/book-draft` | `scene-generator`, `chapter-writer`, `continuity-editor`, `figure-engineer` | `drafts/`, bible ledger, `.velith/critiques/` |
+| 4 | `/book-edit` | `fact-checker`, `chapter-writer`, `continuity-editor`, `style-doctor`, `beta-reader` | revised `drafts/`, `edits/00-06`, `readiness-report.md`, `editorial-report.md` |
+| 3-5 | `/book-visuals` | `art-director`, `figure-engineer`, `illustrator`, `cover-designer` | `art-bible.md`, `visuals/` |
+| 5 | `/book-publish` | `cover-designer`, `art-director`, `marketing-expert` | `publish/` |
 
-### Phase 3: Drafting
-- Plan-Then-Execute: chapter-by-chapter generation
-- Each chapter: outline context + previous chapter summary + style guide
-- `scene-generator` decomposes into scenes (fiction only), `chapter-writer` generates, `continuity-editor` checks consistency
-- Quality gate: line count, frontmatter, style compliance
+## Editing stages
 
-### Phase 4: Editing
-5-stage pipeline:
-1. **Editorial Assessment** — macro structure, chapter order, pacing
-2. **Developmental Edit** — flow, gaps, evidence quality
-3. **Line Edit** — sentence-level clarity, word choice
-4. **Copy Edit** — grammar, terminology, formatting
-5. **Proofread** — final typos, cross-references
+0 fact check → 1 assessment (report) → 2 developmental (rewrites; restructures need author approval) → 3 line edit (style-doctor rewrites in place) → 4 copy edit → 5 proofread (chapters `status: final`) → 6 readiness (beta-reader). Snapshot before every rewriting stage.
 
-### Phase 5: Publishing
-- Format conversion: EPUB, PDF, MOBI, TXT, Markdown (via Pandoc + Calibre)
-- `cover-designer` generates cover concepts, `marketing-expert` creates launch strategy
-- Metadata, title candidates, KDP checklist
+## Genre conventions
 
-## Project Structure
+Each `skills/book-{genre}/SKILL.md` holds structure options, craft, genre-specific tells, language notes, visuals, and the architect's validation list for fiction, non-fiction, technical, screenplay, poetry, game, academic. Custom genres compose via `book-genre-creator` into `genre-custom.md`.
+
+## Project structure
 
 ```
-{project-dir}/
-├── PRD.md              # Book requirements (Phase 0)
-├── STYLE.md            # Voice, tone, conventions (Phase 0)
-├── ideation.md         # Ideas, market research (Phase 1)
-├── outline.md          # Full chapter outline (Phase 2)
-├── drafts/             # Chapter drafts (Phase 3)
-├── edits/              # Editing reports (Phase 4)
-├── publish/            # Final outputs (Phase 5)
-└── sources/            # Source material references
+PRD.md STYLE.md ideation.md outline.md bible.md art-bible.md
+sources/INDEX.md  drafts/  visuals/  edits/  publish/  .velith/
 ```
 
-## Genre Conventions
+## Tooling
 
-| Genre | Key Patterns |
-|-------|-------------|
-| Fiction | Save the Cat! 15-beat, character bible (GMC), scene beats (RDD), POV consistency |
-| Non-Fiction | Problem-solution, learner personas, evidence hierarchy, chapter hooks |
-| Technical | Concept progression (novice→expert), code examples, diagrams, labs |
-| Screenplay | 3-act + 8-sequence, dialogue subtext, A/B story, action lines |
-| Poetry | Form types (sonnet/haiku/free verse), meter, imagery systems, collection arc |
-| Game | Quest/event trees, branching dialogue, lore bible, flag system |
-| Academic | IMRAD, lit review, argument chains, citation practices |
-| Custom | Compose patterns from any genre via genre-creator |
-
-## AI-Slop Detection
-
-Flag these patterns in any draft:
-
-- **Excessive modifiers:** revolutionary, game-changer, groundbreaking, seamless, robust
-- **Repetitive transitions:** overuse of "however", "moreover", "furthermore"
-- **Generic conclusions:** "in conclusion", "ultimately", "it's important to note"
-- **Weak hedging:** "can be", "seems like", "arguably"
-- **AI markers:** "delve", "tapestry", "landscape" (metaphorical), "nuanced", "plethora"
-- **List overuse:** 5+ consecutive bullets without prose
-
-## Quality Gates
-
-| Phase | Gate | Evidence |
-|-------|------|----------|
-| 0 | Project initialized | PRD.md + STYLE.md exist |
-| 1 | Concept validated | Elevator pitch + 3 competing titles |
-| 2 | Outline complete | All chapters specified + cross-reference map |
-| 3 | Drafts complete | All chapters meet word target + frontmatter |
-| 4 | Editing complete | 5-stage passed + <5 issues remaining |
-| 5 | Publish ready | EPUB/PDF generated + metadata complete |
-
-## Design Principles
-
-- **Plan-Then-Execute** — Outline first, validate, then write
-- **Idempotent** — Skip completed chapters, resume from where you left off
-- **Token Efficient** — Summary-based context, not full text
-- **Genre-Aware** — Different structures, templates, and validation per genre
-- **Quality Gated** — Each phase must pass criteria before proceeding
+`node velith.mjs scan|metrics|snapshot|images compile|check|render|agents|serve`. Metrics flags: sentence cv < 0.4, mid-band > 60%, punch endings > 35%, tells > 2/1k, em-dashes > 3/1k, repeated 4-grams, TTR drift.

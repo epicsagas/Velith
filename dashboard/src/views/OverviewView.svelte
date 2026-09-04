@@ -22,6 +22,10 @@
   let currentPhasePct = $derived(currentPhase ? currentPhase.percent : 0);
   let currentPhaseName = $derived(currentPhase ? i18n.t('phase.' + currentPhase.name.toLowerCase().replace(/\s+/g, '-')) || currentPhase.name : '—');
 
+  // Readiness verdict written by the beta-reader agent (edits/readiness-report.md).
+  let readiness = $derived(project.readiness ?? null);
+  let readinessAxes = $derived(readiness?.axes ? Object.entries(readiness.axes) : []);
+
   const QUICK_CMDS = [
     { cmd: '/book-init',    icon: 'rocket_launch',        labelKey: 'cmd.init.label',    descKey: 'cmd.init.desc' },
     { cmd: '/book-outline', icon: 'format_list_bulleted', labelKey: 'cmd.outline.label', descKey: 'cmd.outline.desc' },
@@ -78,6 +82,21 @@
           {#if project.last_updated} · {i18n.t('overview.updated')} {i18n.fmtDate(project.last_updated)}{/if}
         </p>
       </div>
+      {#if readiness?.verdict}
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-xs text-secondary uppercase tracking-widest">{i18n.t('overview.readiness')}</span>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider border
+            {readiness.verdict === 'PASS' ? 'border-primary text-on-primary bg-primary' : 'border-error text-error'}">
+            {i18n.t('readiness.' + readiness.verdict) || readiness.verdict}
+          </span>
+          {#if readiness.score != null}
+            <span class="text-sm font-bold text-on-surface">{Number(readiness.score).toFixed(1)}<span class="text-xs text-secondary">/10</span></span>
+          {/if}
+          {#each readinessAxes as [axis, value]}
+            <span class="text-xs font-mono text-on-surface-variant border border-outline-variant rounded px-1.5 py-0.5" title={axis}>{axis.slice(0, 4)} {value}</span>
+          {/each}
+        </div>
+      {/if}
     </div>
     <div class="text-right shrink-0">
       <p class="text-xs text-secondary uppercase tracking-widest">{i18n.t('overview.currentPhase')}</p>

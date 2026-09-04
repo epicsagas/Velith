@@ -217,5 +217,14 @@ export default {
   "genre.academic.h1": "인용 관리",
   "genre.academic.h2": "방법론 검증",
   "genre.academic.h3": "동료 심사 준비",
-  "genre.academic.tip": "초안 작성 시 인용을 위해 연구 자료를 sources/에 넣어두세요."
+  "genre.academic.tip": "초안 작성 시 인용을 위해 연구 자료를 sources/에 넣어두세요.",
+  "agent.illustrator": "본문 삽화 기획 및 프롬프트 생성 에이전트",
+  "agent.fact-checker": "사실 검증 및 출처 확인 에이전트",
+  "agent.beta-reader": "독자 시뮬레이션 및 출간 준비도 판정 에이전트",
+  "overview.readiness": "출간 준비도",
+  "readiness.PASS": "통과",
+  "readiness.REVISE": "수정 필요",
+  "edit.stage.readiness": "준비도 판정",
+  "agent.art-director": "아트 바이블 수립, 룩 확정 및 이미지 검수 에이전트",
+  "agent.figure-engineer": "코드 기반 다이어그램·차트·도면 제작 에이전트"
 };

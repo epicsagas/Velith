@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "velith",
-  "version": "0.6.0",
-  "description": "AI-native publishing system — autonomous multi-phase workflows from ideation to EPUB/PDF. Fiction, non-fiction, technical, screenplay, poetry, game, academic, and custom genres.",
+  "version": "0.7.0",
+  "description": "Books to the human-quality bar \u2014 6-phase pipeline (onboarding \u2192 ideation \u2192 outlining \u2192 drafting \u2192 editing \u2192 publishing), 12 agents, full-manuscript context, voice lock, draft-critique-revise, fact-check, beta-reader readiness gate, art bible and model-agnostic image pipeline. Fiction, non-fiction, technical, screenplay, poetry, game, academic, custom.",
   "author": {
     "name": "epicsagas",
     "url": "https://github.com/epicsagas"
@@ -27,12 +27,16 @@
   "skills": "./skills/",
   "agents": [
     "./agents/book-architect.md",
+    "./agents/scene-generator.md",
     "./agents/chapter-writer.md",
     "./agents/continuity-editor.md",
+    "./agents/fact-checker.md",
     "./agents/style-doctor.md",
-    "./agents/scene-generator.md",
-    "./agents/cover-designer.md",
+    "./agents/beta-reader.md",
+    "./agents/art-director.md",
+    "./agents/figure-engineer.md",
     "./agents/illustrator.md",
+    "./agents/cover-designer.md",
     "./agents/marketing-expert.md"
   ]
 }

@@ -1,4 +1,4 @@
-<!-- Translated from README.md @ commit 3d6a2f0 (2026-05-16) -->
+<!-- Translated from README.md @ v0.5.0 (2026-09-04) -->
 <!-- The English version is the authoritative source and may be more up-to-date. -->
 
 <div align="center">
@@ -16,10 +16,8 @@
   <a href="../../LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-3fb950?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://claude.ai/code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-plugin-bc8cff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://github.com/openai/codex"><img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-plugin-10a37f?style=for-the-badge&labelColor=0d1117" /></a>
-  <a href="https://x.ai/cli"><img alt="Grok Build" src="https://img.shields.io/badge/Grok_Build-plugin-ffffff?style=for-the-badge&labelColor=0d1117" /></a>
   <a href="https://buymeacoffee.com/epicsaga"><img alt="Buy Me a Coffee" src="https://img.shields.io/badge/buy_me_a_coffee-FFDD00?style=for-the-badge&labelColor=0d1117&logo=buymeacoffee&logoColor=black" /></a>
 </p>
-
 <p>
   <a href="../../README.md">English</a> ·
   <a href="README.ko.md">한국어</a> ·
@@ -31,7 +29,7 @@
   <a href="README.pt-BR.md">Português</a>
 </p>
 
-**像构建软件一样构建书籍。** 一个多阶段流水线，将长篇知识——书籍、RFC、白皮书、设计文档、技术指南——转化为结构化的产物，而非孤立的提示词。从空白页到可发布的 EPUB/PDF。
+**达到人类写作水准的书。** 从空白页到可出版的 EPUB 与 PDF,六阶段流水线以同一标准检验每一章、每一次编辑、每一张图片:买这个类型书来读的陌生读者,分辨不出稿件出自机器初稿。
 
 `Phase 0: Onboarding → Phase 1: Ideation → Phase 2: Outlining → Phase 3: Drafting → Phase 4: Editing → Phase 5: Publishing`
 
@@ -39,70 +37,62 @@
 
 <img src="../../docs/assets/features.png" width="100%" alt="Features of Velith" />
 
-## 为什么选择 Velith？
+## 为什么选择 Velith
 
-使用原始 LLM 提示写书会导致章节脱节、文体不一致、缺乏结构。Velith 提供**先计划后执行的流水线** — 写作前验证，每个阶段把控质量，在整个手稿中保持连贯性。
+前沿模型擅长写句子。放任不管,产出的是读者会中途放下的书:第八章声音就变了,角色只会解释自己的情绪,出现不存在的统计数据,每个段落都用短金句收尾,插图每章换一种画风。这些没有一个是模型的问题,全是流水线的问题。
 
-## 基准测试
+Velith 就是那条流水线。写下一章之前先通读全书,写正文之前用样章锁定声音,保存之前对每一章进行批评并修改,核查每一条主张,编辑时直接改稿而不是只交报告,以目标读者的视角冷读成品书,直到确信读者会继续读下去才允许出版。图片同样如此:每本书一份美术圣经,无论用哪个图像模型都从它编译提示词,图表由代码渲染,出厂前每张图都经过目检。
 
-流水线对非结构化输入的处理效果 — [亲自尝试 →](https://huggingface.co/spaces/epicsaga/Velith)
+## 0.5 的变化
 
-| 指标 | 原始输入 | Velith 流水线处理后 |
-|------|---------|---------------------|
-| 结构评分 | 2–4 / 10 | 6–9 / 10 |
-| 冗余率 | 20–45% n-gram 重叠 | 合并后 < 10% |
-| AI 糟糕内容标记 | 每千词 6–20 个 | 由 style-doctor 检测并删除 |
-| 章节层级 | 无 | 检测后添加交叉引用并映射 |
-| 连贯性评分 | 0.3–1.5 / 10 | 通过章节重构改善 |
+| 之前 (0.4) | 现在 (0.5) |
+|--------------|-----------|
+| 智能体收到章节摘要 | 智能体通读全书(前沿模型 1M 上下文,小说不足 200K) |
+| 四章并行初稿 | 叙事类按顺序写。第 N 章读完第 N-1 章再动笔 |
+| 每章一遍过 | 保存之前:初稿 → 带引文的冷批评 → 修改 |
+| 编辑产出报告 | 编辑留下快照、原地改稿,共 7 个阶段 |
+| "delve" 词表检测 | 2026 AI 痕迹分类:节奏·结构·情感·对话 + en/ko/ja 词汇痕迹,由 `velith.mjs metrics` 度量 |
+| 没有事实核查 | `fact-checker` 建立主张台账,删除无法验证的内容 |
+| 门槛 = 文件存在 | 门槛 = `beta-reader` 就绪判定:五轴 ≥ 7,前三章无弃读点 |
+| 只有封面提示词 | 美术圣经、风格锁定、代码渲染图表、面向各后端的编译提示词、视觉 QA、资产校验 |
 
-| | 功能 | 重要原因 |
-|--|------|----------|
-| 📋 | 6阶段流水线 | 每个阶段验证后再推进 — 无需返工 |
-| 📖 | 7种体裁模板 | 小说、非虚构、技术书、剧本、诗歌、游戏脚本、学术（+ genre-creator自定义） |
-| 🤖 | 8个专业智能体 | 架构、起草、场景生成、连贯性、文体、封面、插图、营销 |
-| ✏️ | 5阶段编辑 | 评估 → 内容编辑 → 行文编辑 → 校对 → 终校 |
-| 🔄 | 随时恢复 | 跳过已完成章节，从中断处继续 |
-| 📦 | EPUB、PDF、MOBI、TXT、Markdown | 通过 Pandoc + Calibre 生成可出版文件 |
-
-## 一个流水线，多种产物
-
-Velith 以图书流水线的形式发布，但同样的 6 个阶段适用于**任何长篇结构化知识**。产出物是 300 页的小说还是 12 页的 RFC 都不重要——先规划后执行的流程、质量关卡和 agent 完全一致。
-
-| 产出物 | 体裁技能 | 典型输出 |
-|----------|-------------|----------------|
-| 小说 / 故事 | `book-fiction` | EPUB / PDF / MOBI |
-| 非虚构图书 | `book-nonfiction` | EPUB / PDF |
-| RFC / 设计文档 | `book-technical` | Markdown / PDF |
-| 白皮书 / 研究报告 | `book-academic` | PDF（引用） |
-| 课程材料 / 教程 | `book-technical` | EPUB / PDF |
-| 游戏剧本 / 世界观设定 | `book-game` | Markdown / EPUB |
+| | 功能 | 为什么重要 |
+|--|---------|----------------|
+| 📏 | 一份质量标准 | `skills/loom/quality-bar.md`:五轴评分量表、AI 痕迹分类、冷读协议。所有智能体都读它 |
+| 📋 | 带作者检查点的六阶段流水线 | 概念、大纲、声音锁定、风格锁定、重构、就绪判定。其余无人值守运行 |
+| 📖 | 7 个流派写作参考 + 自定义 | 小说、非虚构、技术、剧本、诗歌、游戏、学术:结构选项、技艺、流派专属痕迹、语言说明 |
+| 🤖 | 12 个专业智能体 | 架构师、场景规划、写手、连续性、事实核查、风格医生、试读读者、美术总监、图表工程师、插画师、封面、营销 |
+| ✏️ | 7 阶段编辑 | 事实核查 → 评估 → 重构 → 行文 → 校对 → 审校 → 就绪判定 |
+| 🎨 | 视觉系统 | 美术圣经、风格锁定、Mermaid/D2/SVG 图表、模型无关提示词、视觉 QA、印刷/EPUB 检查 |
+| 📊 | 确定性度量 | 句子节奏、段落形态、跨章重复、痕迹密度 (en/ko) |
+| 📦 | EPUB, PDF, MOBI, TXT, Markdown | Pandoc + 可选 Calibre、epubcheck、KDP 与国内平台清单 |
 
 ## 对比
 
-| | Velith | 原始提示 | Notion AI | Jasper / Sudowrite | Scrivener |
+| | Velith | 裸提示词 | Notion AI | Jasper / Sudowrite | Scrivener |
 |--|-----------|-------------|-----------|-------------------|-----------|
-| 结构验证 | 阶段关卡流水线 | 无 | 无 | 基础模板 | 手动 |
-| 跨章节连贯性 | 专属智能体 | 手动 | 无 | 有限 | 手动 |
-| AI 糟糕内容检测 | 内置（style-doctor） | 无 | 无 | 无 | 无 |
-| 体裁感知 | 8种体裁系统 + 自定义 | 取决于提示 | 无 | 以小说为主 | 无 |
-| 输出格式 | EPUB、PDF、MOBI、TXT、Markdown | 复制粘贴 | Markdown / PDF | DOCX，有限 | DOCX、PDF |
-| 质量关卡 | 每个阶段 | 无 | 无 | 无 | 无 |
-| 所需条件 | Claude Code、Codex CLI、Grok Build、Agy、Cursor、Cline 或 Aider | 任意 LLM | Notion 订阅 | 订阅 | 许可证 |
-| 完全控制 | 提示级别 | 完全 | 黑盒 | 黑盒 | 完全 |
+| 全书上下文 | 每个智能体、每项任务 | 手动 | 无 | 有限 | 不适用 |
+| 声音锁定 + 批评-修改循环 | 内置 | 无 | 无 | 无 | 手动 |
+| 主张台账式事实核查 | 专职智能体 | 无 | 无 | 无 | 手动 |
+| 模拟读者的就绪门槛 | 阻止出版 | 无 | 无 | 无 | 无 |
+| 全书图像一致性 | 美术圣经 + 编译提示词 + 视觉 QA | 每图各写提示词 | 无 | 无 | 无 |
+| 流派认知 | 7 份写作参考 + 自定义 | 依赖提示词 | 无 | 偏小说 | 无 |
+| 输出格式 | EPUB, PDF, MOBI, TXT, Markdown | 复制粘贴 | Markdown / PDF | DOCX,有限 | DOCX, PDF |
+| 需要 | Claude Code、Codex CLI、Agy、Cursor、Cline 或 Aider | 任意 LLM | Notion 订阅 | 订阅 | 许可证 |
+| 完全控制 | 提示词级、Apache-2.0 | 完全 | 黑盒 | 黑盒 | 完全 |
 
 ## 安装
 
 ### Claude Code
 
-```bash
-# 添加 epicsagas 市场（首次）
-claude plugin marketplace add epicsagas
-
-# 安装 velith
-claude plugin install velith@epicsagas
+```
+/plugin marketplace add epicsagas/plugins
+/plugin install velith@epicsagas
 ```
 
-**前提条件:** 已安装并通过身份验证的 [Claude Code](https://claude.ai/code) CLI。
+18 个技能与 12 个智能体立即可用。更新:`/plugin update velith@epicsagas`。
+
+**前提:** 已安装并认证 [Claude Code](https://claude.ai/code) CLI。Velith 针对 Claude 5 系列(1M 上下文)调优;智能体继承会话模型并各自设定 effort 级别。
 
 ### Codex CLI (OpenAI)
 
@@ -110,17 +100,9 @@ claude plugin install velith@epicsagas
 codex plugin marketplace add epicsagas/plugins
 ```
 
-**前提条件:** 已安装 [Codex CLI](https://github.com/openai/codex) 并配置 OpenAI API 密钥。
+18 个技能与 12 个自定义子智能体(`.codex-plugin/agents/*.toml`,由 `agents/*.md` 生成)。Codex 自动发现。更新:`codex plugin update velith@epicsagas`。
 
-### Grok Build (xAI)
-
-```bash
-grok plugin install epicsagas/Velith --trust
-```
-
-Grok 会从插件根目录直接读取 `skills/` 和 `agents/`。无需额外配置。
-
-**前提条件:** 已安装并完成认证的 [Grok Build](https://x.ai/cli)。
+**前提:** 已安装并配置 [Codex CLI](https://github.com/openai/codex)。
 
 ### Agy (Antigravity)
 
@@ -128,235 +110,160 @@ Grok 会从插件根目录直接读取 `skills/` 和 `agents/`。无需额外配
 agy plugin install https://github.com/epicsagas/Velith
 ```
 
-Agy 会自动从仓库根目录发现技能和代理。无需额外配置。
-
-**前提条件:** 已安装并配置 [Agy](https://antigravity.google/docs/cli-install)。
-
 ### Cursor
 
-Velith 在 `.cursor/rules/` 中提供上下文规则，使 Cursor 的代理能够完全了解出版流程、体裁模式和编辑标准。在 Cursor 中打开项目时，规则会自动加载。
+`.cursor/rules/` 中的上下文规则:
 
-**前提条件:** 已安装 [Cursor](https://cursor.sh)。
+| 规则文件 | 加载时机 |
+|-----------|-------------|
+| `velith-pipeline.mdc` | 始终(阶段、路由、智能体、质量标准、检查点) |
+| `velith-genres.mdc` | 编辑草稿、大纲或 PRD 时 |
+| `velith-editing.mdc` | 处理 edits、STYLE.md、bible.md 时 |
 
 ### Cline
 
-Velith 在仓库根目录提供 `.clinerules` 项目级指令。在项目目录中工作时，Cline 会自动读取。
-
-**前提条件:** VS Code 或 JetBrains 中已安装 [Cline](https://github.com/cline/cline) 扩展。
+仓库根目录的 `.clinerules` 项目级指令。
 
 ### Aider
 
-Velith 在 `CONVENTIONS.md` 中提供写作规范，通过 `.aider.conf.yml` 自动加载。
-
-```bash
-aider  # CONVENTIONS.md 自动加载
-```
-
-**前提条件:** 已安装 [Aider](https://aider.chat) 并配置 API 密钥。
+`CONVENTIONS.md` 中的写作规范,经 `.aider.conf.yml` 自动加载。
 
 ## 快速开始
 
 ```bash
-# 开始新的图书项目
-> /book-init
-
-# 自动检测当前阶段并继续
-> /loom
+> /book-init          # 流派、读者、语言、声音样本 → PRD.md + STYLE.md
+> /loom               # 检测状态并运行下一阶段,在作者检查点停下
 ```
 
-插件将引导您完成以下流程:
-1. **Onboarding** — 体裁、受众、语言、源材料、风格指南
-2. **Ideation** — 市场调研、概念提炼、竞争书目
-3. **Outlining** — 包含规格、依赖关系、交叉引用的完整章节大纲
-4. **Drafting** — 通过并行子智能体逐章生成
-5. **Editing** — 5阶段流水线：评估 → 内容编辑 → 行文编辑 → 校对 → 终校
-6. **Publishing** — EPUB/PDF/MOBI 转换、元数据、营销计划
+流程:
+
+1. **入门** — 读者、承诺、篇幅,以及从作者本人文样提取的声音指纹
+2. **构思** — 前提压力测试、真实对标书目、排序后的概念。由作者选择
+3. **大纲** — 带理由选定结构、章节规格、图表计划、圣经。架构师评分,作者批准
+4. **起草** — 样章声音锁定;随后顺序全文上下文写作,每章批评并修改,更新圣经台账,连续性检查
+5. **编辑** — 事实核查、评估、重构改写、行文编辑、校对、审校,然后由模拟读者冷读。PASS 或 REVISE
+6. **出版** — 前后辅文、EPUB/PDF/MOBI、epubcheck、美术圣经驱动的封面、营销计划、平台清单
+
+从 Phase 2 起随时可用图片:`/book-visuals plan`(美术圣经)、`/book-visuals lock`(风格锁定),之后按章节需要出图表与插图。
 
 ## 技能
 
-| 技能 | 阶段 | 描述 |
-|------|------|------|
-| `/loom` | 路由 | 自动检测阶段并路由 |
-| `/book-init` | 0 | 开始新图书项目 — 体裁、受众、风格指南 |
-| `/book-ideation` | 1 | 概念生成和验证、竞争分析 |
-| `/book-outline` | 2 | 创建章节大纲（含依赖关系） |
-| `/book-draft` | 3 | 起草章节（全部/特定/恢复，并行智能体） |
-| `/book-edit` | 4 | 5阶段编辑流水线 |
-| `/book-publish` | 5 | EPUB/PDF/MOBI转换、封面、营销 |
-| `/book-illustrate` | 3-5 | 内页插图 — 场景提取、风格一致的提示词、布局方案 |
-| `/book-status` | — | 终端仪表盘 + `--ui` 浏览器仪表盘 |
-| `/book-fiction` | — | 小说模式（15节拍、Snowflake、角色设定集） |
-| `/book-nonfiction` | — | 非虚构模式（问题解决、证据层级） |
-| `/book-technical` | — | 技术书模式（概念梯度、代码、实验） |
-| `/book-screenplay` | — | 剧本模式（三幕结构、对话、A/B故事线） |
-| `/book-poetry` | — | 诗歌模式（体裁、意象、诗节结构） |
-| `/book-game` | — | 游戏脚本模式（任务树、分支、世界观设定集） |
-| `/book-academic` | — | 学术模式（IMRAD、文献综述、论证链） |
-| `/book-genre-creator` | — | 体裁选择指南及自定义体裁创建向导 |
+| 技能 | 阶段 | 说明 |
+|-------|-------|-------------|
+| `/loom` | 路由 | 检测状态、运行下一阶段、强制门槛 |
+| `/book-init` | 0 | 读者、承诺、篇幅、声音指纹、资料索引 → `PRD.md`, `STYLE.md` |
+| `/book-ideation` | 1 | 前提压力测试、对标书、概念排序、声音样本 |
+| `/book-outline` | 2 | 结构、章节规格、图表计划、圣经、评分验证、批准 |
+| `/book-draft` | 3 | 声音锁定、顺序初稿-批评-修改、台账、连续性 |
+| `/book-edit` | 4 | 7 阶段:事实核查 … 就绪判定 |
+| `/book-publish` | 5 | 就绪门槛、辅文、格式、epubcheck、封面、营销、清单 |
+| `/book-visuals` | 2-5 | 美术圣经、风格锁定、图表、插画、照片、提示词编译、视觉 QA、资产检查 |
+| `/book-illustrate` | 3-5 | `/book-visuals` 插画子集的别名 |
+| `/book-status` | — | 终端仪表盘、`--ui` 浏览器仪表盘、`--metrics` |
+| `/book-fiction` … `/book-academic` | — | 流派写作参考(7) |
+| `/book-genre-creator` | — | 流派选择与自定义流派规格 |
 
 ## 智能体
 
-| 智能体 | 角色 |
-|--------|------|
-| `book-architect` | 验证结构、为大纲评分、检查节奏 |
-| `chapter-writer` | 使用体裁模板生成章节草稿 |
-| `continuity-editor` | 跨章节一致性（术语、引用、时间线） |
-| `style-doctor` | 文体/语调一致性、AI 糟糕内容检测 |
-| `scene-generator` | 使用 GMC+RDD 结构进行场景级分析（仅小说） |
-| `cover-designer` | 封面概念 + Midjourney/DALL-E 图像提示 |
-| `illustrator` | 内页插图 — 场景提取、风格指南、提示词生成 |
-| `marketing-expert` | 读者画像、渠道策略、12周上市日历 |
+| 智能体 | 阶段 | 职责 |
+|-------|-------|-----|
+| `book-architect` | 2 | 大纲与圣经;带理由选定结构、评分验证、重构提案 |
+| `scene-generator` | 3 | 小说章节的场景规划(目的、转折、潜台词、出口)。只做规划,不写正文 |
+| `chapter-writer` | 3-4 | 全上下文写一章;初稿、带引文批评、修改、更新台账 |
+| `continuity-editor` | 3-4 | 对照圣经检查全书矛盾与重复 |
+| `fact-checker` | 4 | 主张台账;对照资料与网络验证;删除无法验证内容;运行代码 |
+| `style-doctor` | 4 | 先度量,再原地改写痕迹、节奏均匀性与漂移 |
+| `beta-reader` | 4 | 以三名目标读者加一名专业人士冷读;就绪判定 |
+| `art-director` | 2-5 | 美术圣经、风格锁定、每张图的视觉 QA、全图一致性评审 |
+| `figure-engineer` | 3-5 | 用代码渲染图表、数据图、工程图、地图底图;标签与正文对照验证 |
+| `illustrator` | 3-5 | 基于美术圣经的插画;编译提示词,有工具则生成,视觉 QA |
+| `cover-designer` | 5 | 基于美术圣经的封面概念、规格、营销变体 |
+| `marketing-expert` | 5 | 定位、读者画像、渠道、日历、发布清单 |
+
+## 质量标准
+
+所有写作、编辑、评审智能体都读 `skills/loom/quality-bar.md`。它定义:
+
+- **带锚点的五轴,1-10 分**:声音与文笔、结构与节奏、深度、具体性与依据、读者体验。声音锁定要求第 1 轴 ≥ 7;就绪判定要求每轴 ≥ 7、均值 ≥ 7.5、前三章无弃读点。
+- **2026 AI 痕迹分类**:如今的读者真正注意到的东西(均匀的段落节奏、金句收尾、"not X but Y"、反思性尾声、过于精确的自我认知、有问必答的对话、无出处的权威、虚构的具体性)及修改方法,附英语、韩语、日语词汇表。
+- **冷读协议**:以阅读速度通读一遍、做标记、带引文诊断、诚实评分、排优先级,然后才修改。
+- **视觉规则**:每本书一种风格、先有目的再有装饰、含文字或数据的内容用代码、风格锁定、视觉 QA、出厂约束。
+
+## CLI
+
+```bash
+node velith.mjs scan <dir> [--ui]           # 项目状态、仪表盘数据、就绪判定
+node velith.mjs metrics <dir|file>          # 文本度量 + 跨章重复 (JSON)
+node velith.mjs snapshot <dir> <label>      # 改稿阶段前复制 drafts/
+node velith.mjs images compile <dir> [id]   # 美术圣经 + 规格 → Midjourney / gpt-image / SD-FLUX / Imagen / Ideogram 提示词
+node velith.mjs images check <dir>          # 尺寸、比例、体积、alt 文本、引用、清单覆盖
+node velith.mjs images render <dir>         # Mermaid / D2 / Graphviz / SVG / matplotlib → SVG + PNG
+```
 
 ## 可视化仪表盘
 
-<img src="../assets/dashboard.png" width="100%" alt="Dashboard" />
+<img src="../../docs/assets/dashboard.png" width="100%" alt="Dashboard" />
 
-`/book-status --ui` 在浏览器中打开基于 Svelte 的进度仪表盘。仪表盘每 5 秒自动刷新:
-
-- 6阶段流水线追踪器（Onboarding → Ideation → Outlining → Drafting → Editing → Publishing）
-- 8个智能体状态卡片（book-architect、chapter-writer、continuity-editor、cover-designer、illustrator、marketing-expert、scene-generator、style-doctor）
-- 章节大纲、草稿表和5阶段编辑看板
-- 输出文件状态（EPUB/PDF/MOBI/TXT/MD）及发布清单
-- 项目设置和命令参考
-
-仪表盘从每个项目的 `status.json` 文件动态读取。预构建的 `dist/` 已内置 — 插件用户无需构建步骤。
-
-本地开发环境运行:
+`/book-status --ui` 打开 Svelte 仪表盘:流水线追踪、12 个智能体卡片、章节表格、6 阶段编辑看板、带各轴分数的就绪判定、输出文件、设置。内置预构建 `dist/`。
 
 ```bash
-cd dashboard
-npm install
-npm run dev     # http://localhost:5173
-npm run build   # 重新构建 dist/
+cd dashboard && npm install && npm run dev   # http://localhost:5173
+npm run build                                 # 重建 dist/
 ```
-
-## 设计原则
-
-- **先计划后执行** — 先写大纲，验证后再写作
-- **幂等性** — 跳过已完成章节，从中断处恢复
-- **Token 高效** — 基于摘要的上下文，而非全文
-- **体裁感知** — 每种体裁有不同的结构、模板和验证
-- **质量关卡** — 每个阶段必须通过标准才能继续
 
 ## 外部依赖
 
-用于 EPUB/PDF 输出（Phase 5）:
-
 ```bash
-brew install pandoc        # EPUB/PDF 转换
-brew install texlive       # 支持 CJK/中文的 PDF
-brew install --cask calibre  # MOBI（Kindle）转换 — 可选
+brew install pandoc                 # EPUB/PDF(Phase 5 必需)
+brew install texlive                # 支持 CJK 的 PDF
+brew install --cask calibre         # MOBI(可选)
+brew install epubcheck              # EPUB 校验(可选,推荐)
+npm i -g @mermaid-js/mermaid-cli    # Mermaid 图表 → SVG(可选)
+brew install d2 graphviz librsvg    # D2 / Graphviz 图表、SVG → PNG(可选)
 ```
 
-### 故障排除
+不内置图像生成。会话中存在图像工具时(MCP 图像服务、Replicate、本地 Stable Diffusion),`illustrator` 与 `cover-designer` 直接生成;否则在 `visuals/prompts/` 交付按后端编译的提示词包。
 
 <details>
-<summary>找不到 pandoc</summary>
+<summary>故障排查</summary>
 
-通过 Homebrew 安装:
-```bash
-brew install pandoc
-```
-</details>
-
-<details>
-<summary>CJK/PDF 字符缺失或乱码</summary>
-
-安装支持 CJK 的 LaTeX 发行版:
-```bash
-brew install texlive
-# 或最小安装:
-brew install basictex && sudo tlmgr install collection-langkorean
-```
-</details>
-
-<details>
-<summary>安装后找不到插件命令</summary>
-
-重启 Claude Code 以重新加载插件:
-```bash
-claude restart
-```
+- **pandoc not found** — `brew install pandoc`
+- **PDF 中文乱码** — `brew install texlive`
+- **插件命令不存在** — 重启 Claude Code
+- **Phase 4 永远不结束** — 门槛是含 `verdict: PASS` 的 `edits/readiness-report.md`;运行 `/book-edit 6`
+- **每章图片风格不一** — 缺少风格锁定;先 `/book-visuals plan` 再 `/book-visuals lock`
 </details>
 
 ## 项目结构
 
-创建图书项目后，Velith 会设置以下结构:
-
 ```
 {project-dir}/
-├── PRD.md          # 图书需求
-├── STYLE.md        # 文体、语调、规范
-├── ideation.md     # 想法、市场调研
-├── outline.md      # 完整章节大纲
-├── drafts/         # 章节草稿
-│   ├── ch00-foreword.md
-│   ├── ch01-xxx.md
-│   └── ...
-├── edits/          # 编辑报告
-│   └── editorial-report.md
-├── publish/        # 最终输出文件
-│   ├── book.epub
-│   ├── book.pdf
-│   ├── book.mobi
-│   └── metadata.yaml
-└── sources/        # 源材料引用
+├── PRD.md              # 需求 + 读者承诺
+├── STYLE.md            # 声音指纹、声音样本、规则、声音锁定
+├── ideation.md         # 概念、对标书、选定概念
+├── outline.md          # 章节规格、图表计划、验证、批准
+├── bible.md            # 角色/概念、术语规则、时间线、逐章台账
+├── art-bible.md        # 视觉识别、图表系统、风格锁定
+├── sources/            # 参考资料 + INDEX.md
+├── drafts/             # ch{NN}-{slug}.md, ch{NN}-scenes.md(编辑期间原地修改)
+├── visuals/            # plan, manifest, figures/, illustrations/, photos/, ref/, prompts/
+├── edits/              # 00-fact-check … 06-readiness-report, readiness-report.md, editorial-report.md
+├── publish/            # book.epub/pdf/…、metadata、前后辅文、cover/、marketing、checklists
+└── .velith/            # status.json, art-bible.json, critiques/, snapshots/, metrics.json
 ```
 
 ## 集成
 
-### 内置智能体工作流
+- **alcove** — 在 `/book-init` 与写作期间将文档库作为资料源检索。
+- **obsidian-forge** — `of book init / sync / export`,从 Obsidian 库直接写作。
+- **humanize-korean** — 如已安装,`style-doctor` 可将其作为韩语最终润色运行。
+- **图像生成 MCP** — 存在时由 `illustrator` 与 `cover-designer` 使用。
 
-无需额外设置 — 在流程中自动运行：
-
-- **discover** — 在 `/book-outline` 期间由 `book-architect` 在结构确定前探查书籍概念中的盲点和矛盾
-- **council** — 在 `/book-outline` 和 `/book-edit` 期间将多种编辑视角（发展性、结构性、逐行编辑）融入提纲和修订决策
-
-### alcove — 将研究库作为源材料
-
-[alcove](https://github.com/epicsagas/alcove) 是一个私有文档服务器，让 Velith 智能体在起草过程中引用您现有的笔记、研究资料和项目文档作为源材料。
-
-**适用于以下场景：**
-- 您有多年积累的研究笔记、访谈记录、参考文献，希望智能体从中引用
-- 撰写非虚构作品时需要从结构化的项目文档中提取事实
-- 维护术语表、时间线、世界观设定等希望智能体遵循的知识库
-
-**使用方法：**
-1. 在 Claude Code 设置中将 alcove 安装并配置为 MCP 服务器
-2. 在 `/book-init` 中将 alcove 项目指定为来源
-3. 起草时智能体会自动查询 alcove 以反映您的研究
-
-### obsidian-forge — 从思考到写作
-
-[obsidian-forge](https://github.com/epicsagas/obsidian-forge) 将 Obsidian 知识库与 Velith 连接，让您在 Obsidian 中研究、用 Velith 写作时无需手动复制文件。
-
-**适用于以下场景：**
-- 研究资料、人物档案、参考笔记已存在于 Obsidian 知识库中
-- 希望在提交给 Velith 之前，先在 Obsidian 的双向链接环境中反复打磨大纲
-- 与偏好使用 Obsidian 进行头脑风暴的合著者协作
-
-**使用方法：**
-
-```bash
-# 在 Obsidian 知识库中创建图书项目（01-Projects/）
-of book init my-book --genre non-fiction --lang ko
-
-# 在 Obsidian 中工作：研究笔记、人物档案、参考资料
-# 用 book/my-book 标签将笔记链接为源材料
-of book sync my-book
-
-# 准备好写作时导出到独立目录
-of book export my-book --output ~/projects/my-book
-
-# 在导出的项目上运行 velith
-> /loom
-```
-
-alcove 和 obsidian-forge 都是**可选的** — Velith 可以独立运行。
+均为可选。Velith 可独立运行。
 
 ## 贡献
 
-参见 [CONTRIBUTING.md](../../CONTRIBUTING.md)。欢迎 PR — 查看标有 `good first issue` 的 issue。
+参见 [CONTRIBUTING.md](../../CONTRIBUTING.md)。提示词即产品:`quality-bar.md` 或智能体文件的改动会影响每一本书。用 `examples/` 与 `node velith.mjs metrics` 测试。
 
 ## 许可证
 

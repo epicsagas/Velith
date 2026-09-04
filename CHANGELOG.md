@@ -1,5 +1,46 @@
 # Changelog
 
+## [0.7.0] - 2026-09-04
+
+Human-quality release. The pipeline is rewritten around one standard: a cold reader cannot tell the book was machine-drafted.
+
+### Added
+- `skills/loom/quality-bar.md` — shared standard: five-axis rubric with anchors, the 2026 AI-tell taxonomy (structural, emotional, nonfiction/technical, English lexical, Korean, Japanese), cold-read critique protocol, language and format notes, visual rules.
+- Agents `beta-reader` (cold read as target readers, readiness verdict gating publish), `fact-checker` (claim ledger, source and web verification, removal of unverifiable claims, code execution), `art-director` (art bible, look lock, vision QA, contact-sheet review), `figure-engineer` (code-rendered diagrams, charts, technical drawings, maps' base layers).
+- Skill `/book-visuals` — the book visual system: art bible, look lock, figure plan, code-rendered figures, model-agnostic prompt compilation, vision QA, asset validation, print/EPUB constraints. `/book-illustrate` is now an alias into it.
+- `velith.mjs metrics` — deterministic prose metrics (sentence cv, mid-band share, punch-ending share, TTR, em-dash and AI-tell density for en/ko, "not X but Y", rhetorical questions, connectives, dialogue share, cross-chapter repeated 3/4-grams, flags).
+- `velith.mjs snapshot` — copies `drafts/` and bible/STYLE/outline before rewriting stages.
+- `velith.mjs images compile|check|render` — per-backend prompts (Midjourney, gpt-image, SD/FLUX, Imagen, Ideogram) from the art bible; asset validation (dimensions, aspect, size, alt text, references, manifest coverage); figure rendering with mmdc/d2/dot/rsvg-convert/python3 detection.
+- `bible.md` (story/book bible with per-chapter ledger), `art-bible.md`, voice lock in `STYLE.md`, `.velith/critiques/`, `visuals/`.
+- Editing stage 0 (fact check) and stage 6 (readiness); `edits/readiness-report.md` frontmatter parsed into `status.json` and shown on the dashboard Overview.
+- Agent `effort` levels in frontmatter (`max` for chapter-writer and beta-reader).
+- `scripts/gen-codex-agents.mjs` — Codex TOMLs generated from `agents/*.md`.
+- Dashboard: 12 agent cards, readiness badge with axes, `readiness` edit stage; 9 new i18n keys in all 10 locales.
+
+### Changed
+- Every skill and agent rewritten as craft guidance for frontier models: goals, materials, the bar, judgment. Genre skills now carry structure options, scene/argument craft, genre-specific tells, language notes (en/ko/ja), visuals, and validation lists.
+- Context policy: full-manuscript reading replaces summary-based context (supersedes ADR-005).
+- Drafting: sequential for narrative genres; parallel (≤3) only for DAG-independent technical chapters (amends ADR-003). Voice lock precedes volume. `chapter-writer` drafts, critiques with quoted lines, revises, updates the bible ledger.
+- `scene-generator` produces scene plans, not prose (removes the double-drafting seam).
+- Editing stages 2-5 rewrite the manuscript in place with snapshots; `book-edit` writes `edits/editorial-report.md` on PASS (fixes Phase 4 never reaching 100%).
+- `style-doctor` uses metrics + the 2026 taxonomy and edits in place; `continuity-editor` also hunts repetition; `cover-designer` and `illustrator` consume the art bible and run vision QA; `marketing-expert` leads with the readiness report's strengths.
+- `book-publish` gates on readiness PASS, strips chapter frontmatter before pandoc, builds front/back matter, runs epubcheck, and writes KDP and Korean platform checklists.
+- `${CLAUDE_PLUGIN_ROOT}` replaces the `{PLUGIN_ROOT}` placeholder in skills and agents.
+- Plugin description and manifests list 12 agents; Cursor/Cline/Aider rule files updated to the new pipeline.
+
+### Fixed
+- `velith.mjs scan`: terminal dashboard rendered on one line (missing newlines); `**Genre:**`/`**Language:**`/`**Title:**` bold-label parsing; chapter count parsing from `**Chapters:** N`; `illustrator` missing from agent status; Phase 4 completion detection.
+- Stale `scripts/agent-status.js` and `skills/book-status/scripts/scan-project.js` paths in Codex TOMLs and `book-illustrate`.
+
+
+
+## [0.6.0] - 2026-09-03
+
+### Added
+- Scan: prune zombie project rows and registry entries (moved/deleted paths, non-book directories); dashboard indexes by `last_updated` so `--ui` opens the right project.
+- Serve: DB hot-reload on file change and atomic writes; static handler containment guard.
+- Dashboard: day-ago labels, word-target guard, dev-server upload parity with `velith.mjs serve` (8 MB gate, extension check).
+
 ## [0.5.0] - 2026-09-02
 
 ### Added

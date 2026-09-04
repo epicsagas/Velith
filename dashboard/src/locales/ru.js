@@ -17,7 +17,7 @@ export default {
   "app.exampleMode": "Режим примера",
   "app.generated": "Сгенерировано",
   "app.hoursAgo": "{n} ч назад",
-  "app.daysAgo": "{n} д назад",
+  "app.daysAgo": "{n} д. назад",
   "app.justNow": "только что",
   "app.loading": "Загрузка...",
   "app.minutesAgo": "{n} мин назад",
@@ -217,5 +217,14 @@ export default {
   "genre.academic.h1": "Управление цитированием",
   "genre.academic.h2": "Валидация методологии",
   "genre.academic.h3": "Подготовка к рецензированию",
-  "genre.academic.tip": "Поместите исследовательские статьи в sources/ для цитирования при написании."
+  "genre.academic.tip": "Поместите исследовательские статьи в sources/ для цитирования при написании.",
+  "agent.illustrator": "План внутренних иллюстраций и промпты",
+  "agent.fact-checker": "Проверка фактов и источников",
+  "agent.beta-reader": "Бета-чтение и вердикт о готовности",
+  "overview.readiness": "Готовность",
+  "readiness.PASS": "Пройдено",
+  "readiness.REVISE": "Доработать",
+  "edit.stage.readiness": "Готовность",
+  "agent.art-director": "Арт-библия, фиксация стиля и проверка изображений",
+  "agent.figure-engineer": "Диаграммы, графики и чертежи, рендеримые из кода"
 };

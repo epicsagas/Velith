@@ -217,5 +217,14 @@ export default {
   "genre.academic.h1": "引用管理",
   "genre.academic.h2": "方法論の検証",
   "genre.academic.h3": "査読準備",
-  "genre.academic.tip": "執筆時の引用用に、研究論文をsources/に配置してください。"
+  "genre.academic.tip": "執筆時の引用用に、研究論文をsources/に配置してください。",
+  "agent.illustrator": "本文イラストの計画とプロンプト生成を担当するエージェント",
+  "agent.fact-checker": "事実確認と出典検証を担当するエージェント",
+  "agent.beta-reader": "読者シミュレーションと出版準備度判定を担当するエージェント",
+  "overview.readiness": "出版準備度",
+  "readiness.PASS": "合格",
+  "readiness.REVISE": "要修正",
+  "edit.stage.readiness": "準備度判定",
+  "agent.art-director": "アートバイブル策定・ルック確定・画像検収エージェント",
+  "agent.figure-engineer": "コード生成の図表・チャート・図面制作エージェント"
 };

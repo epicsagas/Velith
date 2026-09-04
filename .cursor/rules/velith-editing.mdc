@@ -1,68 +1,56 @@
 ---
-description: Velith 5-stage editing pipeline, AI-slop detection patterns, and style conventions
+description: Velith editing pipeline (7 stages), the 2026 AI-tell taxonomy, cold-read protocol, and style conventions
 globs:
   - "**/edits/**"
   - "**/STYLE.md"
+  - "**/bible.md"
 alwaysApply: false
 ---
 
 # Velith — Editing Pipeline and Style Conventions
 
-## 5-Stage Editing Pipeline
+Full reference: `skills/loom/quality-bar.md`. Editing means rewriting the manuscript in place; every stage snapshots `drafts/` first (`velith.mjs snapshot`) and files a report of what changed.
 
-| Stage | Focus | What to check |
-|-------|-------|---------------|
-| 1. Editorial Assessment | Macro structure | Chapter order, pacing, gap analysis, argument flow |
-| 2. Developmental Edit | Flow and content | Transitions, evidence quality, redundant sections, missing content |
-| 3. Line Edit | Sentence-level clarity | Word choice, sentence rhythm, paragraph flow, voice consistency |
-| 4. Copy Edit | Grammar and consistency | Grammar, punctuation, terminology consistency, formatting |
-| 5. Proofread | Final polish | Typos, spacing, formatting artifacts, cross-reference accuracy |
+## Stages
 
-## AI-Slop Detection Patterns
+| # | Stage | Rewrites | Report |
+|---|-------|----------|--------|
+| 0 | Fact check (nonfiction, technical, academic; fiction with real-world claims) | Yes: unverifiable claims removed | `edits/00-fact-check.md`, `edits/claim-ledger.md` |
+| 1 | Editorial assessment: promise delivery, pacing map, redundancies, voice consistency, five-axis score, intervention plan | No | `edits/01-assessment.md` |
+| 2 | Developmental: restructure (author approval), chapter rewrites via chapter-writer, deepen; then continuity-editor | Yes | `edits/02-developmental.md`, `edits/continuity-report.md` |
+| 3 | Line edit: style-doctor measures + rewrites; then meaning-level pass | Yes | `edits/03-line-edit.md`, `edits/style-report.md` |
+| 4 | Copy edit: names, terms, numbers, punctuation, 띄어쓰기, headings, citations | Yes | `edits/04-copy-edit.md` |
+| 5 | Proofread; set chapters `status: final` | Yes | `edits/05-proofread.md` |
+| 6 | Readiness: beta-reader cold read; PASS or REVISE with fix list (max two loops, then author) | No | `edits/06-readiness-report.md` → `edits/readiness-report.md`; on PASS `edits/editorial-report.md` |
 
-These patterns indicate AI-generated text that reads as inauthentic. Flag and fix:
+## Five-axis rubric (1-10)
 
-**Excessive modifiers:** revolutionary, game-changer, groundbreaking, cutting-edge, transformative, innovative, seamless, robust, comprehensive
+Voice and prose · Structure and pacing · Depth (character / argument) · Specificity and grounding · Reader experience. Readiness PASS: every axis ≥ 7, mean ≥ 7.5, no put-down point in chapters 1-3.
 
-**Repetitive transitions:** overuse of "however", "moreover", "furthermore", "additionally", "notably"
+## The tells that matter in 2026
 
-**Generic conclusions:** "in conclusion", "in summary", "ultimately", "at the end of the day", "it's important to note"
+Structural: uniform paragraph length; punch-line paragraph endings; tricolons; symmetrical scenes; "not X but Y"; balanced antithesis; reflective codas; em-dash cascades; rhetorical question chains; summary-then-scene; naming the theme.
 
-**Weak hedging:** "can be", "seems like", "it could be argued", "one might say", "arguably"
+Emotional (fiction, memoir): precise self-knowledge; physical-reaction inventories; universal kindness; dialogue that answers; "something shifted"; tidy resolution; interchangeable voices; sensory garnish.
 
-**English AI markers:** "delve", "tapestry", "landscape" (metaphorical), "nuanced", "multifaceted", "plethora", "myriad"
+Nonfiction/technical: hedged authority without a source; invented specificity; framework inflation; listicle drift; preview-and-recap; uniform confidence; analogy padding; code that never fails.
 
-**List overuse:** 5+ consecutive bullet points without prose context
+Korean: 번역투 무생물 주어; ~것이다 남발; 피동 과잉; 감정 명명; 접속부사 연쇄; ~에 대해/~을 통해; 대명사·~들 과잉; 존댓말·시제 흔들림; 균일한 문장 길이; 한자어 과밀; 설명형 대화.
 
-## Style Drift Indicators
+English lexical: delve, tapestry, testament to, navigate/landscape (metaphorical), nuanced, multifaceted, plethora, myriad, robust, seamless, leverage, unpack, at its core, it's worth noting, a beacon of, resonate, embark, foster, underscore, pivotal, game-changer, transformative, holistic, synergy, paradigm, elevate, vibrant, bustling.
 
-Quantitative signals that a chapter's style has drifted from the rest:
+## Cold-read protocol
 
-- **Sentence length variance** — compare per-chapter average against book mean
-- **Paragraph length distribution** — flag chapters with significantly different patterns
-- **Type-token ratio** — vocabulary diversity should remain consistent
-- **POV mixing** — detect shifts between 1st/3rd person within chapters
+Read once at reading speed without fixing; mark where attention dropped or the machine showed. Diagnose each mark with a quoted line and a named tell. Score the five axes with one honest sentence each. Prioritize the three fixes that most raise the lowest axis. Only then revise. A critique with no quoted lines is not a critique.
 
-## Severity Classification
+## Metrics
 
-| Level | Criteria | Action |
-|-------|----------|--------|
-| Critical | Breaks reader comprehension, factual error, POV violation | Must fix before proceeding |
-| Major | Style drift, inconsistent tone, structural gap | Should fix, flag for review |
-| Minor | Word choice, transition quality, formatting | Nice to fix, batch at proofread stage |
+`node velith.mjs metrics <drafts-dir>` reports per chapter: sentence length mean/sd/cv, mid-band share, paragraph length distribution, punch-ending share, type-token ratio, em-dash density, AI-tell hits per 1k (en/ko), "not X but Y" count, rhetorical question density, connectives, dialogue share, and cross-chapter repeated 3/4-grams. Flags: cv < 0.4; mid-band > 60%; punch endings > 35%; tells > 2/1k; em-dashes > 3/1k; any 4-gram ×3+; TTR > 15% below median.
 
-## Tone Rules
+## Severity
 
-- All tone checks reference `STYLE.md` in the project root
-- Flag abrupt shifts between chapters
-- Detect language mixing violations (e.g., Korean text with unmarked English insertions)
-- Check emphasis overuse (bold, italic, exclamation marks)
+Critical: contradiction of fact/character/timeline, fabricated claim or citation, failing code, put-down point in chapters 1-3. Major: repeated image or scene shape, term defined twice, structural gap, voice drift. Minor: spelling, formatting, single tell instance.
 
-## Editing Output
+## Tone rules
 
-Generate `edits/editorial-report.md` with:
-- Issue location (file, line range)
-- Pattern detected
-- Severity level
-- Fix suggestion
-- Quantitative metrics (sentence length, vocabulary diversity, etc.)
+All voice checks reference `STYLE.md`'s voice fingerprint and voice-lock passages. The author's deliberate constructions override the taxonomy. Never sand a voice to neutral.

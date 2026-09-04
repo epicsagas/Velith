@@ -17,7 +17,7 @@ export default {
   "app.exampleMode": "Modalità esempio",
   "app.generated": "Generato",
   "app.hoursAgo": "{n}h fa",
-  "app.daysAgo": "{n}g fa",
+  "app.daysAgo": "{n} g fa",
   "app.justNow": "adesso",
   "app.loading": "Caricamento...",
   "app.minutesAgo": "{n} min fa",
@@ -217,5 +217,14 @@ export default {
   "genre.academic.h1": "Gestione delle citazioni",
   "genre.academic.h2": "Validazione della metodologia",
   "genre.academic.h3": "Preparazione alla peer review",
-  "genre.academic.tip": "Inserisci gli articoli di ricerca in sources/ per le citazioni durante la stesura."
+  "genre.academic.tip": "Inserisci gli articoli di ricerca in sources/ per le citazioni durante la stesura.",
+  "agent.illustrator": "Piano delle illustrazioni interne e prompt",
+  "agent.fact-checker": "Verifica dei fatti e delle fonti",
+  "agent.beta-reader": "Lettura beta e verdetto di prontezza",
+  "overview.readiness": "Prontezza",
+  "readiness.PASS": "Approvato",
+  "readiness.REVISE": "Da rivedere",
+  "edit.stage.readiness": "Prontezza",
+  "agent.art-director": "Bibbia visiva, blocco dello stile e revisione immagini",
+  "agent.figure-engineer": "Diagrammi, grafici e disegni generati da codice"
 };

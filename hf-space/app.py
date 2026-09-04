@@ -183,7 +183,7 @@ headings, cross-reference map, and redundancy warnings.
 
 The actual Velith plugin (Claude Code) adds:
 - **6-phase quality gates** — each phase validates before proceeding
-- **7 specialized agents** — architecture, drafting, continuity, style, cover, marketing
+- **12 specialized agents** — architecture, scenes, drafting, continuity, fact-check, style, beta-read, art direction, figures, illustration, cover, marketing
 - **Genre templates** — fiction, non-fiction, technical, screenplay, poetry, game, academic
 - **5-stage editing** — Assessment → Developmental → Line → Copy → Proofread
 - **EPUB/PDF/MOBI export** via Pandoc
@@ -215,7 +215,7 @@ Claude Code · Codex CLI · Agy · Cursor · Cline · Aider
 |--|---------|
 | 📋 | 6-phase pipeline with quality gates |
 | 📖 | 8 genre templates + custom genres |
-| 🤖 | 7 specialized agents |
+| 🤖 | 12 specialized agents |
 | ✏️ | 5-stage editing pipeline |
 | 🔄 | Resume from any phase |
 | 📦 | EPUB, PDF, MOBI, TXT, Markdown output |

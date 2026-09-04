@@ -217,5 +217,14 @@ export default {
   "genre.academic.h1": "引用管理",
   "genre.academic.h2": "方法论验证",
   "genre.academic.h3": "同行评审准备",
-  "genre.academic.tip": "将研究论文放入 sources/ 以便撰写初稿时引用。"
+  "genre.academic.tip": "将研究论文放入 sources/ 以便撰写初稿时引用。",
+  "agent.illustrator": "内页插图规划与提示词生成智能体",
+  "agent.fact-checker": "事实核查与来源验证智能体",
+  "agent.beta-reader": "读者冷读与出版就绪判定智能体",
+  "overview.readiness": "出版就绪度",
+  "readiness.PASS": "通过",
+  "readiness.REVISE": "需修改",
+  "edit.stage.readiness": "就绪判定",
+  "agent.art-director": "美术圣经制定、风格锁定与图像审核智能体",
+  "agent.figure-engineer": "代码渲染的图表、图形与工程图智能体"
 };
