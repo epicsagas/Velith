@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velith — books to the human-quality bar</title>
+<meta name="description" content="A six-phase book-writing pipeline for AI coding agents: from blank page to publishable EPUB, gated by a cold read that refuses to publish what readers would put down.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23FBF7EE'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='20' font-style='italic' text-anchor='middle' fill='%23221D16'%3EV%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF7EE; --paper2:#F4EDDE; --ink:#221D16; --graphite:#6E6558;
+    --pencil:#A93527; --pencilsoft:#C86A5C; --rule:#E3D9C4; --ok:#3E6B4F;
+    --disp:'Fraunces',Georgia,serif; --body:'Newsreader',Georgia,serif; --mono:'IBM Plex Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font:400 18px/1.72 var(--body)}
+  ::selection{background:var(--pencil);color:var(--paper)}
+  a{color:var(--pencil);text-decoration:none}
+  a:hover{text-decoration:underline}
+  :focus-visible{outline:2px solid var(--pencil);outline-offset:3px}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 26px}
+
+  nav{border-bottom:1px solid var(--rule);background:rgba(251,247,238,.92);position:sticky;top:0;z-index:10;backdrop-filter:blur(6px)}
+  .navin{display:flex;align-items:baseline;gap:30px;height:60px}
+  .brand{font:600 22px var(--disp);font-style:italic;color:var(--ink);letter-spacing:.01em}
+  .brand:hover{text-decoration:none}
+  .navin .sp{flex:1}
+  .navin a.lnk{color:var(--graphite);font-size:15.5px}
+  .navin a.lnk:hover{color:var(--ink)}
+
+  /* hero = title page */
+  .titlepage{text-align:center;padding:96px 0 70px;position:relative}
+  .rule3{width:64px;border-top:3px double var(--rule);margin:0 auto}
+  .tp-kicker{font:400 13.5px var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--graphite)}
+  h1{font:600 clamp(56px,9vw,104px)/1.02 var(--disp);letter-spacing:-.015em;margin:26px 0 10px}
+  .tp-sub{font:400 clamp(21px,2.6vw,27px)/1.4 var(--disp);font-style:italic;color:var(--ink);max-width:620px;margin:14px auto 0}
+  .tp-desc{color:var(--graphite);font-size:17.5px;max-width:600px;margin:26px auto 0}
+  .tp-cta{margin-top:38px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-block;font:600 16.5px var(--disp);border-radius:3px;padding:13px 30px;border:1px solid var(--ink)}
+  .btn.solid{background:var(--ink);color:var(--paper)}
+  .btn.solid:hover{background:var(--pencil);border-color:var(--pencil);text-decoration:none}
+  .btn.line{color:var(--ink)}
+  .btn.line:hover{border-color:var(--pencil);color:var(--pencil);text-decoration:none}
+  .tp-hosts{margin-top:34px;font:400 13px var(--mono);color:var(--graphite)}
+
+  /* manuscript demo */
+  .ms{max-width:680px;margin:58px auto 0;text-align:left;background:#FFFDF7;border:1px solid var(--rule);box-shadow:0 1px 0 var(--rule),0 14px 34px rgba(60,45,20,.08);padding:44px 48px 40px;position:relative}
+  .ms .folio{font:400 12px var(--mono);color:var(--graphite);letter-spacing:.14em;text-align:center;border-bottom:1px solid var(--rule);padding-bottom:14px;margin-bottom:26px}
+  .ms p{font-size:18.5px;margin-bottom:14px}
+  .ms .cut{position:relative;white-space:nowrap}
+  .ms .cut::after{content:"";position:absolute;left:-2%;right:-2%;top:56%;height:2.5px;background:var(--pencil);transform:rotate(-1.6deg)}
+  .ms .anim .cut::after{width:0;animation:strike .7s ease .9s forwards}
+  @keyframes strike{to{width:104%}}
+  .ms .fix{color:var(--pencil);font-style:italic}
+  .ms .note{font:400 14.5px/1.6 var(--disp);font-style:italic;color:var(--pencil);border-left:2px solid var(--pencilsoft);padding-left:14px;margin:22px 0 0}
+  .verdict{position:absolute;top:20px;right:22px;transform:rotate(7deg);border:2px solid var(--ok);color:var(--ok);font:600 12px var(--mono);letter-spacing:.18em;padding:6px 12px;border-radius:2px}
+  @media(max-width:640px){.ms{padding:30px 24px}.verdict{top:12px;right:12px}}
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.ms .anim .cut::after{animation:none;width:104%}}
+
+  section{padding:80px 0}
+  section + section{border-top:1px solid var(--rule)}
+  .chap{font:400 13px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--graphite);margin-bottom:12px}
+  h2{font:600 clamp(28px,3.8vw,40px)/1.15 var(--disp);letter-spacing:-.01em;margin-bottom:16px}
+  .lead{font-size:19px;color:#4A4234;max-width:660px}
+  .lead em{color:var(--pencil);font-style:italic}
+
+  /* toc / phases */
+  .toc{margin-top:44px;max-width:720px}
+  .toc a{display:flex;align-items:baseline;gap:12px;padding:15px 6px;border-bottom:1px solid var(--rule);color:var(--ink)}
+  .toc a:first-child{border-top:1px solid var(--rule)}
+  .toc a:hover{text-decoration:none;background:var(--paper2)}
+  .toc .no{font:500 13px var(--mono);color:var(--pencil);min-width:26px}
+  .toc .nm{font:600 20px var(--disp);white-space:nowrap}
+  .toc .dots{flex:1;border-bottom:2px dotted #CBBFA4;transform:translateY(-5px)}
+  .toc .ds{font-size:15px;color:var(--graphite);text-align:right;max-width:46%}
+  @media(max-width:640px){.toc .ds{display:none}}
+
+  /* problem */
+  .tells{margin-top:40px;columns:2;column-gap:56px;font-size:17px;color:#4A4234}
+  .tells li{margin:0 0 13px 20px;break-inside:avoid}
+  .tells li::marker{color:var(--pencil)}
+  @media(max-width:700px){.tells{columns:1}}
+
+  /* answer rows */
+  .pairs{margin-top:40px}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:26px;padding:22px 0;border-bottom:1px solid var(--rule)}
+  .pair:first-child{border-top:1px solid var(--rule)}
+  .pair .was{color:var(--graphite)}
+  .pair .now{color:var(--ink)}
+  .pair .now b{font-family:var(--disp);font-weight:600}
+  @media(max-width:700px){.pair{grid-template-columns:1fr;gap:4px}}
+
+  /* axes scorecard */
+  .axes{margin-top:40px;max-width:640px}
+  .axis{margin-bottom:20px}
+  .axis .t{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+  .axis .t b{font:600 17px var(--disp)}
+  .axis .t span{font:400 13px var(--mono);color:var(--graphite)}
+  .bar{height:9px;background:var(--paper2);border:1px solid var(--rule);position:relative}
+  .bar i{position:absolute;inset:1px auto 1px 1px;background:var(--ink)}
+  .bar .gate{position:absolute;top:-5px;bottom:-5px;left:70%;width:2px;background:var(--pencil)}
+  .gatenote{font:400 14px var(--mono);color:var(--pencil);margin-top:4px}
+
+  /* dramatis personae */
+  .cast{margin-top:40px;columns:2;column-gap:56px}
+  .cast div{break-inside:avoid;margin-bottom:16px;font-size:16.5px;color:#4A4234}
+  .cast b{font:600 17px var(--disp);color:var(--ink);display:block}
+  @media(max-width:700px){.cast{columns:1}}
+
+  /* usage */
+  .usage{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:26px}
+  .ucard{border:1px solid var(--rule);background:#FFFDF7;padding:26px 28px}
+  .ucard h3{font:600 20px var(--disp);margin-bottom:12px}
+  pre{background:#241F17;color:#F0E8D8;border-radius:3px;padding:16px 18px;overflow-x:auto;font:400 13.5px/1.8 var(--mono);margin:12px 0}
+  pre .c{color:#9A8F7C}
+  pre .p{color:#E8A87C}
+  .ucard p{font-size:15.5px;color:#4A4234}
+  @media(max-width:820px){.usage{grid-template-columns:1fr}}
+
+  /* compare */
+  .cmpwrap{margin-top:40px;overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:15.5px;min-width:640px}
+  th{font:600 14px var(--disp);text-align:left;padding:12px 14px;border-bottom:2px solid var(--ink)}
+  td{padding:11px 14px;border-bottom:1px solid var(--rule);color:#4A4234;vertical-align:top}
+  td:first-child{color:var(--ink);font-weight:600}
+  th:first-child{color:var(--pencil)}
+
+  section img.shot{width:100%;border:1px solid var(--rule);margin-top:36px;display:block}
+
+  .final{text-align:center;background:var(--paper2)}
+  .final h2{max-width:660px;margin:0 auto 12px}
+  .final .lead{margin:0 auto}
+
+  /* colophon footer */
+  footer{border-top:3px double var(--rule);padding:40px 0 50px;text-align:center;color:var(--graphite);font-size:14.5px}
+  footer .fim{font:400 15px var(--disp);font-style:italic;margin-bottom:18px}
+  footer a{margin:0 12px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap navin">
+    <a class="brand" href="#top">Velith</a>
+    <span class="sp"></span>
+    <a class="lnk" href="#pipeline">Pipeline</a>
+    <a class="lnk" href="#agents">Agents</a>
+    <a class="lnk" href="#install">Install</a>
+    <a class="lnk" href="https://github.com/epicsagas/Velith">GitHub</a>
+  </div>
+</nav>
+
+<header class="titlepage" id="top">
+  <div class="wrap">
+    <div class="tp-kicker">A WRITING PIPELINE FOR CODING AGENTS · v0.7</div>
+    <h1>Velith</h1>
+    <div class="rule3"></div>
+    <p class="tp-sub">Books to the human-quality bar.</p>
+    <p class="tp-desc">Six phases take a book from a blank page to a publishable EPUB — and hold every chapter, every edit, and every image to one standard: a cold reader who buys books in this genre cannot tell it was machine-drafted.</p>
+    <div class="tp-cta">
+      <a class="btn solid" href="#install">Start a book</a>
+      <a class="btn line" href="https://github.com/epicsagas/Velith">Read the source</a>
+    </div>
+    <p class="tp-hosts">Claude Code · Codex CLI · Grok Build · Agy · Cursor · Cline · Aider</p>
+
+    <div class="ms anim" role="img" aria-label="A manuscript paragraph with one sentence struck through in red and rewritten, and a margin note">
+      <span class="verdict">READINESS · PASS</span>
+      <div class="folio">DRAFTS / CH07 · VOICE LOCKED · REV 3</div>
+      <p>She knew exactly why she had come back to the harbor — not merely for the sea, but for the version of herself she had left on it.</p>
+      <p>Marta walked the pier. <span class="cut">It wasn’t just the salt air; it was the memories that seemed to seep from the very boards beneath her feet.</span> <span class="fix">The boards had memory in them, she thought — her grandmother’s, mostly, and one wet August that was hers alone.</span></p>
+      <p class="note">critic, pass 3 — “seep from the very boards” is tell № 14. Ground it in a real August. — revised below, rescored 8.1</p>
+    </div>
+  </div>
+</header>
+
+<section id="pipeline">
+  <div class="wrap">
+    <p class="chap">The method</p>
+    <h2>A pipeline, not a prompt.</h2>
+    <p class="lead">Frontier models write good sentences. Left alone they still write books readers put down. <em>None of that is a model problem — it is a pipeline problem</em> — and Velith is the pipeline.</p>
+    <div class="toc">
+      <a href="https://github.com/epicsagas/Velith/blob/main/skills/book-init/SKILL.md"><span class="no">0</span><span class="nm">Onboarding</span><span class="dots"></span><span class="ds">reader, promise, scope — and a voice fingerprint from your own writing</span></a>
+      <a href="https://github.com/epicsagas/Velith/blob/main/skills/book-ideation/SKILL.md"><span class="no">1</span><span class="nm">Ideation</span><span class="dots"></span><span class="ds">premise stress-tested against real comparable titles; you choose</span></a>
+      <a href="https://github.com/epicsagas/Velith/blob/main/skills/book-outline/SKILL.md"><span class="no">2</span><span class="nm">Outlining</span><span class="dots"></span><span class="ds">structure chosen and justified, chapter specs, the book bible</span></a>
+      <a href="https://github.com/epicsagas/Velith/blob/main/skills/book-draft/SKILL.md"><span class="no">3</span><span class="nm">Drafting</span><span class="dots"></span><span class="ds">voice locked on a sample, then full-context chapters, critiqued and revised</span></a>
+      <a href="https://github.com/epicsagas/Velith/blob/main/skills/book-edit/SKILL.md"><span class="no">4</span><span class="nm">Editing</span><span class="dots"></span><span class="ds">fact check, developmental, line, copy, proofread — rewritten in place</span></a>
+      <a href="https://github.com/epicsagas/Velith/blob/main/skills/book-publish/SKILL.md"><span class="no">5</span><span class="nm">Publishing</span><span class="dots"></span><span class="ds">EPUB / PDF / MOBI, epubcheck, cover from the art bible</span></a>
+    </div>
+    <img class="shot" src="assets/features.png" alt="Diagram of the Velith feature system" loading="lazy">
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="chap">Why books fail</p>
+    <h2>What readers actually notice.</h2>
+    <p class="lead">Velith’s quality bar is built on the 2026 AI-tell taxonomy — the things that put readers down now, not the “delve” lists of two years ago.</p>
+    <ul class="tells">
+      <li>A voice that drifts by chapter eight, because each chapter was written without the ones before it</li>
+      <li>Characters who explain their feelings instead of having them</li>
+      <li>Statistics and citations that do not exist</li>
+      <li>Paragraphs that all end on a punch line, in a rhythm readers feel before they name</li>
+      <li>“Not X but Y” constructions every other page</li>
+      <li>Illustrations that change style every chapter</li>
+    </ul>
+    <div class="pairs">
+      <div class="pair"><div class="was">Agents receive chapter summaries.</div><div class="now"><b>Every agent reads the entire manuscript.</b> Frontier models carry a million tokens; a novel is under 200K. Summaries are what made the voice drift.</div></div>
+      <div class="pair"><div class="was">One pass per chapter, saved as-is.</div><div class="now"><b>Draft → cold critique with quoted lines → revise</b> — before the file is ever saved.</div></div>
+      <div class="pair"><div class="was">Editing produces reports.</div><div class="now"><b>Editing rewrites the manuscript in place</b>, with snapshots, across seven stages.</div></div>
+      <div class="pair"><div class="was">“Files exist” counts as done.</div><div class="now"><b>Publishing is gated by simulated readers:</b> three target readers and one genre professional cold-read the book. Every axis ≥ 7, no put-down point in the first three chapters — or the verdict is REVISE.</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="chap">The gate</p>
+    <h2>Five axes. Scored honestly. Published only above the line.</h2>
+    <p class="lead">The same rubric <em>every</em> writing, editing, and reviewing agent reads. Voice lock needs axis one at 7 or better. Publication needs all five.</p>
+    <div class="axes" role="img" aria-label="The five readiness axes, each scored on a ten-point bar with the publishing gate at seven">
+      <div class="axis"><div class="t"><b>Voice &amp; prose</b><span>readiness needs ≥ 7</span></div><div class="bar"><i style="width:82%"></i><span class="gate"></span></div></div>
+      <div class="axis"><div class="t"><b>Structure &amp; pacing</b><span>≥ 7</span></div><div class="bar"><i style="width:76%"></i><span class="gate"></span></div></div>
+      <div class="axis"><div class="t"><b>Depth</b><span>≥ 7</span></div><div class="bar"><i style="width:74%"></i><span class="gate"></span></div></div>
+      <div class="axis"><div class="t"><b>Specificity &amp; grounding</b><span>≥ 7 — the fact-checker’s ledger feeds this</span></div><div class="bar"><i style="width:78%"></i><span class="gate"></span></div></div>
+      <div class="axis"><div class="t"><b>Reader experience</b><span>≥ 7, mean ≥ 7.5</span></div><div class="bar"><i style="width:80%"></i><span class="gate"></span></div></div>
+      <p class="gatenote">| = the publishing gate. Below it, the verdict is REVISE and the loop runs again.</p>
+    </div>
+  </div>
+</section>
+
+<section id="agents">
+  <div class="wrap">
+    <p class="chap">Dramatis personae</p>
+    <h2>Twelve specialists, one shared standard.</h2>
+    <p class="lead">Skills are the entry points; these are the agents behind them. Each has a minimal toolset and its own effort level — the writer and the beta reader get the most.</p>
+    <div class="cast">
+      <div><b>book-architect</b>Chooses and justifies the structure, scores the outline, proposes restructures.</div>
+      <div><b>scene-generator</b>Plans every fiction scene — purpose, turn, subtext, exit hook. Plans, never prose.</div>
+      <div><b>chapter-writer</b>Drafts one chapter in full context; critiques itself with quoted lines; revises.</div>
+      <div><b>continuity-editor</b>Hunts contradictions and repetitions across the whole manuscript against the bible.</div>
+      <div><b>fact-checker</b>Builds a claim ledger; verifies against sources and the web; removes what it can’t verify.</div>
+      <div><b>style-doctor</b>Measures rhythm, tells, and drift with real metrics — then rewrites in place.</div>
+      <div><b>beta-reader</b>Cold-reads as three target readers and one professional; issues the verdict.</div>
+      <div><b>art-director</b>Owns the one look per book: art bible, look lock, vision QA on every image.</div>
+      <div><b>figure-engineer</b>Renders diagrams, charts, and drawings from code — labels verified against the text.</div>
+      <div><b>illustrator</b>Illustrations from compiled art-bible prompts, for whichever image model you have.</div>
+      <div><b>cover-designer</b>Cover concepts from the art bible — ebook, print wrap, audiobook, marketing.</div>
+      <div><b>marketing-expert</b>Positioning, comparable-title framing, channels, and the launch calendar.</div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <p class="chap">Usage</p>
+    <h2>Two commands start the book. /loom runs the rest.</h2>
+    <p class="lead">You approve at the author checkpoints — concept, outline, voice lock, look lock, readiness. Everything between them runs unattended.</p>
+    <div class="usage">
+      <div class="ucard">
+        <h3>In Claude Code</h3>
+        <pre>/plugin marketplace add epicsagas/plugins
+/plugin install velith@epicsagas</pre>
+        <pre><span class="c"># in your empty book directory</span>
+&gt; /book-init   <span class="c"># genre, reader, voice sample → PRD + STYLE</span>
+&gt; /loom        <span class="c"># detects state, runs the next phase, stops at checkpoints</span></pre>
+        <p>Eighteen skills ship with the plugin, including seven genre craft references — fiction, non-fiction, technical, screenplay, poetry, game, academic — and a custom genre builder.</p>
+      </div>
+      <div class="ucard">
+        <h3>On the command line</h3>
+        <pre>node velith.mjs scan my-book --ui
+node velith.mjs metrics drafts/ch07.md
+node velith.mjs snapshot my-book pre-lineedit
+node velith.mjs images compile my-book
+node velith.mjs images render my-book</pre>
+        <p>Deterministic prose metrics (sentence rhythm, tell density, cross-chapter repetition), snapshots before every rewriting stage, and per-backend image prompts. <code style="font-family:var(--mono);font-size:13.5px">/book-status --ui</code> opens the Svelte dashboard.</p>
+      </div>
+    </div>
+    <img class="shot" src="assets/dashboard.png" alt="The Velith dashboard: pipeline tracker, agent cards, chapter table, editing stages, readiness verdict" loading="lazy">
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="chap">Compared</p>
+    <h2>Against the alternatives.</h2>
+    <div class="cmpwrap">
+    <table>
+      <tr><th></th><th>Velith</th><th>Raw prompts</th><th>Notion AI</th><th>Jasper / Sudowrite</th><th>Scrivener</th></tr>
+      <tr><td>Full-manuscript context</td><td>Every agent, every task</td><td>Manual</td><td>None</td><td>Limited</td><td>n/a</td></tr>
+      <tr><td>Voice lock + critique loop</td><td>Built in</td><td>None</td><td>None</td><td>None</td><td>Manual</td></tr>
+      <tr><td>Fact-checking, claim ledger</td><td>Dedicated agent</td><td>None</td><td>None</td><td>None</td><td>Manual</td></tr>
+      <tr><td>Readiness gate by cold readers</td><td>Blocks publishing</td><td>None</td><td>None</td><td>None</td><td>None</td></tr>
+      <tr><td>Visual consistency per book</td><td>Art bible + vision QA</td><td>Per-image prompts</td><td>None</td><td>None</td><td>None</td></tr>
+      <tr><td>Output</td><td>EPUB, PDF, MOBI, TXT, MD</td><td>Copy-paste</td><td>Markdown / PDF</td><td>DOCX, limited</td><td>DOCX, PDF</td></tr>
+      <tr><td>Control</td><td>Prompt-level, Apache-2.0</td><td>Full</td><td>Black box</td><td>Black box</td><td>Full</td></tr>
+    </table>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2>The reader never has to know. The writer always does.</h2>
+    <p class="lead">Start with onboarding and a page of your own prose — the voice fingerprint does the rest.</p>
+    <div class="tp-cta">
+      <a class="btn solid" href="https://github.com/epicsagas/Velith#installation">Install Velith</a>
+      <a class="btn line" href="https://github.com/epicsagas/Velith/blob/main/docs/launch-playbook.md">Launch playbook</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="fim">· Fin ·</p>
+    <p>Velith · Apache-2.0 · prompts are the product — test every change against <a href="https://github.com/epicsagas/Velith/tree/main/examples">examples/</a></p>
+    <p style="margin-top:14px">
+      <a href="https://github.com/epicsagas/Velith">GitHub</a>
+      <a href="https://github.com/epicsagas/Velith/blob/main/CONTRIBUTING.md">Contributing</a>
+      <a href="https://github.com/epicsagas/Velith/blob/main/CHANGELOG.md">Changelog</a>
+      <a href="https://github.com/epicsagas/Velith#installation">README (7 languages)</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
