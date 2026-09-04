@@ -32,6 +32,8 @@
   .navin a.lnk{color:var(--graphite);font-size:15.5px}
   .navin a.lnk:hover{color:var(--ink)}
 
+  @media(max-width:640px){.navin a.lnk{display:none}}
+
   /* hero = title page */
   .titlepage{text-align:center;padding:96px 0 70px;position:relative}
   .rule3{width:64px;border-top:3px double var(--rule);margin:0 auto}
@@ -48,7 +50,7 @@
   .tp-hosts{margin-top:34px;font:400 13px var(--mono);color:var(--graphite)}
 
   /* manuscript demo */
-  .ms{max-width:680px;margin:58px auto 0;text-align:left;background:#FFFDF7;border:1px solid var(--rule);box-shadow:0 1px 0 var(--rule),0 14px 34px rgba(60,45,20,.08);padding:44px 48px 40px;position:relative}
+  .ms{max-width:680px;margin:58px auto 0;text-align:left;background:#FFFDF7;border:1px solid var(--rule);box-shadow:0 1px 0 var(--rule),0 14px 34px rgba(60,45,20,.08);padding:44px 48px 40px;position:relative;overflow-x:auto}
   .ms .folio{font:400 12px var(--mono);color:var(--graphite);letter-spacing:.14em;text-align:center;border-bottom:1px solid var(--rule);padding-bottom:14px;margin-bottom:26px}
   .ms p{font-size:18.5px;margin-bottom:14px}
   .ms .cut{position:relative;white-space:nowrap}
@@ -97,7 +99,7 @@
   /* axes scorecard */
   .axes{margin-top:40px;max-width:640px}
   .axis{margin-bottom:20px}
-  .axis .t{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+  .axis .t{display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:space-between;align-items:baseline;margin-bottom:7px}
   .axis .t b{font:600 17px var(--disp)}
   .axis .t span{font:400 13px var(--mono);color:var(--graphite)}
   .bar{height:9px;background:var(--paper2);border:1px solid var(--rule);position:relative}
