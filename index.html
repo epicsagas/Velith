@@ -72,9 +72,9 @@
 
   /* toc / phases */
   .toc{margin-top:44px;max-width:720px}
-  .toc a{display:flex;align-items:baseline;gap:12px;padding:15px 6px;border-bottom:1px solid var(--rule);color:var(--ink)}
-  .toc a:first-child{border-top:1px solid var(--rule)}
-  .toc a:hover{text-decoration:none;background:var(--paper2)}
+  .toc .row{display:flex;align-items:baseline;gap:12px;padding:15px 6px;border-bottom:1px solid var(--rule);color:var(--ink)}
+  .toc .row:first-child{border-top:1px solid var(--rule)}
+  .toc .row:hover{text-decoration:none;background:var(--paper2)}
   .toc .no{font:500 13px var(--mono);color:var(--pencil);min-width:26px}
   .toc .nm{font:600 20px var(--disp);white-space:nowrap}
   .toc .dots{flex:1;border-bottom:2px dotted #CBBFA4;transform:translateY(-5px)}
@@ -185,12 +185,12 @@
     <h2>A pipeline, not a prompt.</h2>
     <p class="lead">Frontier models write good sentences. Left alone they still write books readers put down. <em>None of that is a model problem — it is a pipeline problem</em> — and Velith is the pipeline.</p>
     <div class="toc">
-      <a href="https://github.com/epicsagas/Velith/blob/main/skills/book-init/SKILL.md"><span class="no">0</span><span class="nm">Onboarding</span><span class="dots"></span><span class="ds">reader, promise, scope — and a voice fingerprint from your own writing</span></a>
-      <a href="https://github.com/epicsagas/Velith/blob/main/skills/book-ideation/SKILL.md"><span class="no">1</span><span class="nm">Ideation</span><span class="dots"></span><span class="ds">premise stress-tested against real comparable titles; you choose</span></a>
-      <a href="https://github.com/epicsagas/Velith/blob/main/skills/book-outline/SKILL.md"><span class="no">2</span><span class="nm">Outlining</span><span class="dots"></span><span class="ds">structure chosen and justified, chapter specs, the book bible</span></a>
-      <a href="https://github.com/epicsagas/Velith/blob/main/skills/book-draft/SKILL.md"><span class="no">3</span><span class="nm">Drafting</span><span class="dots"></span><span class="ds">voice locked on a sample, then full-context chapters, critiqued and revised</span></a>
-      <a href="https://github.com/epicsagas/Velith/blob/main/skills/book-edit/SKILL.md"><span class="no">4</span><span class="nm">Editing</span><span class="dots"></span><span class="ds">fact check, developmental, line, copy, proofread — rewritten in place</span></a>
-      <a href="https://github.com/epicsagas/Velith/blob/main/skills/book-publish/SKILL.md"><span class="no">5</span><span class="nm">Publishing</span><span class="dots"></span><span class="ds">EPUB / PDF / MOBI, epubcheck, cover from the art bible</span></a>
+      <div class="row"><span class="no">0</span><span class="nm">Onboarding</span><span class="dots"></span><span class="ds">reader, promise, scope — and a voice fingerprint from your own writing</span></div>
+      <div class="row"><span class="no">1</span><span class="nm">Ideation</span><span class="dots"></span><span class="ds">premise stress-tested against real comparable titles; you choose</span></div>
+      <div class="row"><span class="no">2</span><span class="nm">Outlining</span><span class="dots"></span><span class="ds">structure chosen and justified, chapter specs, the book bible</span></div>
+      <div class="row"><span class="no">3</span><span class="nm">Drafting</span><span class="dots"></span><span class="ds">voice locked on a sample, then full-context chapters, critiqued and revised</span></div>
+      <div class="row"><span class="no">4</span><span class="nm">Editing</span><span class="dots"></span><span class="ds">fact check, developmental, line, copy, proofread — rewritten in place</span></div>
+      <div class="row"><span class="no">5</span><span class="nm">Publishing</span><span class="dots"></span><span class="ds">EPUB / PDF / MOBI, epubcheck, cover from the art bible</span></div>
     </div>
     <img class="shot" src="assets/features.png" alt="Diagram of the Velith feature system" loading="lazy">
   </div>
@@ -310,7 +310,7 @@ node velith.mjs images render my-book</pre>
     <p class="lead">Start with onboarding and a page of your own prose — the voice fingerprint does the rest.</p>
     <div class="tp-cta">
       <a class="btn solid" href="https://github.com/epicsagas/Velith#installation">Install Velith</a>
-      <a class="btn line" href="https://github.com/epicsagas/Velith/blob/main/docs/launch-playbook.md">Launch playbook</a>
+      <a class="btn line" href="#pipeline">See the six phases</a>
     </div>
   </div>
 </section>
@@ -318,7 +318,7 @@ node velith.mjs images render my-book</pre>
 <footer>
   <div class="wrap">
     <p class="fim">· Fin ·</p>
-    <p>Velith · Apache-2.0 · prompts are the product — test every change against <a href="https://github.com/epicsagas/Velith/tree/main/examples">examples/</a></p>
+    <p>Velith · Apache-2.0 · free and open source</p>
     <p style="margin-top:14px">
       <a href="https://github.com/epicsagas/Velith">GitHub</a>
       <a href="https://github.com/epicsagas/Velith/blob/main/CONTRIBUTING.md">Contributing</a>
