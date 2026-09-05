@@ -146,7 +146,6 @@ Human-quality release. The pipeline is rewritten around one standard: a cold rea
 - Hugging Face Space demo (`hf-space/`) — Gradio app with heuristic NLP pipeline
 - Three 1000+ word example inputs (messy notes, meeting transcript, research dump)
 - README: Benchmark section, expanded comparison table (Notion AI, Scrivener)
-- `docs/launch-playbook.md` — 48-hour HN + HF + X launch strategy
 - Cursor integration: `.cursor/rules/` with pipeline, genre, and editing rule files
 - Cline integration: `.clinerules` project-level instructions
 - Aider integration: `CONVENTIONS.md` with `.aider.conf.yml` auto-load config
