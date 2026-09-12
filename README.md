@@ -113,7 +113,7 @@ Alternatively, add this repository as a marketplace:
 
 ```bash
 grok plugin marketplace add epicsagas/Velith
-grok plugin install velith --trust
+grok plugin install velith@velith --trust
 ```
 
 Updates with `grok plugin update velith`.
