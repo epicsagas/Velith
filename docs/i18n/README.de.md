@@ -104,6 +104,23 @@ codex plugin marketplace add epicsagas/plugins
 
 **Voraussetzung:** [Codex CLI](https://github.com/openai/codex) installiert und konfiguriert.
 
+### Grok Build (xAI)
+
+```bash
+grok plugin marketplace add epicsagas/plugins
+grok plugin install velith@epicsagas --trust
+```
+
+Oder direkt aus diesem Repository installieren, ohne den Marketplace zu registrieren:
+
+```bash
+grok plugin install epicsagas/Velith --trust
+```
+
+Grok liest Skills aus `skills/` und Agenten aus `agents/` im Plugin-Stammverzeichnis. Keine zusätzliche Konfiguration erforderlich. Agenten starten als `velith:<name>` (z. B. `velith:chapter-writer`). Updates mit `grok plugin update velith@epicsagas`.
+
+**Voraussetzung:** [Grok Build](https://x.ai/cli) installiert und authentifiziert.
+
 ### Agy (Antigravity)
 
 ```bash
