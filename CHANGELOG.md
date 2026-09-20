@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.7.1] - 2026-09-20
+
+### Fixed
+- CLI direct-run detection compared raw paths; on macOS (`/tmp`, `/var`, symlinked `~/.claude`) the CLI silently did nothing. It compares real paths now.
+- `serve` wrote the PID file before `~/.velith` existed and crashed on fresh machines.
+- `scan --ui` was macOS-only: the server spawn used `nohup ... &` and the browser opener used `open`. Now a detached `spawn` plus `open`/`start`/`xdg-open` per platform.
+- `scan` prints a terminal summary line after scanning (`book-status` promised it; `scan` was silent).
+- Editing progress counts `edits/00-fact-check.md` (stage 0) again.
+- art-director names the `tokens`/`mood` keys `velith.mjs images compile` reads — character/setting constants and mood no longer drop from compiled prompts.
+- art-director look lock hands compiled prompts to the dispatcher instead of spawning illustrator/figure-engineer; subagents cannot spawn subagents.
+- figure-engineer toolchain note matches what `images render` actually detects (python3).
+
+### Added
+
 ## [0.7.0] - 2026-09-04
 
 Human-quality release. The pipeline is rewritten around one standard: a cold reader cannot tell the book was machine-drafted.
