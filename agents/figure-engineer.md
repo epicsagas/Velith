@@ -24,7 +24,7 @@ Read `${CLAUDE_PLUGIN_ROOT}/skills/book-visuals/SKILL.md`, `art-bible.md` (the f
 ## Toolchain (detect, then use what exists)
 
 ```bash
-node ${CLAUDE_PLUGIN_ROOT}/velith.mjs images render <project-dir>   # detects mmdc, d2, dot, rsvg-convert, python3+matplotlib and renders visuals/figures/src/* → visuals/figures/
+node ${CLAUDE_PLUGIN_ROOT}/velith.mjs images render <project-dir>   # detects mmdc, d2, dot, rsvg-convert, python3 and renders visuals/figures/src/* → visuals/figures/
 ```
 
 - Mermaid (`.mmd`) for flowcharts, sequence, state, class, ER, Gantt; apply the theme config for fonts and colors.

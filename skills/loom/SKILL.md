@@ -6,7 +6,7 @@ argument-hint: "[onboard|ideate|outline|draft|edit|publish|status] [--force]"
 
 # Velith — Books to the Human-Quality Bar
 
-Velith produces books a cold reader cannot distinguish from a competent human author's work. Six phases, ten agents, one standard: `quality-bar.md` in this directory. Read it once per session before doing any writing or editing work.
+Velith produces books a cold reader cannot distinguish from a competent human author's work. Six phases, twelve agents, one standard: `quality-bar.md` in this directory. Read it once per session before doing any writing or editing work.
 
 `${CLAUDE_PLUGIN_ROOT}` is this plugin's install directory. On hosts that do not substitute it, use the directory that contains `velith.mjs`.
 
