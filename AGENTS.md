@@ -57,43 +57,15 @@ Each agent has minimal tools by design (`style-doctor` has Edit but not Write; `
 
 ### Book project runtime structure
 
-```
-{project-dir}/
-├── PRD.md              # Requirements + reader promise (frontmatter: title, genre, language, target_length, count_unit, chapters)
-├── STYLE.md            # Voice fingerprint, voice sample, rules, ## Voice Lock
-├── ideation.md         # Concepts, comps, ## Chosen Concept
-├── outline.md          # Chapter specs, figure plan, ## Validation, ## Approval
-├── bible.md            # Characters/concepts, term rules, timeline, motifs, ## Chapter ledger
-├── art-bible.md        # Visual identity, ## Look lock
-├── sources/INDEX.md    # Source map with trust levels
-├── drafts/             # ch{NN}-{slug}.md (frontmatter: status draft|edited|final, revision, critique_score), ch{NN}-scenes.md
-├── visuals/            # plan.md, manifest.json, figures/{src/}, illustrations/, photos/, ref/, prompts/
-├── edits/              # 00-fact-check … 06-readiness-report, readiness-report.md, editorial-report.md, continuity-report.md, style-report.md, claim-ledger.md
-├── publish/            # book.*, metadata.yaml, frontmatter/, backmatter/, cover/, title-candidates.md, marketing-plan.md, CHECKLIST.md, PUBLISH-NOTES.md
-└── .velith/            # status.json, art-bible.json, critiques/, snapshots/, metrics.json
-```
+A book project directory's layout is created by the skills themselves (`/book-init` onward) — run `ls` on the project dir. `.velith/` holds runtime state; `edits/` holds per-stage reports plus `readiness-report.md`.
 
 ## CLI (`velith.mjs`)
 
-| Command | Purpose |
-|---------|---------|
-| `scan [dir] [--ui]` | Project state → SQLite + `status.json`; parses `edits/readiness-report.md` frontmatter into `readiness` |
-| `metrics <file\|dir>` | Deterministic prose metrics: sentence cv, mid-band share, punch endings, TTR, em-dash, AI-tell hits (en/ko), not-X-but-Y, rhetorical questions, connectives, dialogue share, cross-chapter repeated 3/4-grams, flags. Writes `.velith/metrics.json` |
-| `snapshot <dir> <label>` | Copies `drafts/` + bible/STYLE/outline to `.velith/snapshots/{stamp}-{label}` |
-| `images compile [dir] [id]` | Art bible + manifest entry → per-backend prompts (Midjourney, gpt-image, SD/FLUX, Imagen, Ideogram) in `visuals/prompts/` |
-| `images check [dir]` | Manifest coverage, dimensions (PNG/JPEG/SVG headers), aspect, size, alt text, draft references, unmanaged files. Exit 2 on failure |
-| `images render [dir]` | Detects mmdc/d2/dot/rsvg-convert/python3; renders `visuals/figures/src/*` to SVG (+PNG) |
-| `agents <id> <status> [task]` | Agent status for the dashboard |
-| `serve`, `list`, `stats`, `words`, `migrate` | As before |
+Single-file CLI + HTTP server. Run `node velith.mjs --help` (or read `velith.mjs` usage strings) for commands: `scan`, `metrics`, `snapshot`, `images compile|check|render`, `agents`, `serve`, `list`, `stats`, `words`, `migrate`.
 
 ## Dashboard
 
-Svelte 5 + Vite + Tailwind (CDN). `dashboard/src/App.svelte` + `views/`. Routing is manual (`View` union + `VALID_VIEWS`). i18n: 10 locales, `en.js` is the key source of truth; every locale must have identical keys (the `add-i18n` pattern: import module, merge, re-serialize). Data from SQLite via `getStatus()` in both `vite.config.ts` and `velith.mjs serve`. `AGENT_DEFS` in `lib/data.js` lists 12 agents; `EDIT_STAGES` has 6 (incl. readiness). Overview shows the readiness verdict and axes when present.
-
-```bash
-cd dashboard && npm install && npm run dev   # http://localhost:5173
-npm run build                                 # rebuild dist/ (committed for plugin users)
-```
+See `dashboard/CLAUDE.md` (loads when working under `dashboard/`).
 
 ## Grok Build (xAI) Plugin Support
 
@@ -103,15 +75,7 @@ Grok also reads the root `plugin.json`, where the `agents` field must stay a dir
 
 ## Multi-platform support
 
-| Platform | Files |
-|----------|-------|
-| Claude Code | `.claude-plugin/plugin.json`, `skills/`, `agents/` |
-| Codex CLI | `.codex-plugin/plugin.json`, `.codex-plugin/agents/*.toml` (generated: `node scripts/gen-codex-agents.mjs`) |
-| Grok Build | `.grok-plugin/plugin.json` + `.grok-plugin/marketplace.json` | Metadata + catalog; skills/agents discovered from plugin root |
-| Agy | root `plugin.json` |
-| Cursor | `.cursor/rules/*.mdc` |
-| Cline | `.clinerules` |
-| Aider | `CONVENTIONS.md` + `.aider.conf.yml` |
+One platform config set per host — each lives in its own top-level dot-directory (`.claude-plugin/`, `.codex-plugin/`, `.grok-plugin/`, root `plugin.json` for Agy, `.cursor/rules/`, `.clinerules`, `CONVENTIONS.md` for Aider); `ls -d .*/` shows what's active. Codex agent TOMLs are **generated** (`node scripts/gen-codex-agents.mjs`) — never hand-edit.
 
 When an agent changes, regenerate the Codex TOMLs and update `.clinerules`, `CONVENTIONS.md`, and the Cursor rules if the change affects pipeline semantics.
 

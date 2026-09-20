@@ -4,6 +4,7 @@
 !dist/**
 !server.mjs
 !AGENT_STATUS_SCHEMA.md
+!CLAUDE.md
 !.gitignore
 
 # Development source (for recovery/editing)
