@@ -1,11 +1,12 @@
 // Velith CLI — unified client for book project management
 // Usage: node velith.mjs <command> [args]
 // Commands: scan, agents, stats, words, list, migrate, metrics, snapshot, images, serve
-import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, renameSync, createReadStream, cpSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, renameSync, createReadStream, cpSync, realpathSync } from 'node:fs';
 import http from 'node:http';
 import { homedir } from 'node:os';
 import { join, basename, resolve, extname } from 'node:path';
-import { execSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { execSync, spawn } from 'node:child_process';
 import initSqlJs from './vendor/sql.js/sql-wasm.js';
 
 const HOME = homedir();
@@ -233,6 +234,7 @@ async function cmdScan(args) {
   // Edits
   const editsPath = join(dir, 'edits');
   const editReports = [
+    { stage: 'fact-check', file: '00-fact-check.md' },
     { stage: 'assessment', file: '01-assessment.md' },
     { stage: 'developmental', file: '02-developmental.md' },
     { stage: 'line-edit', file: '03-line-edit.md' },
@@ -407,6 +409,11 @@ async function cmdScan(args) {
   if (idx >= 0) reg.projects[idx] = entry; else reg.projects.push(entry);
   writeFileSync(regPath, JSON.stringify(reg, null, 2));
 
+  // ─── Terminal summary (book-status prints this after the scan) ───
+  const phaseName = phases[current_phase] ? phases[current_phase].name : '';
+  const readyLine = readiness && readiness.verdict ? `readiness ${readiness.verdict} (${readiness.score ?? '—'})` : 'readiness —';
+  console.log(`${meta.title} · phase ${current_phase}/5 ${phaseName} · ${completedChapters}/${totalChapters} chapters · ${total_words} words · ${readyLine}`);
+
   // ─── Terminal output ───
   const bar = (pct) => { const f = Math.round(pct / 100 * 12); return '█'.repeat(f) + '░'.repeat(12 - f); };
   const statusLabel = (s) => s === 'complete' ? 'COMPLETE' : s === 'in_progress' ? 'IN PROGRESS' : 'PENDING';
@@ -433,15 +440,16 @@ async function cmdScan(args) {
     const port = config.port || 9631;
     try { execSync(`curl -sf http://127.0.0.1:${port}/status.json`, { stdio: 'pipe' }); }
     catch {
-      const clientPath = pluginRoot ? join(pluginRoot, 'velith.mjs') : import.meta.url.replace(/^file:\/\//, '');
-      execSync(`nohup node "${clientPath}" serve > /dev/null 2>&1 &`, { stdio: 'ignore' });
+      const clientPath = pluginRoot ? join(pluginRoot, 'velith.mjs') : fileURLToPath(import.meta.url);
+      spawn(process.execPath, [clientPath, 'serve'], { detached: true, stdio: 'ignore' }).unref(); // no shell: works on POSIX and Windows
     }
     // Dashboard indexes projects by last_updated DESC; the just-scanned
     // project (last_updated = now) sits at that position. The registry's
     // insertion order is a different sequence and opened the wrong project.
     const posRows = db.exec('SELECT COUNT(*) FROM projects WHERE last_updated > ?', [now]);
     const pidx = posRows.length ? posRows[0].values[0][0] : 0;
-    execSync(`open http://127.0.0.1:${port}/${pidx}/overview`, { stdio: 'ignore' });
+    const opener = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
+    execSync(`${opener} http://127.0.0.1:${port}/${pidx}/overview`, { stdio: 'ignore' });
   }
 }
 
@@ -1121,14 +1129,21 @@ async function cmdServe(args) {
   const host = config.host || '127.0.0.1';
 
   server.listen(port, host, () => {
+    mkdirSync(VELITH, { recursive: true }); // fresh machines have no ~/.velith yet
     writeFileSync(PID_PATH, String(process.pid));
     console.log(`velith:${host === '0.0.0.0' ? '0.0.0.0' : '127.0.0.1'}:${port}`);
   });
 }
 
 // ─── CLI Router (only when run directly, not when imported) ──────────────────────
-
-const isMain = process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.url.replace(/^file:\/\//, ''));
+// Compare real paths: resolve() keeps symlinks, so on macOS (/tmp, /var, symlinked
+// ~/.claude) the module URL and argv disagree and the CLI would silently no-op.
+const isMain = (() => {
+  if (!process.argv[1]) return false;
+  try {
+    return realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url));
+  } catch { return false; }
+})();
 if (isMain) {
   const [,, cmd, ...rest] = process.argv;
   const commands = { scan: cmdScan, agents: cmdAgents, stats: cmdStats, words: cmdWords, list: cmdList, migrate: cmdMigrate, metrics: cmdMetrics, snapshot: cmdSnapshot, images: cmdImages, serve: cmdServe };
