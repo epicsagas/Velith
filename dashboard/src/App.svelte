@@ -310,7 +310,7 @@
       <div class="relative">
         <select
           class="h-8 bg-surface text-on-surface rounded pl-2 pr-7 text-xs font-semibold border border-outline-variant uppercase tracking-wider cursor-pointer"
-          style="appearance:none;-webkit-appearance:none;-moz-appearance:none;min-width:3rem"
+          style="appearance:none;-webkit-appearance:none;-moz-appearance:none;background-image:none;min-width:3rem"
           value={currentI18n.locale}
           onchange={(e) => { locale.set(e.target.value); syncFontToLocale(e.target.value); }}
         >
