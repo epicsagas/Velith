@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.7.2] - 2026-09-30
 
 ### Fixed
 - Windows: the dashboard served `index.html` for every script and stylesheet because the static containment check assumed `/` separators, so the dashboard rendered blank; `publish/` downloads always returned 403. Both use a separator-independent `path.relative` check now.
@@ -8,6 +8,7 @@
 - Windows: `book-publish` documents the `;` resource-path separator and explicit file lists.
 - `scan --ui` no longer shells out to `curl`, waits for the dashboard server before opening the browser, and prints the URL instead of exiting with an error on headless Linux.
 - Terminal dashboard lines no longer overflow the box with long chapter file names.
+- Dashboard locale selector showed two chevrons (the Tailwind forms plugin adds a background arrow); the plugin arrow is removed.
 
 ## [0.7.1] - 2026-09-20
 

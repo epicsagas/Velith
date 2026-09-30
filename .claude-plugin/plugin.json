@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "velith",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Books to the human-quality bar \u2014 6-phase pipeline (onboarding \u2192 ideation \u2192 outlining \u2192 drafting \u2192 editing \u2192 publishing), 12 agents, full-manuscript context, voice lock, draft-critique-revise, fact-check, beta-reader readiness gate, art bible and model-agnostic image pipeline. Fiction, non-fiction, technical, screenplay, poetry, game, academic, custom.",
   "author": {
     "name": "epicsagas",
