@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+- Windows: the dashboard served `index.html` for every script and stylesheet because the static containment check assumed `/` separators, so the dashboard rendered blank; `publish/` downloads always returned 403. Both use a separator-independent `path.relative` check now.
+- Windows: `images render` reported every tool as missing (`command -v` does not exist in cmd.exe) and copied SVG sources with `cp`. Tools are resolved on PATH directly (honouring PATHEXT) and run with argument arrays; npm `.cmd` shims such as `mmdc` work. Python is found as `python3`, `python`, or `py`.
+- Windows: `book-publish` documents the `;` resource-path separator and explicit file lists.
+- `scan --ui` no longer shells out to `curl`, waits for the dashboard server before opening the browser, and prints the URL instead of exiting with an error on headless Linux.
+- Terminal dashboard lines no longer overflow the box with long chapter file names.
+
 ## [0.7.1] - 2026-09-20
 
 ### Fixed

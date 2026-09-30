@@ -1,12 +1,12 @@
 // Velith CLI — unified client for book project management
 // Usage: node velith.mjs <command> [args]
 // Commands: scan, agents, stats, words, list, migrate, metrics, snapshot, images, serve
-import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, renameSync, createReadStream, cpSync, realpathSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, renameSync, createReadStream, cpSync, copyFileSync, realpathSync } from 'node:fs';
 import http from 'node:http';
 import { homedir } from 'node:os';
-import { join, basename, resolve, extname } from 'node:path';
+import { join, basename, resolve, extname, relative, isAbsolute, delimiter } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execSync, spawn } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import initSqlJs from './vendor/sql.js/sql-wasm.js';
 
 const HOME = homedir();
@@ -153,6 +153,55 @@ function readJson(p, fb) {
 // ─── Helpers ─────────────────────────────────────────────────────────────────────
 
 const has = (dir, f) => existsSync(join(dir, f));
+
+// True when p resolves to a path strictly inside dir. Uses path.relative so the
+// check holds with Windows separators and drive letters, not just POSIX '/'.
+export function isInside(dir, p) {
+  const rel = relative(resolve(dir), resolve(p));
+  return rel !== '' && !rel.startsWith('..') && !isAbsolute(rel);
+}
+
+// Resolve an executable on PATH without spawning a shell (`command -v` does not
+// exist in cmd.exe). On Windows, honours PATHEXT (.exe, .cmd, ...).
+export function findCmd(name) {
+  const exts = process.platform === 'win32' ? ['', ...(process.env.PATHEXT || '.EXE;.CMD;.BAT;.COM').split(';')] : [''];
+  for (const d of (process.env.PATH || '').split(delimiter)) {
+    if (!d) continue;
+    for (const e of exts) {
+      const c = join(d.replace(/^"|"$/g, ''), name + e);
+      try { if (statSync(c).isFile()) return c; } catch {}
+    }
+  }
+  return null;
+}
+
+// Run a resolved executable with an argument array (no shell string, no quoting bugs).
+// Windows .cmd/.bat shims (npm-installed mmdc) cannot be spawned without a shell since
+// Node's CVE-2024-27980 fix, so those go through cmd with each argument quoted.
+export function runCmd(exe, args, opts = {}) {
+  if (process.platform === 'win32' && /\.(cmd|bat)$/i.test(exe)) {
+    const q = (s) => `"${String(s).replace(/"/g, '""')}"`;
+    return execFileSync(`${q(exe)} ${args.map(q).join(' ')}`, { stdio: 'pipe', shell: true, ...opts });
+  }
+  return execFileSync(exe, args, { stdio: 'pipe', ...opts });
+}
+
+// Open a URL in the default browser. Never throws: headless Linux has no xdg-open target.
+function openUrl(url) {
+  const [cmd, args] = process.platform === 'darwin' ? ['open', [url]]
+    : process.platform === 'win32' ? ['cmd', ['/c', 'start', '""', url]]
+    : ['xdg-open', [url]];
+  try {
+    const child = spawn(cmd, args, { detached: true, stdio: 'ignore', windowsHide: true });
+    child.on('error', () => {});
+    child.unref();
+  } catch {}
+  console.log(`Dashboard: ${url}`);
+}
+
+async function isUp(url) {
+  try { const r = await fetch(url, { signal: AbortSignal.timeout(800) }); return r.ok; } catch { return false; }
+}
 // In-process counters (was execSync wc/tr per file — spawned ~3 processes per chapter).
 const countLines = (p) => { try { return (readFileSync(p, 'utf8').match(/\n/g) || []).length; } catch { return 0; } };
 const countWords = (p) => { try { return readFileSync(p, 'utf8').split(/\s+/).filter(Boolean).length; } catch { return 0; } };
@@ -418,7 +467,8 @@ async function cmdScan(args) {
   const bar = (pct) => { const f = Math.round(pct / 100 * 12); return '█'.repeat(f) + '░'.repeat(12 - f); };
   const statusLabel = (s) => s === 'complete' ? 'COMPLETE' : s === 'in_progress' ? 'IN PROGRESS' : 'PENDING';
   const w = 59;
-  const line = (s) => `║  ${s.padEnd(w - 4)}║\n`;
+  const fit = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s.padEnd(n);
+  const line = (s) => `║  ${fit(s, w - 4)}║\n`;
   const sep = () => `╠${'═'.repeat(w - 2)}╣\n`;
   let out = `╔${'═'.repeat(w - 2)}╗\n`;
   out += line(`${meta.title}`);
@@ -427,7 +477,7 @@ async function cmdScan(args) {
   phases.forEach(p => out += line(`${p.phase}. ${p.name.padEnd(13)} ${bar(p.percent)} ${String(p.percent).padStart(3)}%  ${statusLabel(p.status)}`));
   if (readiness) out += line(`Readiness: ${readiness.verdict || '?'} ${readiness.score != null ? readiness.score.toFixed(1) + '/10' : ''} ${Object.entries(readiness.axes).map(([k, v]) => k[0] + v).join(' ')}`);
   out += sep();
-  chapter_details.forEach(c => out += line(`${c.filename.padEnd(20)} ${String(c.lines).padStart(5)} lines  ${String(c.words).padStart(5)} ${countUnit}  [${c.status}]`));
+  chapter_details.forEach(c => out += line(`${fit(c.filename, 20)} ${String(c.lines).padStart(5)} lines  ${String(c.words).padStart(5)} ${countUnit}  [${c.status}]`));
   if (chapter_details.length) out += line(`Total: ${total_words} ${countUnit} · Target: ${meta.target_words || '?'}`);
   out += sep();
   output_files.forEach(f => out += line(`${f.name.padEnd(12)} ${f.exists ? '✓ exists' : '✗ missing'}${f.size_bytes ? ` (${(f.size_bytes / 1024).toFixed(0)}KB)` : ''}`));
@@ -438,18 +488,19 @@ async function cmdScan(args) {
   if (ui) {
     const config = readJson(join(VELITH, 'config.json'), {});
     const port = config.port || 9631;
-    try { execSync(`curl -sf http://127.0.0.1:${port}/status.json`, { stdio: 'pipe' }); }
-    catch {
+    const base = `http://127.0.0.1:${port}`;
+    if (!(await isUp(`${base}/status.json`))) {
       const clientPath = pluginRoot ? join(pluginRoot, 'velith.mjs') : fileURLToPath(import.meta.url);
-      spawn(process.execPath, [clientPath, 'serve'], { detached: true, stdio: 'ignore' }).unref(); // no shell: works on POSIX and Windows
+      spawn(process.execPath, [clientPath, 'serve'], { detached: true, stdio: 'ignore', windowsHide: true }).unref(); // no shell: works on POSIX and Windows
+      // Wait for the server so the browser does not land on "connection refused".
+      for (let i = 0; i < 25 && !(await isUp(`${base}/status.json`)); i++) await new Promise(r => setTimeout(r, 200));
     }
     // Dashboard indexes projects by last_updated DESC; the just-scanned
     // project (last_updated = now) sits at that position. The registry's
     // insertion order is a different sequence and opened the wrong project.
     const posRows = db.exec('SELECT COUNT(*) FROM projects WHERE last_updated > ?', [now]);
     const pidx = posRows.length ? posRows[0].values[0][0] : 0;
-    const opener = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
-    execSync(`${opener} http://127.0.0.1:${port}/${pidx}/overview`, { stdio: 'ignore' });
+    openUrl(`${base}/${pidx}/overview`);
   }
 }
 
@@ -796,7 +847,7 @@ const DEFAULT_ASPECT = { 'full-page': '2:3', 'chapter-header': '3:1', inline: '1
 const BASE_NEGATIVE = ['text', 'letters', 'words', 'watermark', 'signature', 'logo', 'border', 'frame'];
 const SD_NEGATIVE_EXTRA = ['lowres', 'jpeg artifacts', 'bad anatomy', 'extra limbs', 'extra fingers', 'deformed hands', 'blurry'];
 
-function imageDims(fp) {
+export function imageDims(fp) {
   try {
     const ext = extname(fp).toLowerCase();
     if (ext === '.svg') {
@@ -941,24 +992,26 @@ function cmdImages(args) {
     const outDir = join(dir, 'visuals', 'figures');
     if (!existsSync(srcDir)) { console.error('No visuals/figures/src in', dir); process.exit(1); }
     mkdirSync(outDir, { recursive: true });
-    const have = (t) => { try { execSync(`command -v ${t}`, { stdio: 'pipe' }); return true; } catch { return false; } };
-    const tools = { mmdc: have('mmdc'), d2: have('d2'), dot: have('dot'), 'rsvg-convert': have('rsvg-convert'), python3: have('python3') };
-    const themeMmd = existsSync(join(srcDir, 'theme.json')) ? ` -c "${join(srcDir, 'theme.json')}"` : '';
+    const exe = { mmdc: findCmd('mmdc'), d2: findCmd('d2'), dot: findCmd('dot'), 'rsvg-convert': findCmd('rsvg-convert'), python3: findCmd('python3') || findCmd('python') || findCmd('py') };
+    const tools = Object.fromEntries(Object.entries(exe).map(([k, v]) => [k, !!v]));
+    const theme = join(srcDir, 'theme.json');
     const results = [];
     for (const f of readdirSync(srcDir).sort()) {
       const src = join(srcDir, f), id = f.replace(/\.[^.]+$/, ''), ext = extname(f).toLowerCase();
       if (f.startsWith('theme')) continue;
       const svg = join(outDir, `${id}.svg`);
-      let cmd = null, tool = null;
-      if (ext === '.mmd') { tool = 'mmdc'; cmd = `mmdc -i "${src}" -o "${svg}"${themeMmd} -b transparent`; }
-      else if (ext === '.d2') { tool = 'd2'; cmd = `d2 "${src}" "${svg}"`; }
-      else if (ext === '.dot') { tool = 'dot'; cmd = `dot -Tsvg "${src}" -o "${svg}"`; }
-      else if (ext === '.py') { tool = 'python3'; cmd = `cd "${outDir}" && python3 "${src}"`; }
-      else if (ext === '.svg') { tool = null; cmd = `cp "${src}" "${svg}"`; }
+      let args = null, tool = null, cwd;
+      if (ext === '.mmd') { tool = 'mmdc'; args = ['-i', src, '-o', svg, ...(existsSync(theme) ? ['-c', theme] : []), '-b', 'transparent']; }
+      else if (ext === '.d2') { tool = 'd2'; args = [src, svg]; }
+      else if (ext === '.dot') { tool = 'dot'; args = ['-Tsvg', src, '-o', svg]; }
+      else if (ext === '.py') { tool = 'python3'; args = [src]; cwd = outDir; }
+      else if (ext === '.svg') { tool = null; }
       else { results.push({ file: f, skipped: 'unknown source type' }); continue; }
-      if (tool && !tools[tool]) { results.push({ file: f, skipped: `${tool} not installed` }); continue; }
-      try { execSync(cmd, { stdio: 'pipe' }); const r = { file: f, svg: existsSync(svg) ? svg : null };
-        if (r.svg && tools['rsvg-convert']) { const png = join(outDir, `${id}.png`); execSync(`rsvg-convert -w 2400 "${svg}" -o "${png}"`, { stdio: 'pipe' }); r.png = png; }
+      if (tool && !exe[tool]) { results.push({ file: f, skipped: `${tool} not installed` }); continue; }
+      try {
+        if (tool) runCmd(exe[tool], args, cwd ? { cwd } : {}); else copyFileSync(src, svg);
+        const r = { file: f, svg: existsSync(svg) ? svg : null };
+        if (r.svg && exe['rsvg-convert']) { const png = join(outDir, `${id}.png`); runCmd(exe['rsvg-convert'], ['-w', '2400', svg, '-o', png]); r.png = png; }
         results.push(r);
       } catch (err) { results.push({ file: f, error: String(err.message || err).split('\n')[0] }); }
     }
@@ -997,7 +1050,7 @@ async function cmdServe(args) {
     let fp = join(DIST_DIR, urlPath === '/' ? 'index.html' : urlPath);
     // Explicit containment guard: URL normalization blocks most traversal, but
     // don't rely on it — anything resolving outside DIST_DIR is SPA-routed.
-    if (!fp.startsWith(DIST_DIR + '/')) fp = join(DIST_DIR, 'index.html');
+    if (!isInside(DIST_DIR, fp)) fp = join(DIST_DIR, 'index.html');
     if (!existsSync(fp) || statSync(fp).isDirectory()) fp = join(DIST_DIR, 'index.html');
     const ext = basename(fp).includes('.') ? '.' + basename(fp).split('.').pop() : '';
     try {
@@ -1114,7 +1167,7 @@ async function cmdServe(args) {
       if (!proj?.path) { res.writeHead(404); res.end('Not found'); return; }
       const fp = resolve(proj.path, 'publish', dlMatch[2]);
       const pubDir = resolve(proj.path, 'publish');
-      if (!fp.startsWith(pubDir + '/') || !existsSync(fp) || statSync(fp).isDirectory()) { res.writeHead(403); res.end('Forbidden'); return; }
+      if (!isInside(pubDir, fp) || !existsSync(fp) || statSync(fp).isDirectory()) { res.writeHead(403); res.end('Forbidden'); return; }
       const ext = extname(fp);
       res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream', 'Content-Disposition': `attachment; filename="${dlMatch[2]}"` });
       createReadStream(fp).pipe(res);
